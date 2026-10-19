@@ -6,6 +6,8 @@ Um MVP de espaço virtual para Desbravadores, com catálogo conectado ao Supabas
 
 Repositório: [kakashaomilgrau28-trilha/trilha](https://github.com/kakashaomilgrau28-trilha/trilha).
 
+Site de demonstração: [Abrir Trilha](https://trilha-campori.vercel.app).
+
 Requer Node.js 22.13 ou superior e pnpm 11.25.0.
 
 ```bash
