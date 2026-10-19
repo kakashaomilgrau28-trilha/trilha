@@ -129,7 +129,8 @@ export default function OpenWorld(props: Props) {
           }
           cameraTarget.set(p.x + Math.sin(yaw) * Math.cos(pitch) * clearDistance, 1.6 + Math.sin(pitch) * clearDistance, p.y + Math.cos(yaw) * Math.cos(pitch) * clearDistance)
           camera.position.lerp(cameraTarget, 1 - Math.exp(-8 * dt))
-          lookAt.set(p.x, 1.6, p.y); camera.lookAt(lookAt); renderer.render(scene, camera)
+          lookAt.set(p.x - Math.sin(yaw) * 7, 1.6, p.y - Math.cos(yaw) * 7)
+          camera.lookAt(lookAt); renderer.render(scene, camera)
         }
       }
       frame = requestAnimationFrame(tick)
