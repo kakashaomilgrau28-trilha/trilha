@@ -134,8 +134,8 @@ function landmarkTag(scene: THREE.Scene, title: string, x: number, z: number, he
 function church(scene: THREE.Scene) {
   // OSM building 266958811. The west front faces Praça General Carneiro.
   const group = facadeGroup(scene, -1.85, -1.2, -1.287)
-  box(group, 17.5, 7.1, 43.5, 0, 3.55, -21.75, '#f0eadb')
-  box(group, 17.7, .45, .4, 0, 6.9, .02, '#e4d7bc')
+  box(group, 17.5, 7.1, 43.5, 0, 3.55, -21.75, '#ffffff')
+  box(group, 17.7, .45, .4, 0, 6.9, .02, '#f0ece2')
   roof(group, 17.5, 43.5, 7.1, 2.3)
   // Stone portal, three choir windows, curved baroque front and left bell tower.
   door(group, 0, 3.4, .28, '#c9b797')
@@ -144,9 +144,9 @@ function church(scene: THREE.Scene) {
   pediment.moveTo(-8.8, 7.05); pediment.quadraticCurveTo(-5.4, 7.15, -4.2, 8.1)
   pediment.quadraticCurveTo(0, 10.2, 4.2, 8.1); pediment.quadraticCurveTo(5.4, 7.15, 8.8, 7.05)
   pediment.closePath()
-  const front = new THREE.Mesh(new THREE.ShapeGeometry(pediment), material('#f4ebd9'))
+  const front = new THREE.Mesh(new THREE.ShapeGeometry(pediment), material('#ffffff'))
   front.position.z = .55; group.add(front)
-  box(group, 3.5, 12.1, 4.2, -6.9, 6.05, -2.4, '#efe7d7')
+  box(group, 3.5, 12.1, 4.2, -6.9, 6.05, -2.4, '#ffffff')
   for (const y of [7.8, 10]) windowFrame(group, -6.9, y, 1.2, 1.3, .1, '#d1bea0')
   const towerRoof = new THREE.Mesh(new THREE.ConeGeometry(3, 2.6, 4), material('#8e5941'))
   towerRoof.rotation.y = Math.PI / 4; towerRoof.position.set(-6.9, 13.4, -2.4); group.add(towerRoof)
