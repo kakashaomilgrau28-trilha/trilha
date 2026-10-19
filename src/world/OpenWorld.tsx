@@ -129,7 +129,8 @@ export default function OpenWorld(props: Props) {
           }
           cameraTarget.set(p.x + Math.sin(yaw) * Math.cos(pitch) * clearDistance, 1.6 + Math.sin(pitch) * clearDistance, p.y + Math.cos(yaw) * Math.cos(pitch) * clearDistance)
           camera.position.lerp(cameraTarget, 1 - Math.exp(-8 * dt))
-          lookAt.set(p.x - Math.sin(yaw) * 7, 1.6, p.y - Math.cos(yaw) * 7)
+          const lookAhead = camera.aspect < .85 ? 2.2 : 7
+          lookAt.set(p.x - Math.sin(yaw) * lookAhead, 1.6, p.y - Math.cos(yaw) * lookAhead)
           camera.lookAt(lookAt); renderer.render(scene, camera)
         }
       }
