@@ -1,6 +1,7 @@
 import type { Claim, ClaimResult, EditionId, GameState, Reward } from './model'
 
-export const RESCUE_RADIUS = 10
+// World coordinates span 240 m over the legacy 0–100 catalog grid.
+export const RESCUE_RADIUS = 5 / 2.4
 
 export function canRescue(
   reward: Reward,

@@ -58,3 +58,16 @@ Esta demonstração não implementa autenticação, consentimento parental, mode
 ## Monetização
 
 A vitrine apresenta produtos, conteúdo e preço em `src/gameData.ts`; clicar em “Experimentar” registra uma compra simulada no armazenamento local. Não há checkout, pagamento real, moeda premium, sorteio, anúncio ou coleta de dados de cartão. Para compras reais, ainda seriam necessários autorização do responsável para participantes menores, checkout seguro, preços/condições apropriados a cada país e revisão legal. Produtos pagos devem permanecer puramente visuais.
+
+
+## Mundo 3D e cenário de Lapa
+
+Personagens humanos articulados, câmera de acompanhamento, WASD/setas, corrida com Shift e analógico flutuante por Pointer Events no celular. Clique no cenário para ativar o teclado. E abre a recompensa a até 5 m virtuais. Movimento pausa em modais, ao perder foco e ao ocultar a aba. O mundo inicial tem 240 m e colisões no cenário artístico. Os demais personagens são NPCs, sem multiplayer.
+
+O cenário artístico é provisório, com ruas fictícias; não é um levantamento da Lapa. A integração oficial Google Maps usa WebGLOverlayView com personagens Three.js ancorados em Lapa–PR (-25.769722, -49.715833). Não baixa tiles nem cria edifícios a partir de imagens do Google. O modo Google não tem colisões com edifícios reais, e ainda precisa ser validado com uma chave habilitada.
+
+Para ativar: habilite Maps JavaScript API e faturamento no Google Cloud; crie uma chave restrita ao website https://trilha-campori.vercel.app/* e à API; salve VITE_GOOGLE_MAPS_API_KEY em Production na Vercel e faça novo deploy. Opcional: VITE_GOOGLE_MAPS_MAP_ID para um mapa vetorial personalizado. Não é necessário GPS. A chave do navegador é pública por natureza e deve ter restrições de uso. O Google cobra por uso; configure limites/alertas na sua conta.
+
+Clubes: seleção inicial de CARATUVA e Escudeiros do Rei (Curitiba) e Shekinah (Campina Grande do Sul), conferidos no diretório DSA em 19/10/2026. URLs por clube em src/realClubs.ts; SQL reproduzível em supabase/real-clubs.sql. Não é o catálogo nacional completo; nenhum clube sediado em Lapa foi confirmado. Não importamos pessoas, contatos nem suposta participação no jogo. Afiliações antigas fictícias são limpas no navegador.
+
+Verificação: node scripts/check-world.mjs verifica velocidade diagonal, independência de FPS, colisão, limites e conversão geográfica; pnpm build verifica TypeScript e bundle. Google Maps só pode ser validado de ponta a ponta após configurar a chave.

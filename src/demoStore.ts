@@ -6,7 +6,7 @@ const STORAGE_KEY = 'trilha-demo-v1'
 export const initialState: GameState = {
   nickname: '',
   avatar: 'trilheiro',
-  clubId: 'horizonte',
+  clubId: '',
   edition: 'preview',
   claims: [],
   purchasedCosmetics: [],
@@ -19,7 +19,9 @@ export const initialState: GameState = {
 export function loadState(): GameState {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
-    return saved ? { ...initialState, ...JSON.parse(saved) } as GameState : initialState
+    const state = saved ? { ...initialState, ...JSON.parse(saved) } as GameState : initialState
+    if (['horizonte', 'ipe', 'constelacao'].includes(state.clubId)) state.clubId = ''
+    return state
   } catch {
     return initialState
   }

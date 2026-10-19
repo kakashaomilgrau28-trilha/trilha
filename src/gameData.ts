@@ -1,3 +1,4 @@
+import { realClubs } from './realClubs'
 import type { ChatMessage, Club, CosmeticProduct, Edition, EditionId, Player, Reward } from './model'
 
 export const DEMO_MODE = true
@@ -9,11 +10,7 @@ export const editions: Edition[] = [
   { id: 'omega', label: 'Edição Ômega', shortLabel: 'ÔMEGA', description: 'Espaço demonstrativo Ômega', accent: '#6c76a8' },
 ]
 
-export const clubs: Club[] = [
-  { id: 'horizonte', name: 'Horizonte', color: '#c26c48' },
-  { id: 'ipe', name: 'Ipê Amarelo', color: '#d5a841' },
-  { id: 'constelacao', name: 'Constelação', color: '#647da8' },
-]
+export const clubs: Club[] = realClubs
 
 export const avatars = [
   { id: 'trilheiro', label: 'Trilheiro', emoji: '🧭', color: '#d59156' },
@@ -35,11 +32,11 @@ export const rewards: Reward[] = [
 ]
 
 export const players: Player[] = [
-  { id: 'player-lua', nickname: 'LuaSerena', avatar: 'observadora', clubId: 'ipe', x: 48, y: 49, online: true },
-  { id: 'player-caio', nickname: 'CaioTrilha', avatar: 'trilheiro', clubId: 'horizonte', x: 56, y: 40, online: true },
-  { id: 'player-nina', nickname: 'NinaNorte', avatar: 'cartografa', clubId: 'constelacao', x: 43, y: 62, online: true },
-  { id: 'player-sol', nickname: 'SolNascente', avatar: 'naturalista', clubId: 'ipe', x: 77, y: 46, online: true },
-  { id: 'player-teo', nickname: 'TeoExplora', avatar: 'guardiao', clubId: 'horizonte', x: 23, y: 43, online: false },
+  { id: 'player-lua', nickname: 'LuaSerena', avatar: 'observadora', clubId: '', x: 48, y: 49, online: true },
+  { id: 'player-caio', nickname: 'CaioTrilha', avatar: 'trilheiro', clubId: '', x: 56, y: 40, online: true },
+  { id: 'player-nina', nickname: 'NinaNorte', avatar: 'cartografa', clubId: '', x: 43, y: 62, online: true },
+  { id: 'player-sol', nickname: 'SolNascente', avatar: 'naturalista', clubId: '', x: 77, y: 46, online: true },
+  { id: 'player-teo', nickname: 'TeoExplora', avatar: 'guardiao', clubId: '', x: 23, y: 43, online: false },
 ]
 
 export const cosmetics: CosmeticProduct[] = [

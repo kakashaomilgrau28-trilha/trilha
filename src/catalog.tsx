@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { clubs, cosmetics, editions, rewards } from './gameData'
+import { realClubs } from './realClubs'
 import { supabase } from './lib/supabase'
 import type { Club, CosmeticProduct, Edition, EditionId, Reward } from './model'
 import './catalog.css'
@@ -28,7 +29,7 @@ async function fetchCatalog(signal: AbortSignal): Promise<Catalog> {
   if (!supabase) throw new Error('Configuração do Supabase ausente.')
   const [editionResult, clubResult, rewardResult, cosmeticResult] = await Promise.all([
     supabase.from('editions').select('id,label,short_label,description,accent_color').abortSignal(signal),
-    supabase.from('clubs').select('id,name,color').order('name').abortSignal(signal),
+    supabase.from('clubs').select('id,name,color').in('id', realClubs.map(club => club.id)).order('name').abortSignal(signal),
     supabase.from('rewards').select('id,edition_id,name,description,category,rarity,points,max_claims,map_x,map_y,icon').eq('active', true).order('id').abortSignal(signal),
     supabase.from('cosmetics').select('id,name,description,price_minor,currency_code,icon,item_type').eq('active', true).order('id').abortSignal(signal),
   ])
