@@ -380,7 +380,7 @@ export function buildTown(scene: THREE.Scene) {
   const circle = new THREE.Mesh(new THREE.CylinderGeometry(7.8, 7.8, .06, 28), material('#d5c9af'))
   circle.position.y = .17; scene.add(circle)
   monument(scene, 0, 0)
-  for (const [x,z] of [[-49,16],[-38,-9],[-27,18],[-13,-13],[20,12],[33,-13],[48,-18],[53,-3]]) {
+  for (const [x,z] of [[-49,16],[-38,-9],[-22,19],[-13,-13],[20,12],[33,-13],[48,-18],[53,-3]]) {
     box(scene, .35, 2.8, .35, x, 1.5, z, '#655a42')
     const crown = new THREE.Mesh(new THREE.SphereGeometry(2.7, 9, 7), material('#4d7752'))
     crown.position.set(x, 3.9, z); crown.scale.set(1.2,.85,1); scene.add(crown)

@@ -19,7 +19,7 @@ export default function OpenWorld(props: Props) {
   const input = useRef({ x: 0, z: 0, run: false })
   const touch = useRef<{ id: number; x: number; y: number } | null>(null)
   const cameraDrag = useRef<{ id: number; x: number; y: number } | null>(null)
-  const view = useRef({ yaw: -0.6, pitch: 0.5, distance: 20 })
+  const view = useRef({ yaw: -1.05, pitch: 0.5, distance: 20 })
   const latest = useRef(props); latest.current = props
   const [error, setError] = useState('')
   const [nearby, setNearby] = useState<Reward | null>(null)
@@ -58,7 +58,7 @@ export default function OpenWorld(props: Props) {
     let renderer: THREE.WebGLRenderer | undefined
     const camera = new THREE.PerspectiveCamera(48, 1, .1, 600)
     const cameraTarget = new THREE.Vector3(), lookAt = new THREE.Vector3()
-    camera.position.set(p.x - 11, 11.5, p.y + 16)
+    camera.position.set(p.x - 15.2, 11.2, p.y + 8.7)
     const resize = () => {
       if (!renderer) return
       const w = container.clientWidth, h = container.clientHeight
@@ -191,10 +191,10 @@ export default function OpenWorld(props: Props) {
     surface.current?.focus({ preventScroll: true })
   }
   return <section className="open-world">
-    <div className="world-toolbar"><div><span className="world-live-dot" /> CENTRO DA LAPA <small>PARANÁ · BRASIL</small></div><div><span className="world-data-label">CENTRO HISTÓRICO RECRIADO</span><button onClick={() => { view.current = { yaw: -0.6, pitch: 0.5, distance: 20 }; surface.current?.focus({ preventScroll: true }) }} aria-label="Centralizar câmera">↺ Câmera</button><button onClick={() => setHelp(v => !v)} aria-label="Ajuda e controles">?</button></div></div>
+    <div className="world-toolbar"><div><span className="world-live-dot" /> CENTRO DA LAPA <small>PARANÁ · BRASIL</small></div><div><span className="world-data-label">CENTRO HISTÓRICO RECRIADO</span><button onClick={() => { view.current = { yaw: -1.05, pitch: 0.5, distance: 20 }; surface.current?.focus({ preventScroll: true }) }} aria-label="Centralizar câmera">↺ Câmera</button><button onClick={() => setHelp(v => !v)} aria-label="Ajuda e controles">?</button></div></div>
     <div className="world-surface" ref={surface} tabIndex={0} aria-label="Explorar Lapa. Use WASD ou setas para andar. Arraste para girar a câmera. No celular, analógico à esquerda e câmera à direita." onPointerDown={start} onPointerMove={move} onPointerUp={stop} onPointerCancel={stop} onLostPointerCapture={stop} onWheel={zoom}>
       <div ref={host} className="world-renderer" />
-      <div className="world-location"><small>01 / EXPLORE O MUNDO</small><b>Bem-vindo à Lapa.</b><span>Praça General Carneiro · monumento e marcos históricos</span></div>
+      <div className="world-location"><small>CENTRO HISTÓRICO</small><b>Praça General Carneiro</b></div>
       <div className="world-minimap" aria-label={`Posição virtual: ${coords.x}, ${coords.y} metros`}><span>N ↑</span><i style={{ left: `${coords.x / WORLD_SIZE * 100 + 50}%`, top: `${coords.y / WORLD_SIZE * 100 + 50}%` }} /><small>{coords.x} / {coords.y} m</small></div>
       <div className="world-control-hint"><span className="desktop-controls"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> andar · arraste para girar câmera · roda aproxima</span><span className="mobile-controls">Esquerda: andar · direita: girar câmera</span></div>
       <div className="floating-stick" ref={joystick} aria-hidden="true"><div ref={thumb} /></div>

@@ -27,8 +27,8 @@ function App() {
   const [game, setGame] = useState<GameState>(loadState)
   const [activePage, setActivePage] = useState<PageId>('map')
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null)
-  // Open plaza west of the mapped church, with a clear third-person camera view.
-  const [playerPosition, setPlayerPosition] = useState({ x: 43.33, y: 50 })
+  // Paved path in Praça General Carneiro, facing the monument and church.
+  const [playerPosition, setPlayerPosition] = useState({ x: 47, y: 50.83 })
   const [nicknameDraft, setNicknameDraft] = useState('')
   const [avatarDraft, setAvatarDraft] = useState('trilheiro')
   const [clubDraft, setClubDraft] = useState('')
