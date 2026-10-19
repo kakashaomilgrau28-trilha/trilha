@@ -1,6 +1,6 @@
 # Trilha · demonstração do jogo
 
-Um MVP local de espaço virtual compartilhado para Desbravadores. O projeto é uma demonstração independente, não oficial e sem aprovação atribuída à organização do VI Campori Sul-Americano. A stack é React, TypeScript e Vite: oferece interface tipada e responsiva, com execução simples no navegador e sem conta ou credenciais de serviço.
+Um MVP de espaço virtual para Desbravadores, com catálogo conectado ao Supabase e publicação na Vercel. O projeto é uma demonstração independente, não oficial e sem aprovação atribuída à organização do VI Campori Sul-Americano. A stack é React, TypeScript e Vite. Perfil, progresso, chat e compras simuladas ficam neste navegador; esta versão ainda não oferece multiplayer.
 
 ## Executar localmente
 
@@ -10,6 +10,7 @@ Requer Node.js 22.13 ou superior e pnpm 11.25.0.
 
 ```bash
 pnpm install --frozen-lockfile
+# Copie .env.example para .env.local e preencha a URL e a chave publishable do Supabase.
 pnpm dev
 ```
 
@@ -24,21 +25,25 @@ Abra o endereço local que o Vite informar (normalmente `http://localhost:5173`)
 - Coleção pessoal e placares demonstrativos por jogador ou clube.
 - Vitrine de cosméticos configuráveis com preços visíveis e compra simulada. Nenhum pagamento ou dado de cartão é solicitado; cosméticos não afetam pontos ou resgates.
 - Chat público demonstrativo, com apelidos, bloqueio/silenciamento/denúncia locais, limite de 160 caracteres, intervalo de 8 segundos e bloqueio simples de telefones e e-mails.
-- Estado de conexão alternável para mostrar a interface de sinal instável.
+- Catálogo de edições, clubes, recompensas e cosméticos carregado do Supabase, com atualização e tratamento de falhas.
 
 ## Dados fictícios e configuração
 
 Os dados de demonstração estão em `src/gameData.ts`: mapa e posições virtuais, jogadores, clubes, recompensas, itens cosméticos e preços. Não use as posições atuais em produção. Não há coordenadas reais, locais oficiais, horários ou regras do evento neste repositório. Os nomes, mapas e pontuações precisam ser substituídos e confirmados pela organização antes de qualquer associação ao evento.
 
-`src/model.ts` contém os tipos do domínio; `src/gameLogic.ts` contém regras demonstrativas de alcance, pontuação e prevenção de dados de contato; `src/demoStore.ts` contém persistência local e o contrato inicial `GameRepository`. O arquivo `.env.example` não contém segredos e nenhuma variável é necessária para a demonstração.
+`src/model.ts` contém os tipos do domínio; `src/gameLogic.ts` contém regras demonstrativas de alcance, pontuação e prevenção de dados de contato; `src/demoStore.ts` contém persistência local e o contrato inicial `GameRepository`. `src/catalog.tsx` carrega o catálogo do Supabase com consultas paralelas e timeout. Sem variáveis, o servidor de desenvolvimento usa os dados locais; em produção, a conexão com o catálogo é obrigatória.
 
-## Backend compartilhado em preparação
+## Supabase
 
-A aplicação ainda não tem autenticação, banco de dados conectado, presença em tempo real nem servidor. `demoRepository` é apenas um adaptador local; o estado do navegador pode ser alterado pelo jogador e **não é confiável**. O projeto Supabase separado `trilha-campori` foi criado em `sa-east-1`. O esquema inicial está em `supabase/schema.sql` e já foi aplicado ao banco. Ele define clubes, edições, perfis, recompensas, resgates, chat e cosméticos, sem inserir os dados fictícios da demonstração.
+O projeto separado `trilha-campori` (`yphomgvxamhhetlxxkza`) fica em `sa-east-1`. `supabase/schema.sql` registra o esquema inicial aplicado ao banco; `supabase/catalog-access.sql` contém as políticas de leitura do catálogo e `supabase/seed.sql` registra os dados fictícios inseridos para esta demonstração. Esses scripts são fontes do provisionamento já realizado, não comandos para executar novamente em um banco existente.
 
-Todas as tabelas estão com RLS ligado e sem permissões para `anon` ou `authenticated` enquanto não houver autenticação e regras de acesso definidas. O frontend continua independente do Supabase. Antes de uma versão compartilhada, implemente `GameRepository` contra um backend que confira identidade e edição, valide alcance/QR e limite de resgates, registre resgates de forma idempotente e calcule pontos no servidor. O cliente nunca deve enviar pontos como autoridade. Credenciais privilegiadas devem ficar apenas no servidor.
+Todas as tabelas têm RLS. `anon` e `authenticated` podem apenas ler edições, clubes, recompensas ativas e cosméticos ativos. Perfis, resgates, mensagens e cosméticos dos jogadores não têm permissões públicas. A chave publishable usada em `VITE_SUPABASE_PUBLISHABLE_KEY` é pública por definição; nunca coloque chaves `service_role` ou `sb_secret_` em variáveis Vite.
 
-O projeto de banco está separado do projeto `CAMP 2027`. O código está no repositório `kakashaomilgrau28-trilha/trilha`. Ainda falta conectar a aplicação ao Supabase e configurar integração contínua ou publicação na Vercel.
+Para verificar o acesso real ao catálogo e o bloqueio das tabelas privadas, use `node --env-file=.env.local scripts/check-supabase.mjs`. Antes de implementar multiplayer, substitua `demoRepository` por operações autenticadas no servidor, com resgates transacionais e pontos calculados no backend. O estado local não é confiável para competição.
+
+## Vercel
+
+O projeto Vercel `trilha-campori` usa Node.js 24, Vite e as duas variáveis públicas do Supabase. `vercel.json` fixa os comandos de instalação e build. `.vercel/` e `.env.local` são ignorados pelo Git. A publicação inicial usa envio direto dos fontes. A atualização automática por push requer adicionar a conexão de login do GitHub `kakashaomilgrau28-trilha` na conta Vercel e então vincular o repositório `kakashaomilgrau28-trilha/trilha`.
 
 ## Localização e QR
 
