@@ -1,7 +1,7 @@
 import type { Claim, ClaimResult, EditionId, GameState, Reward } from './model'
 
-// World coordinates span 240 m over the legacy 0–100 catalog grid.
-export const RESCUE_RADIUS = 5 / 2.4
+// The center of Lapa spans 600 m over the 0–100 catalog grid.
+export const RESCUE_RADIUS = 5 / 6
 
 export function canRescue(
   reward: Reward,

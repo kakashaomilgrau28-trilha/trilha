@@ -20,18 +20,18 @@ Abra o endereço local que o Vite informar (normalmente `http://localhost:5173`)
 
 ## O que já funciona
 
-- Apelido, avatar e clube demonstrativo persistidos no navegador.
+- Apelido, personagem e clube real de Desbravadores escolhido no Paraná, persistidos no navegador como perfil demonstrativo.
 - Navegação entre Prévia, Alpha e Ômega; os resgates e pontos de cada edição ficam separados.
-- Mapa vetorial fictício. Toque ou clique no mapa para mover seu avatar virtual; selecione uma recompensa para ver disponibilidade, alcance, limite e confirmar o resgate.
+- Representação 3D jogável de ruas, praças e edifícios mapeados no centro da Lapa; WASD no computador e analógico flutuante no celular. As fachadas e alturas sem dados são interpretações artísticas.
 - Um fluxo QR de demonstração como alternativa, sem câmera nem códigos reais.
-- Coleção pessoal e placares demonstrativos por jogador ou clube.
+- Coleção pessoal e placar demonstrativo; a aba do clube mostra apenas seus pontos locais, sem atribuir pontuação fictícia a outros clubes reais.
 - Vitrine de cosméticos configuráveis com preços visíveis e compra simulada. Nenhum pagamento ou dado de cartão é solicitado; cosméticos não afetam pontos ou resgates.
 - Chat público demonstrativo, com apelidos, bloqueio/silenciamento/denúncia locais, limite de 160 caracteres, intervalo de 8 segundos e bloqueio simples de telefones e e-mails.
-- Catálogo de edições, clubes, recompensas e cosméticos carregado do Supabase, com atualização e tratamento de falhas.
+- Catálogo de edições, recompensas e cosméticos carregado do Supabase; nomes dos clubes vêm de um snapshot verificável do diretório DSA e também foram sincronizados com o projeto Supabase.
 
 ## Dados fictícios e configuração
 
-Os dados de demonstração estão em `src/gameData.ts`: mapa e posições virtuais, jogadores, clubes, recompensas, itens cosméticos e preços. Não use as posições atuais em produção. Não há coordenadas reais, locais oficiais, horários ou regras do evento neste repositório. Os nomes, mapas e pontuações precisam ser substituídos e confirmados pela organização antes de qualquer associação ao evento.
+`src/gameData.ts` conserva os personagens NPC e o catálogo de fallback local. O recorte do centro histórico está em `src/data/lapa-center-osm.json`; os clubes de Desbravadores do Paraná estão em `src/data/parana-clubs.json`. As recompensas, os personagens NPC, pontos e regras de resgate permanecem demonstrativos. A representação da cidade não equivale a um mapa de navegação.
 
 `src/model.ts` contém os tipos do domínio; `src/gameLogic.ts` contém regras demonstrativas de alcance, pontuação e prevenção de dados de contato; `src/demoStore.ts` contém persistência local e o contrato inicial `GameRepository`. `src/catalog.tsx` carrega o catálogo do Supabase com consultas paralelas e timeout. Sem variáveis, o servidor de desenvolvimento usa os dados locais; em produção, a conexão com o catálogo é obrigatória.
 
@@ -45,11 +45,11 @@ Para verificar o acesso real ao catálogo e o bloqueio das tabelas privadas, use
 
 ## Vercel
 
-O projeto Vercel `trilha-campori` usa Node.js 24, Vite e as duas variáveis públicas do Supabase. `vercel.json` fixa os comandos de instalação e build. `.vercel/` e `.env.local` são ignorados pelo Git. A publicação inicial usa envio direto dos fontes. A atualização automática por push requer adicionar a conexão de login do GitHub `kakashaomilgrau28-trilha` na conta Vercel e então vincular o repositório `kakashaomilgrau28-trilha/trilha`.
+O projeto Vercel `trilha-campori` usa Node.js 24, Vite e as duas variáveis públicas do Supabase. `vercel.json` fixa os comandos de instalação e build. `.vercel/` e `.env.local` são ignorados pelo Git. A branch `main` do repositório `kakashaomilgrau28-trilha/trilha` publica automaticamente em produção.
 
 ## Localização e QR
 
-O MVP não solicita permissão de GPS nem acompanha a localização em segundo plano. Todo movimento é virtual, feito ao clicar no mapa. A alternativa QR só simula uma validação local; o desenho/código apresentado não é um QR escaneável e não deve ser usado no evento. Uma versão real precisará de códigos assinados, expiração e uso único conferidos no servidor. Armazene presença aproximada pelo menor tempo necessário e nunca publique coordenadas precisas em perfil ou placar.
+O MVP não solicita permissão de GPS nem acompanha a localização em segundo plano. Todo movimento é virtual, com WASD/setas no computador ou analógico flutuante no celular. A alternativa QR só simula uma validação local; o desenho/código apresentado não é um QR escaneável e não deve ser usado no evento. Uma versão real precisará de códigos assinados, expiração e uso único conferidos no servidor. Armazene presença aproximada pelo menor tempo necessário e nunca publique coordenadas precisas em perfil ou placar.
 
 ## Segurança, menores e moderação
 
@@ -60,14 +60,16 @@ Esta demonstração não implementa autenticação, consentimento parental, mode
 A vitrine apresenta produtos, conteúdo e preço em `src/gameData.ts`; clicar em “Experimentar” registra uma compra simulada no armazenamento local. Não há checkout, pagamento real, moeda premium, sorteio, anúncio ou coleta de dados de cartão. Para compras reais, ainda seriam necessários autorização do responsável para participantes menores, checkout seguro, preços/condições apropriados a cada país e revisão legal. Produtos pagos devem permanecer puramente visuais.
 
 
-## Mundo 3D e cenário de Lapa
+## Centro histórico da Lapa em 3D
 
-Personagens humanos articulados, câmera de acompanhamento, WASD/setas, corrida com Shift e analógico flutuante por Pointer Events no celular. Clique no cenário para ativar o teclado. E abre a recompensa a até 5 m virtuais. Movimento pausa em modais, ao perder foco e ao ocultar a aba. O mundo inicial tem 240 m e colisões no cenário artístico. Os demais personagens são NPCs, sem multiplayer.
+A prévia começa na Praça General Carneiro (-25.7675993, -49.7164928). Um recorte de aproximadamente 600 × 600 m usa ruas, caminhos, praças e contornos de edifícios do OpenStreetMap coletados em 19/10/2026. Os dados originais reduzidos e os scripts reprodutíveis estão em src/data/lapa-center-osm.json e scripts/import-lapa-osm.mjs. Licença dos dados: ODbL 1.0, © contribuidores do OpenStreetMap (https://www.openstreetmap.org/copyright). O crédito aparece no jogo. Onde não há contorno, o jogo não inventa um edifício real. Cores, alturas sem dados explícitos, árvores, fachadas e iluminação são interpretações artísticas. O cenário não serve para navegação real.
 
-O cenário artístico é provisório, com ruas fictícias; não é um levantamento da Lapa. A integração oficial Google Maps usa WebGLOverlayView com personagens Three.js ancorados em Lapa–PR (-25.769722, -49.715833). Não baixa tiles nem cria edifícios a partir de imagens do Google. O modo Google não tem colisões com edifícios reais, e ainda precisa ser validado com uma chave habilitada.
+Personagens humanos articulados, câmera de acompanhamento, WASD/setas, corrida com Shift e analógico flutuante por Pointer Events no celular. Clique no cenário para ativar o teclado. E abre a recompensa a até 5 m virtuais. O movimento pausa em modais, ao perder foco e ao ocultar a aba. Colisões seguem os contornos de edifícios mapeados. Os demais personagens são NPCs simulados, sem multiplayer.
 
-Para ativar: habilite Maps JavaScript API e faturamento no Google Cloud; crie uma chave restrita ao website https://trilha-campori.vercel.app/* e à API; salve VITE_GOOGLE_MAPS_API_KEY em Production na Vercel e faça novo deploy. Opcional: VITE_GOOGLE_MAPS_MAP_ID para um mapa vetorial personalizado. Não é necessário GPS. A chave do navegador é pública por natureza e deve ter restrições de uso. O Google cobra por uso; configure limites/alertas na sua conta.
+## Clubes de Desbravadores do Paraná
 
-Clubes: seleção inicial de CARATUVA e Escudeiros do Rei (Curitiba) e Shekinah (Campina Grande do Sul), conferidos no diretório DSA em 19/10/2026. URLs por clube em src/realClubs.ts; SQL reproduzível em supabase/real-clubs.sql. Não é o catálogo nacional completo; nenhum clube sediado em Lapa foi confirmado. Não importamos pessoas, contatos nem suposta participação no jogo. Afiliações antigas fictícias são limpas no navegador.
+O script scripts/import-dsa-clubs.mjs percorre o formulário público do diretório da DSA por Brasil → Paraná → cidade e importa somente as opções prefixadas “DESBRAVADORES |”. Em 19/10/2026, a seleção tinha 185 cidades e retornou 511 clubes de Desbravadores em 174 delas. O snapshot completo de nomes, IDs e cidades fica em src/data/parana-clubs.json; nenhuma informação de membros ou contatos é coletada. O perfil começa em Lapa com o clube Excelência da Criação e permite escolher outra cidade paranaense. Estes dados são um recorte temporal do diretório, não prova de filiação de quem joga. Pontos e ranking continuam locais e demonstrativos.
 
-Verificação: node scripts/check-world.mjs verifica velocidade diagonal, independência de FPS, colisão, limites e conversão geográfica; pnpm build verifica TypeScript e bundle. Google Maps só pode ser validado de ponta a ponta após configurar a chave.
+O Google Maps não aparece no site nem é usado como fonte para traçar ruas ou edifícios. Os termos da plataforma restringem extrair esse material para criar outra representação; o OpenStreetMap licencia o recorte usado no jogo.
+
+Verificação: node scripts/check-world.mjs confirma velocidade diagonal, independência da taxa de quadros, colisões, limites e conversão geográfica; pnpm build verifica TypeScript e bundle. O fluxo local no navegador validou seleção de clube, caminhada por WASD, interação e resgate.

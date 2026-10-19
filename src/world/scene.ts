@@ -1,5 +1,7 @@
 import * as THREE from 'three'
+import lapa from '../data/lapa-center-osm.json'
 import type { Obstacle } from './physics'
+import { pointInPolygon } from './physics'
 
 export const looks = [
   { shirt: '#d59b57', skin: '#bb825b', hair: '#332921' },
@@ -59,52 +61,67 @@ export function label(text: string) {
   sprite.scale.set(3.5, .65, 1); return sprite
 }
 
-export function buildTown(scene: THREE.Scene, clearings: { x: number; z: number }[] = []) {
+function footprint(points: number[][], height: number, color: string) {
+  const shape = new THREE.Shape()
+  points.forEach(([x, z], i) => i ? shape.lineTo(x, -z) : shape.moveTo(x, -z))
+  shape.closePath()
+  const mesh = new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: height, bevelEnabled: false }), material(color))
+  mesh.rotation.x = -Math.PI / 2; mesh.castShadow = true; mesh.receiveShadow = true
+  return mesh
+}
+
+export function buildTown(scene: THREE.Scene) {
   const obstacles: Obstacle[] = []
-  box(scene, 260, .2, 260, 0, -.18, 0, '#8caa74')
-  // Original stylized town, not digitized Google imagery or an asserted city survey.
-  for (const x of [-70, 0, 70]) {
-    box(scene, 12, .08, 240, x, -.03, 0, '#747b79')
-    box(scene, 17, .04, 240, x, -.065, 0, '#d6d0bd')
-  }
-  for (const z of [-70, 0, 70]) {
-    box(scene, 240, .08, 12, 0, -.02, z, '#747b79')
-    box(scene, 240, .04, 17, 0, -.055, z, '#d6d0bd')
-    for (let x = -110; x < 120; x += 12) box(scene, 4, .01, .16, x, .03, z, '#e9d69b')
-  }
-  box(scene, 43, .12, 43, 27, 0, -28, '#cfbfa0')
-  box(scene, 28, .12, 28, 27, .02, -28, '#a6b482')
-  const palette = ['#e7c493', '#c77c64', '#e5dec7', '#e5b965', '#9bb7ae', '#bdc5ce']
-  for (let i = 0; i < 32; i++) {
-    const x = (i % 8) * 28 - 98, z = Math.floor(i / 8) * 56 - 84
-    if (Math.abs(x) < 12 || Math.abs(x - 70) < 12 || Math.abs(x + 70) < 12 || (x > 5 && x < 55 && z < 0 && z > -56)) continue
-    const w = 12 + (i % 3), d = 12, h = 4 + i % 3
-    if (clearings.some(p => Math.abs(p.x - x) < w / 2 + 6 && Math.abs(p.z - z) < d / 2 + 6)) continue
-    box(scene, w, h, d, x, h / 2, z, palette[i % palette.length])
-    const roof = new THREE.Mesh(new THREE.CylinderGeometry(0, 1, 1, 4), material('#a35e45'))
-    roof.scale.set(w * .78, 3, d * .78); roof.rotation.y = Math.PI / 4; roof.position.set(x, h + 1.5, z); scene.add(roof); roof.castShadow = true
-    for (const side of [-1, 1]) for (const offset of [-3.7, 3.7]) {
-      box(scene, 1.6, 2, .12, x + offset, 2.3, z + side * 6.04, '#f6edd9')
-      box(scene, 1.2, 1.6, .14, x + offset, 2.3, z + side * 6.11, '#547b7c')
+  box(scene, 610, .2, 610, 0, -.18, 0, '#a9b990')
+  for (const road of lapa.roads) {
+    const pedestrian = ['footway', 'path', 'pedestrian', 'steps'].includes(road.kind)
+    const width = pedestrian ? 2.4 : road.kind === 'residential' ? 7 : 8.5
+    for (let i = 1; i < road.points.length; i++) {
+      const [ax, az] = road.points[i - 1], [bx, bz] = road.points[i]
+      const length = Math.hypot(bx - ax, bz - az)
+      if (length < .2) continue
+      const angle = Math.atan2(bx - ax, bz - az)
+      const sidewalk = box(scene, width + (pedestrian ? 0 : 3.2), .025, length + .5, (ax + bx) / 2, .005, (az + bz) / 2, pedestrian ? '#cdbda0' : '#d8d4c7')
+      sidewalk.rotation.y = angle
+      if (!pedestrian) {
+        const lane = box(scene, width, .025, length + .5, (ax + bx) / 2, .035, (az + bz) / 2, '#747d7b')
+        lane.rotation.y = angle
+      }
     }
-    box(scene, 1.7, 2.7, .15, x, 1.35, z + 6.1, '#604c3a')
-    obstacles.push({ x, z, width: w, depth: d })
   }
-  for (let i = 0; i < 70; i++) {
-    const x = Math.sin(i * 17.3) * 108, z = Math.cos(i * 11.1) * 108
-    if ([-70, 0, 70].some(v => Math.abs(x-v) < 11 || Math.abs(z-v) < 11) || obstacles.some(o => Math.abs(x-o.x)<12 && Math.abs(z-o.z)<12)) continue
-    box(scene, .5, 4, .5, x, 2, z, '#73543d')
-    for (let j = 0; j < 3; j++) {
-      const crown = new THREE.Mesh(new THREE.ConeGeometry(2.7 - j * .5, 2.8, 8), material(j % 2 ? '#486e4b' : '#547e51'))
-      crown.position.set(x, 4 + j * 1.1, z); crown.castShadow = true; scene.add(crown)
+  for (const park of lapa.parks) {
+    const shape = footprint(park.points, .045, park.name === 'Praça General Carneiro' ? '#85a97f' : '#83a48a')
+    shape.position.y = .07; scene.add(shape)
+    if (park.name) {
+      const center = park.points.reduce((p, q) => [p[0] + q[0] / park.points.length, p[1] + q[1] / park.points.length], [0, 0])
+      const tag = label(park.name); tag.position.set(center[0], 4, center[1]); tag.scale.multiplyScalar(2); scene.add(tag)
     }
-    obstacles.push({ x, z, width: .8, depth: .8 })
   }
-  for (const x of [-9, 9]) for (let z = -105; z < 110; z += 28) {
-    box(scene, .14, 4, .14, x, 2, z, '#3d4942')
-    box(scene, .5, .6, .5, x, 4, z, '#f6dda1')
+  const palette = ['#e4c5a5', '#c98271', '#e8dec4', '#d5b680', '#acc0b2', '#c2b6ab']
+  for (const building of lapa.buildings) {
+    const points = building.points as [number, number][]
+    const xs = points.map(p => p[0]), zs = points.map(p => p[1])
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs)
+    const church = building.name === 'Igreja Matriz Santo Antônio'
+    const height = church ? 10 : 3.7 * building.levels + 1
+    const wall = footprint(points, height, church ? '#efe4c9' : palette[building.id % palette.length]); wall.position.y = .08; scene.add(wall)
+    const roof = footprint(points, .2, building.id % 2 ? '#9c6652' : '#a57e60'); roof.position.y = height + .08; scene.add(roof)
+    obstacles.push({ x: (x0 + x1) / 2, z: (z0 + z1) / 2, width: x1 - x0, depth: z1 - z0, polygon: points })
+    if (building.name && x1 - x0 > 3) { const tag = label(building.name); tag.position.set((x0+x1)/2, height+2, (z0+z1)/2); scene.add(tag) }
   }
-  const sign = label('LAPA · PARANÁ'); sign.position.set(0, 6, -18); sign.scale.multiplyScalar(3); scene.add(sign)
+  // Trees add atmosphere without claiming exact surveyed positions.
+  const plaza = lapa.parks.find(park => park.name === 'Praça General Carneiro')
+  if (plaza) for (let x = -38; x <= 38; x += 9) for (let z = -38; z <= 38; z += 9) {
+    if (!pointInPolygon(x, z, plaza.points as [number, number][])) continue
+    if ((Math.abs(x)+Math.abs(z)) % 3 === 0 || Math.hypot(x,z) < 10 || obstacles.some(o => o.polygon && pointInPolygon(x, z, o.polygon))) continue
+    box(scene, .4, 2.3, .4, x, 1.2, z, '#705c42')
+    const crown = new THREE.Mesh(new THREE.SphereGeometry(2.1, 8, 6), material('#537d58'))
+    crown.position.set(x, 3, z); scene.add(crown)
+    obstacles.push({ x, z, width: .5, depth: .5 })
+  }
+  for (const place of lapa.places.filter(place => ['Museu Histórico', 'Casa Vermelha', 'Memorial Ney Braga'].includes(place.name))) {
+    const tag = label(place.name); tag.position.set(place.point[0], 6, place.point[1]); scene.add(tag)
+  }
   return obstacles
 }
 

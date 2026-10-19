@@ -1,4 +1,5 @@
 import { realClubs } from './realClubs'
+import { worldLocations } from './world/locations'
 import type { ChatMessage, Club, CosmeticProduct, Edition, EditionId, Player, Reward } from './model'
 
 export const DEMO_MODE = true
@@ -30,6 +31,10 @@ export const rewards: Reward[] = [
   { id: 'sinal-de-companheirismo', name: 'Sinal de Companheirismo', description: 'Emblema de uma jornada feita em conjunto.', category: 'Emblema', rarity: 'Incomum', points: 35, limit: 1, x: 48, y: 28, edition: 'omega', icon: '🤝' },
   { id: 'cume-dourado', name: 'Cume Dourado', description: 'Cartão especial da edição Ômega.', category: 'Cartão', rarity: 'Raro', points: 55, limit: 1, x: 71, y: 62, edition: 'omega', icon: '⛰️' },
 ]
+for (const reward of rewards) {
+  const location = worldLocations[reward.id]
+  if (location) [reward.x, reward.y] = location
+}
 
 export const players: Player[] = [
   { id: 'player-lua', nickname: 'LuaSerena', avatar: 'observadora', clubId: '', x: 48, y: 49, online: true },

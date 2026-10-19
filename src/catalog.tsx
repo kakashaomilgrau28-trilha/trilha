@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { clubs, cosmetics, editions, rewards } from './gameData'
 import { realClubs } from './realClubs'
+import { worldLocations } from './world/locations'
 import { supabase } from './lib/supabase'
 import type { Club, CosmeticProduct, Edition, EditionId, Reward } from './model'
 import './catalog.css'
@@ -27,16 +28,15 @@ function editionId(value: string): EditionId {
 
 async function fetchCatalog(signal: AbortSignal): Promise<Catalog> {
   if (!supabase) throw new Error('Configuração do Supabase ausente.')
-  const [editionResult, clubResult, rewardResult, cosmeticResult] = await Promise.all([
+  const [editionResult, rewardResult, cosmeticResult] = await Promise.all([
     supabase.from('editions').select('id,label,short_label,description,accent_color').abortSignal(signal),
-    supabase.from('clubs').select('id,name,color').in('id', realClubs.map(club => club.id)).order('name').abortSignal(signal),
     supabase.from('rewards').select('id,edition_id,name,description,category,rarity,points,max_claims,map_x,map_y,icon').eq('active', true).order('id').abortSignal(signal),
     supabase.from('cosmetics').select('id,name,description,price_minor,currency_code,icon,item_type').eq('active', true).order('id').abortSignal(signal),
   ])
-  for (const result of [editionResult, clubResult, rewardResult, cosmeticResult]) {
+  for (const result of [editionResult, rewardResult, cosmeticResult]) {
     if (result.error) throw result.error
   }
-  if (!editionResult.data?.length || !clubResult.data?.length || !rewardResult.data?.length) {
+  if (!editionResult.data?.length || !rewardResult.data?.length) {
     throw new Error('Catálogo incompleto.')
   }
   const editionOrder: EditionId[] = ['preview', 'alpha', 'omega']
@@ -46,13 +46,13 @@ async function fetchCatalog(signal: AbortSignal): Promise<Catalog> {
   })).sort((a, b) => editionOrder.indexOf(a.id) - editionOrder.indexOf(b.id))
   return {
     editions: mappedEditions,
-    clubs: clubResult.data,
+    clubs: realClubs,
     rewards: rewardResult.data.map((row): Reward => {
       if (!['Comum', 'Incomum', 'Raro'].includes(row.rarity)) throw new Error('Raridade inválida.')
       return {
         id: row.id, edition: editionId(row.edition_id), name: row.name, description: row.description,
         category: row.category, rarity: row.rarity as Reward['rarity'], points: row.points,
-        limit: row.max_claims, x: row.map_x, y: row.map_y, icon: row.icon,
+        limit: row.max_claims, x: worldLocations[row.id]?.[0] ?? row.map_x, y: worldLocations[row.id]?.[1] ?? row.map_y, icon: row.icon,
       }
     }),
     cosmetics: (cosmeticResult.data ?? []).map((row): CosmeticProduct => {

@@ -1,0 +1,3068 @@
+[
+  {
+    "id": "dsa-40395",
+    "name": "JOIAS DO PORTO",
+    "city": "ADRIANÓPOLIS",
+    "cityId": "2785"
+  },
+  {
+    "id": "dsa-57099",
+    "name": "SETE MONTES",
+    "city": "AGUDOS DO SUL",
+    "cityId": "2786"
+  },
+  {
+    "id": "dsa-1342",
+    "name": "ADONAI",
+    "city": "ALMIRANTE TAMANDARÉ",
+    "cityId": "2787"
+  },
+  {
+    "id": "dsa-47611",
+    "name": "ALFA CENTAURO",
+    "city": "ALMIRANTE TAMANDARÉ",
+    "cityId": "2787"
+  },
+  {
+    "id": "dsa-34590",
+    "name": "ATALAIAS DO SUL",
+    "city": "ALMIRANTE TAMANDARÉ",
+    "cityId": "2787"
+  },
+  {
+    "id": "dsa-1230",
+    "name": "CASTELO FORTE",
+    "city": "ALMIRANTE TAMANDARÉ",
+    "cityId": "2787"
+  },
+  {
+    "id": "dsa-39682",
+    "name": "DIAMANTE REAL",
+    "city": "ALMIRANTE TAMANDARÉ",
+    "cityId": "2787"
+  },
+  {
+    "id": "dsa-1229",
+    "name": "NOVA JERUSALEM",
+    "city": "ALMIRANTE TAMANDARÉ",
+    "cityId": "2787"
+  },
+  {
+    "id": "dsa-22513",
+    "name": "SENTINELAS DO MIRANTE",
+    "city": "ALMIRANTE TAMANDARÉ",
+    "cityId": "2787"
+  },
+  {
+    "id": "dsa-40267",
+    "name": "TAMANDAYORK",
+    "city": "ALMIRANTE TAMANDARÉ",
+    "cityId": "2787"
+  },
+  {
+    "id": "dsa-20913",
+    "name": "GUARDIÕES DO ALTO",
+    "city": "ALTO PARANÁ",
+    "cityId": "2790"
+  },
+  {
+    "id": "dsa-2371",
+    "name": "ESCUDEIROS DO REI",
+    "city": "ALTO PIQUIRI",
+    "cityId": "2791"
+  },
+  {
+    "id": "dsa-2322",
+    "name": "ILHA GRANDE",
+    "city": "ALTÔNIA",
+    "cityId": "2792"
+  },
+  {
+    "id": "dsa-18541",
+    "name": "FAISÃO AZUL",
+    "city": "ÂNGULO",
+    "cityId": "2798"
+  },
+  {
+    "id": "dsa-1811",
+    "name": "ARCO-ÍRIS",
+    "city": "ANTONINA",
+    "cityId": "2799"
+  },
+  {
+    "id": "dsa-14326",
+    "name": "ESQUADRÃO ÁGUIA",
+    "city": "ANTONINA",
+    "cityId": "2799"
+  },
+  {
+    "id": "dsa-1821",
+    "name": "NOVO TEMPO",
+    "city": "ANTONINA",
+    "cityId": "2799"
+  },
+  {
+    "id": "dsa-53129",
+    "name": "BRAVUS",
+    "city": "APUCARANA",
+    "cityId": "2801"
+  },
+  {
+    "id": "dsa-17788",
+    "name": "GUERREIROS DA FÉ",
+    "city": "APUCARANA",
+    "cityId": "2801"
+  },
+  {
+    "id": "dsa-1746",
+    "name": "HARRY FENNER",
+    "city": "APUCARANA",
+    "cityId": "2801"
+  },
+  {
+    "id": "dsa-1696",
+    "name": "LEÕES DA COLINA",
+    "city": "APUCARANA",
+    "cityId": "2801"
+  },
+  {
+    "id": "dsa-1697",
+    "name": "LUTHER WARREN",
+    "city": "APUCARANA",
+    "cityId": "2801"
+  },
+  {
+    "id": "dsa-30867",
+    "name": "ALCATÉIA",
+    "city": "ARAPONGAS",
+    "cityId": "2802"
+  },
+  {
+    "id": "dsa-1715",
+    "name": "CIDADE DOS PÁSSAROS",
+    "city": "ARAPONGAS",
+    "cityId": "2802"
+  },
+  {
+    "id": "dsa-18860",
+    "name": "FAMÍLIA HAVILLÁ",
+    "city": "ARAPONGAS",
+    "cityId": "2802"
+  },
+  {
+    "id": "dsa-35202",
+    "name": "MONTANHA",
+    "city": "ARAPONGAS",
+    "cityId": "2802"
+  },
+  {
+    "id": "dsa-24869",
+    "name": "FALCÕES DOS ALPES",
+    "city": "ARAPOTI",
+    "cityId": "2803"
+  },
+  {
+    "id": "dsa-1270",
+    "name": "ARAUCÁRIAS",
+    "city": "ARAUCÁRIA",
+    "cityId": "2806"
+  },
+  {
+    "id": "dsa-1271",
+    "name": "ESTAÇÃO ESPERANÇA",
+    "city": "ARAUCÁRIA",
+    "cityId": "2806"
+  },
+  {
+    "id": "dsa-25837",
+    "name": "ISRAEL",
+    "city": "ARAUCÁRIA",
+    "cityId": "2806"
+  },
+  {
+    "id": "dsa-1272",
+    "name": "LUZ DAS ARAUCÁRIAS",
+    "city": "ARAUCÁRIA",
+    "cityId": "2806"
+  },
+  {
+    "id": "dsa-57061",
+    "name": "PINHEIROS",
+    "city": "ARAUCÁRIA",
+    "cityId": "2806"
+  },
+  {
+    "id": "dsa-46780",
+    "name": "PLANALTO",
+    "city": "ARAUCÁRIA",
+    "cityId": "2806"
+  },
+  {
+    "id": "dsa-2342",
+    "name": "ANTÔNIO CARNIATTO",
+    "city": "ASSIS CHATEAUBRIAND",
+    "cityId": "2809"
+  },
+  {
+    "id": "dsa-1670",
+    "name": "ELDORADO",
+    "city": "ASTORGA",
+    "cityId": "2810"
+  },
+  {
+    "id": "dsa-54783",
+    "name": "MANANCIAL",
+    "city": "BALSA NOVA",
+    "cityId": "2812"
+  },
+  {
+    "id": "dsa-58024",
+    "name": "PURUNÃ",
+    "city": "BALSA NOVA",
+    "cityId": "2812"
+  },
+  {
+    "id": "dsa-17107",
+    "name": "STAR",
+    "city": "BANDEIRANTES",
+    "cityId": "2813"
+  },
+  {
+    "id": "dsa-49987",
+    "name": "HORTELÃ DO NORTE",
+    "city": "BARBOSA FERRAZ",
+    "cityId": "2814"
+  },
+  {
+    "id": "dsa-16092",
+    "name": "CÉU AZUL",
+    "city": "BOCAIÚVA DO SUL",
+    "cityId": "2824"
+  },
+  {
+    "id": "dsa-18539",
+    "name": "SOBRE A ROCHA",
+    "city": "BOM SUCESSO",
+    "cityId": "2826"
+  },
+  {
+    "id": "dsa-2312",
+    "name": "COLUNAS DA FÉ",
+    "city": "BRAGANEY",
+    "cityId": "2829"
+  },
+  {
+    "id": "dsa-2317",
+    "name": "GUARDIÕES DO VALE",
+    "city": "BRAGANEY",
+    "cityId": "2829"
+  },
+  {
+    "id": "dsa-2354",
+    "name": "LOBO GUARÁ",
+    "city": "CAFELÂNDIA",
+    "cityId": "2832"
+  },
+  {
+    "id": "dsa-44915",
+    "name": "FAROL",
+    "city": "CALIFÓRNIA",
+    "cityId": "2834"
+  },
+  {
+    "id": "dsa-1749",
+    "name": "ÔMEGA",
+    "city": "CAMBARÁ",
+    "cityId": "2835"
+  },
+  {
+    "id": "dsa-44932",
+    "name": "DESBRAVA RIVIERA",
+    "city": "CAMBÉ",
+    "cityId": "2836"
+  },
+  {
+    "id": "dsa-16953",
+    "name": "GUARDIÕES DA LUZ",
+    "city": "CAMBÉ",
+    "cityId": "2836"
+  },
+  {
+    "id": "dsa-31053",
+    "name": "VALE VERDE",
+    "city": "CAMPINA DA LAGOA",
+    "cityId": "2838"
+  },
+  {
+    "id": "dsa-1790",
+    "name": "SHEKINAH",
+    "city": "CAMPINA GRANDE DO SUL",
+    "cityId": "2840"
+  },
+  {
+    "id": "dsa-55078",
+    "name": "PIONEIROS DO CAMPO",
+    "city": "CAMPO DO TENENTE",
+    "cityId": "2842"
+  },
+  {
+    "id": "dsa-1275",
+    "name": "EBENEZER SUL",
+    "city": "CAMPO LARGO",
+    "cityId": "2843"
+  },
+  {
+    "id": "dsa-1281",
+    "name": "ESTRELA DO CAMPO",
+    "city": "CAMPO LARGO",
+    "cityId": "2843"
+  },
+  {
+    "id": "dsa-47387",
+    "name": "ITA",
+    "city": "CAMPO LARGO",
+    "cityId": "2843"
+  },
+  {
+    "id": "dsa-54343",
+    "name": "PEDRAS DA COLINA",
+    "city": "CAMPO LARGO",
+    "cityId": "2843"
+  },
+  {
+    "id": "dsa-56765",
+    "name": "PIONEIROS DA MONTANHA",
+    "city": "CAMPO LARGO",
+    "cityId": "2843"
+  },
+  {
+    "id": "dsa-25394",
+    "name": "PORTAL DO CAMPO",
+    "city": "CAMPO LARGO",
+    "cityId": "2843"
+  },
+  {
+    "id": "dsa-1282",
+    "name": "SOLDADOS DE CRISTO",
+    "city": "CAMPO LARGO",
+    "cityId": "2843"
+  },
+  {
+    "id": "dsa-56524",
+    "name": "VALENTES DO CERCADINHO",
+    "city": "CAMPO LARGO",
+    "cityId": "2843"
+  },
+  {
+    "id": "dsa-1276",
+    "name": "ZION",
+    "city": "CAMPO LARGO",
+    "cityId": "2843"
+  },
+  {
+    "id": "dsa-21294",
+    "name": "NOVA TERRA",
+    "city": "CAMPO MAGRO",
+    "cityId": "2844"
+  },
+  {
+    "id": "dsa-24528",
+    "name": "SOLDADOS DA LUZ",
+    "city": "CAMPO MAGRO",
+    "cityId": "2844"
+  },
+  {
+    "id": "dsa-2310",
+    "name": "ESTRELA DO ORIENTE",
+    "city": "CAMPO MOURÃO",
+    "cityId": "2845"
+  },
+  {
+    "id": "dsa-2350",
+    "name": "FERAS DO CAMPO",
+    "city": "CAMPO MOURÃO",
+    "cityId": "2845"
+  },
+  {
+    "id": "dsa-21967",
+    "name": "KAIRÓS",
+    "city": "CAMPO MOURÃO",
+    "cityId": "2845"
+  },
+  {
+    "id": "dsa-39821",
+    "name": "ÔNIX",
+    "city": "CAMPO MOURÃO",
+    "cityId": "2845"
+  },
+  {
+    "id": "dsa-2269",
+    "name": "ÓRION",
+    "city": "CAMPO MOURÃO",
+    "cityId": "2845"
+  },
+  {
+    "id": "dsa-51247",
+    "name": "PATRULHEIROS DE CRISTO",
+    "city": "CAMPO MOURÃO",
+    "cityId": "2845"
+  },
+  {
+    "id": "dsa-40759",
+    "name": "SÍRIUS",
+    "city": "CAPANEMA",
+    "cityId": "2849"
+  },
+  {
+    "id": "dsa-1160",
+    "name": "AMAZONAS",
+    "city": "CARAMBEÍ",
+    "cityId": "2851"
+  },
+  {
+    "id": "dsa-21515",
+    "name": "SENTINELAS DO PARANÁ",
+    "city": "CARLÓPOLIS",
+    "cityId": "2852"
+  },
+  {
+    "id": "dsa-2307",
+    "name": "AMIGOS DA NATUREZA",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-2308",
+    "name": "ANJOS DO ÉDEN",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-34745",
+    "name": "ANTARES",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-2335",
+    "name": "CIDADE DAS ÁGUAS",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-2341",
+    "name": "CRUZEIRO DO SUL",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-44046",
+    "name": "DENTE DE LEÃO",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-40379",
+    "name": "EXPLORADORES DO OESTE",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-12754",
+    "name": "FALCÃO NEGRO",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-54662",
+    "name": "GUARDIÕES DA GALÁXIA",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-47646",
+    "name": "INVICTUS",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-57422",
+    "name": "KADOSH",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-2324",
+    "name": "PICO PARANÁ",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-2318",
+    "name": "PIONEIROS DO OESTE",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-36541",
+    "name": "TIGRES DO OESTE",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-41768",
+    "name": "TROPA DO ALTO",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-12757",
+    "name": "VALE DO ÉDEN",
+    "city": "CASCAVEL",
+    "cityId": "2853"
+  },
+  {
+    "id": "dsa-27948",
+    "name": "ALPHA",
+    "city": "CASTRO",
+    "cityId": "2854"
+  },
+  {
+    "id": "dsa-37069",
+    "name": "MENSAGEIROS DA ALVORADA",
+    "city": "CASTRO",
+    "cityId": "2854"
+  },
+  {
+    "id": "dsa-1184",
+    "name": "PIONEIROS DO SUL",
+    "city": "CASTRO",
+    "cityId": "2854"
+  },
+  {
+    "id": "dsa-1176",
+    "name": "SOLDADOS DA FÉ",
+    "city": "CASTRO",
+    "cityId": "2854"
+  },
+  {
+    "id": "dsa-1253",
+    "name": "TROPEIROS",
+    "city": "CASTRO",
+    "cityId": "2854"
+  },
+  {
+    "id": "dsa-22706",
+    "name": "ADVENTURE",
+    "city": "CATANDUVAS",
+    "cityId": "2855"
+  },
+  {
+    "id": "dsa-1197",
+    "name": "GUERREIROS DA COLINA",
+    "city": "CERRO AZUL",
+    "cityId": "2857"
+  },
+  {
+    "id": "dsa-34637",
+    "name": "GUARDIÕES DO PARQUE",
+    "city": "CÉU AZUL",
+    "cityId": "2858"
+  },
+  {
+    "id": "dsa-55639",
+    "name": "CHOPINZINHO",
+    "city": "CHOPINZINHO",
+    "cityId": "2859"
+  },
+  {
+    "id": "dsa-25996",
+    "name": "FALCONS",
+    "city": "CIANORTE",
+    "cityId": "2860"
+  },
+  {
+    "id": "dsa-1698",
+    "name": "LUZEIROS DO PARANÁ",
+    "city": "CIANORTE",
+    "cityId": "2860"
+  },
+  {
+    "id": "dsa-57296",
+    "name": "WOLF",
+    "city": "CIANORTE",
+    "cityId": "2860"
+  },
+  {
+    "id": "dsa-1929",
+    "name": "PÉROLA DO SUL",
+    "city": "CLEVELÂNDIA",
+    "cityId": "2862"
+  },
+  {
+    "id": "dsa-1208",
+    "name": "AGUIA DOURADA",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-1226",
+    "name": "CEU CRISTO ESPERANÇA UNIVERSAL",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-1225",
+    "name": "COMBATENTES DO REI",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-50012",
+    "name": "EXCELÊNCIA",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-1211",
+    "name": "GALÁXIAS",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-1212",
+    "name": "HERÓIS DA FÉ",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-23938",
+    "name": "IMPÉRIO CELESTE",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-1204",
+    "name": "KALLION",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-51981",
+    "name": "LIBERTY",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-1213",
+    "name": "MAR VERMELHO",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-1205",
+    "name": "MORIÁ",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-44063",
+    "name": "OCEANO",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-1254",
+    "name": "PEDRAS PRECIOSAS",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-1203",
+    "name": "PRISMA CELESTE",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-20106",
+    "name": "TORRENTES DE FÉ",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-1209",
+    "name": "VALE DO ÉDEN",
+    "city": "COLOMBO",
+    "cityId": "2863"
+  },
+  {
+    "id": "dsa-26488",
+    "name": "LOBOS COLORADOS",
+    "city": "COLORADO",
+    "cityId": "2864"
+  },
+  {
+    "id": "dsa-22244",
+    "name": "SOLARES",
+    "city": "CONTENDA",
+    "cityId": "2867"
+  },
+  {
+    "id": "dsa-2343",
+    "name": "ASAS DE ÁGUIA",
+    "city": "CORBÉLIA",
+    "cityId": "2868"
+  },
+  {
+    "id": "dsa-1657",
+    "name": "ADVENTURE",
+    "city": "CORNÉLIO PROCÓPIO",
+    "cityId": "2869"
+  },
+  {
+    "id": "dsa-32158",
+    "name": "GATO DO MATO",
+    "city": "CORNÉLIO PROCÓPIO",
+    "cityId": "2869"
+  },
+  {
+    "id": "dsa-51174",
+    "name": "CAMALEÕES",
+    "city": "CORONEL VIVIDA",
+    "cityId": "2871"
+  },
+  {
+    "id": "dsa-24554",
+    "name": "ÁGUIA PIONEIRA",
+    "city": "CRUZEIRO DO IGUAÇU",
+    "cityId": "2874"
+  },
+  {
+    "id": "dsa-22146",
+    "name": "VALENTES DE DAVI",
+    "city": "CRUZEIRO DO OESTE",
+    "cityId": "2875"
+  },
+  {
+    "id": "dsa-55990",
+    "name": "ÁAQUILA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1227",
+    "name": "ÁGUIA DE OURO",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1256",
+    "name": "ÁGUIA VERDE",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1233",
+    "name": "ÁGUIAS DA COLINA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-2019",
+    "name": "ÁGUIAS DO REI",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1839",
+    "name": "ÁGUIAS DO SENHOR",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1199",
+    "name": "ÁGUIAS DO SENHOR",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-51439",
+    "name": "ÁGUIAS DO UNIÃO",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1796",
+    "name": "ALDEBARÃ",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1234",
+    "name": "ALIANÇA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1797",
+    "name": "ALVORADA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1840",
+    "name": "ARAUTOS DO IGUAÇU",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1223",
+    "name": "BAIRRO ALTO",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1798",
+    "name": "BETELGEUSE",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1897",
+    "name": "CARATUVA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1277",
+    "name": "CHAGAS LIMA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1274",
+    "name": "CIC ESPERTO",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1841",
+    "name": "CIDADE CELESTE",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1261",
+    "name": "CIDADE SORRISO",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1331",
+    "name": "CONSTELAÇÃO REAL",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1800",
+    "name": "CORÉ-ETUBA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1231",
+    "name": "CRUZEIRO DO SUL",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1801",
+    "name": "DARASH",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1842",
+    "name": "DIAMANTE REAL",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-22767",
+    "name": "DOZE D",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1909",
+    "name": "ELITE DE PATMOS",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-52072",
+    "name": "ELITE WAY",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1224",
+    "name": "ESCUDEIROS DO REI",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-15074",
+    "name": "ESTRELA DA MANHÃ",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-19965",
+    "name": "EXÉRCITO ESPERANÇA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-20488",
+    "name": "FALCÕES DA VITÓRIA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1802",
+    "name": "FALCÕES DOURADOS",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1236",
+    "name": "GRALHA AZUL",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-24628",
+    "name": "GUARDIÕES DA NATUREZA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-24546",
+    "name": "GUERREIROS DA ORDEM",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-24563",
+    "name": "GUERREIROS DO BACA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1263",
+    "name": "HALLIWELL",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1237",
+    "name": "HARPIA REAL",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-27928",
+    "name": "JÓIA REAL",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1235",
+    "name": "KERAH",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1844",
+    "name": "LÉO RANZOLIN",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1783",
+    "name": "LOBOS GUARÁ",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1846",
+    "name": "LUZ DAS AMÉRICAS",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1933",
+    "name": "LUZ DO AMANHÃ",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1200",
+    "name": "MAANAIM",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1201",
+    "name": "MARANATA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1803",
+    "name": "MARLIM AZUL",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-54092",
+    "name": "MARUMBI",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1260",
+    "name": "METROPOLITANO",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1804",
+    "name": "MONTANHA DOURADA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1262",
+    "name": "MONTE EVERESTH",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-18591",
+    "name": "NUVEM DO ORIENTE",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1805",
+    "name": "ÓRION",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-25596",
+    "name": "OS SAMARITANOS",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1196",
+    "name": "PEACEMAKERS",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-43698",
+    "name": "PEDRA BRANCA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1324",
+    "name": "PIEMONTE",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1943",
+    "name": "PIONEIROS DAS MONTANHAS",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-22116",
+    "name": "RENASCER",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1833",
+    "name": "ROCHA ETERNA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-51570",
+    "name": "ROUTE ADVENTURE",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-21812",
+    "name": "SEMELHANTES",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1835",
+    "name": "SETE D",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1806",
+    "name": "SOL DAS ARAUCÁRIAS",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1807",
+    "name": "SOLDADOS DO REI",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-46758",
+    "name": "STAURÓS",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1255",
+    "name": "TABERNÁCULO",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1836",
+    "name": "TIGRES DO EUFRATES",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-57064",
+    "name": "TRIBO DO FANNY",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1326",
+    "name": "VILA ESPERANÇA",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-52839",
+    "name": "VIVA AO EXTREMO",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-1232",
+    "name": "YAHALOM",
+    "city": "CURITIBA",
+    "cityId": "2878"
+  },
+  {
+    "id": "dsa-2328",
+    "name": "LEÕES DO SUDOESTE",
+    "city": "DOIS VIZINHOS",
+    "cityId": "2883"
+  },
+  {
+    "id": "dsa-2297",
+    "name": "TRILHA DA AVENTURA",
+    "city": "DOIS VIZINHOS",
+    "cityId": "2883"
+  },
+  {
+    "id": "dsa-1740",
+    "name": "ELDORADO DO IVAÍ",
+    "city": "DOUTOR CAMARGO",
+    "cityId": "2885"
+  },
+  {
+    "id": "dsa-1732",
+    "name": "SENTINELAS DO IVAÍ",
+    "city": "ENGENHEIRO BELTRÃO",
+    "cityId": "2888"
+  },
+  {
+    "id": "dsa-44883",
+    "name": "DEFENSORES DO RIO",
+    "city": "ENTRE RIOS DO OESTE",
+    "cityId": "2889"
+  },
+  {
+    "id": "dsa-1824",
+    "name": "ANTARES",
+    "city": "FAZENDA RIO GRANDE",
+    "cityId": "2894"
+  },
+  {
+    "id": "dsa-50878",
+    "name": "CONQUISTADORES",
+    "city": "FAZENDA RIO GRANDE",
+    "cityId": "2894"
+  },
+  {
+    "id": "dsa-1827",
+    "name": "FALCÃO NEGRO",
+    "city": "FAZENDA RIO GRANDE",
+    "cityId": "2894"
+  },
+  {
+    "id": "dsa-56750",
+    "name": "FAZENDA RIO GRANDE",
+    "city": "FAZENDA RIO GRANDE",
+    "cityId": "2894"
+  },
+  {
+    "id": "dsa-1951",
+    "name": "FORMIGAS",
+    "city": "FAZENDA RIO GRANDE",
+    "cityId": "2894"
+  },
+  {
+    "id": "dsa-35348",
+    "name": "GRANDES HERÓIS",
+    "city": "FAZENDA RIO GRANDE",
+    "cityId": "2894"
+  },
+  {
+    "id": "dsa-1834",
+    "name": "SENTINELAS DO VALE",
+    "city": "FAZENDA RIO GRANDE",
+    "cityId": "2894"
+  },
+  {
+    "id": "dsa-38196",
+    "name": "LÓTUS",
+    "city": "FIGUEIRA",
+    "cityId": "2897"
+  },
+  {
+    "id": "dsa-55663",
+    "name": "SIRIUS",
+    "city": "FLORESTA",
+    "cityId": "2900"
+  },
+  {
+    "id": "dsa-2323",
+    "name": "ATALAIA DA FRONTEIRA",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-2347",
+    "name": "CATARATAS DO IGUAÇU",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-27288",
+    "name": "DELTA FOZ",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-2339",
+    "name": "FERAS DO IGUAÇU",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-22996",
+    "name": "GOLDEN FOX",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-44886",
+    "name": "HERDEIROS DO REINO",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-46415",
+    "name": "LUZEIROS DO IGUAÇU",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-2355",
+    "name": "PACIFICADOR",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-2319",
+    "name": "PEDRA QUE CANTA",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-22247",
+    "name": "ROCHA ETERNA",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-2305",
+    "name": "SOLDADOS DO REI",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-2304",
+    "name": "TERRA DAS CATARATAS",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-2303",
+    "name": "TRÊS FRONTEIRAS",
+    "city": "FOZ DO IGUAÇU",
+    "cityId": "2904"
+  },
+  {
+    "id": "dsa-43497",
+    "name": "HÁGIOS",
+    "city": "FRANCISCO ALVES",
+    "cityId": "2906"
+  },
+  {
+    "id": "dsa-2294",
+    "name": "PIONEIROS DO SUDOESTE",
+    "city": "FRANCISCO BELTRÃO",
+    "cityId": "2907"
+  },
+  {
+    "id": "dsa-2340",
+    "name": "ÁGUAS CLARAS",
+    "city": "GOIOERÊ",
+    "cityId": "2910"
+  },
+  {
+    "id": "dsa-47485",
+    "name": "DYNAMUS",
+    "city": "GOIOERÊ",
+    "cityId": "2910"
+  },
+  {
+    "id": "dsa-34886",
+    "name": "EMBAIXADORES DE CRISTO",
+    "city": "GOIOERÊ",
+    "cityId": "2910"
+  },
+  {
+    "id": "dsa-2368",
+    "name": "7 QUEDAS",
+    "city": "GUAÍRA",
+    "cityId": "2913"
+  },
+  {
+    "id": "dsa-2300",
+    "name": "PIONEIROS DA FRONTEIRA",
+    "city": "GUAÍRA",
+    "cityId": "2913"
+  },
+  {
+    "id": "dsa-24056",
+    "name": "ELEAKIM",
+    "city": "GUAPIRAMA",
+    "cityId": "2916"
+  },
+  {
+    "id": "dsa-2336",
+    "name": "DESMOND DOSS",
+    "city": "GUARANIAÇU",
+    "cityId": "2919"
+  },
+  {
+    "id": "dsa-1218",
+    "name": "ATALAIA",
+    "city": "GUARAPUAVA",
+    "cityId": "2920"
+  },
+  {
+    "id": "dsa-19790",
+    "name": "KERIGMA",
+    "city": "GUARAPUAVA",
+    "cityId": "2920"
+  },
+  {
+    "id": "dsa-30682",
+    "name": "LOBOS DA SERRA",
+    "city": "GUARAPUAVA",
+    "cityId": "2920"
+  },
+  {
+    "id": "dsa-1217",
+    "name": "PEREGRINOS DO SUL",
+    "city": "GUARAPUAVA",
+    "cityId": "2920"
+  },
+  {
+    "id": "dsa-1215",
+    "name": "PÉROLA DOESTE",
+    "city": "GUARAPUAVA",
+    "cityId": "2920"
+  },
+  {
+    "id": "dsa-1817",
+    "name": "GUARÁ DAS ÁGUAS",
+    "city": "GUARAQUEÇABA",
+    "cityId": "2921"
+  },
+  {
+    "id": "dsa-52064",
+    "name": "GUARÁS DA SERRA",
+    "city": "GUARAQUEÇABA",
+    "cityId": "2921"
+  },
+  {
+    "id": "dsa-1816",
+    "name": "GUARÁ",
+    "city": "GUARATUBA",
+    "cityId": "2922"
+  },
+  {
+    "id": "dsa-56350",
+    "name": "VENTOS DO LITORAL",
+    "city": "GUARATUBA",
+    "cityId": "2922"
+  },
+  {
+    "id": "dsa-16184",
+    "name": "ÁGAPE",
+    "city": "IBAITI",
+    "cityId": "2924"
+  },
+  {
+    "id": "dsa-1704",
+    "name": "ADVENTHUS",
+    "city": "IBIPORÃ",
+    "cityId": "2926"
+  },
+  {
+    "id": "dsa-34606",
+    "name": "ARAUTOS DO REINO",
+    "city": "IBIPORÃ",
+    "cityId": "2926"
+  },
+  {
+    "id": "dsa-30188",
+    "name": "CANOA GRANDE",
+    "city": "IGUARAÇU",
+    "cityId": "2928"
+  },
+  {
+    "id": "dsa-28116",
+    "name": "LUZEIROS DE IPIRANGA",
+    "city": "IPIRANGA",
+    "cityId": "2935"
+  },
+  {
+    "id": "dsa-1311",
+    "name": "ESTRELAS DO SUL",
+    "city": "IRATI",
+    "cityId": "2938"
+  },
+  {
+    "id": "dsa-53238",
+    "name": "ÁGUAS DE JUREMA",
+    "city": "IRETAMA",
+    "cityId": "2939"
+  },
+  {
+    "id": "dsa-1745",
+    "name": "EVEREST MASTER",
+    "city": "IVAIPORÃ",
+    "cityId": "2948"
+  },
+  {
+    "id": "dsa-38940",
+    "name": "EXÉRCITO DE CRISTO",
+    "city": "IVATÉ",
+    "cityId": "2949"
+  },
+  {
+    "id": "dsa-18504",
+    "name": "GUARDIÕES DO IVAÍ",
+    "city": "IVATUBA",
+    "cityId": "2950"
+  },
+  {
+    "id": "dsa-1724",
+    "name": "PIONEIROS DO IAP",
+    "city": "IVATUBA",
+    "cityId": "2950"
+  },
+  {
+    "id": "dsa-1706",
+    "name": "ALFA",
+    "city": "JACAREZINHO",
+    "cityId": "2952"
+  },
+  {
+    "id": "dsa-34783",
+    "name": "FORTES DA FRONTEIRA",
+    "city": "JACAREZINHO",
+    "cityId": "2952"
+  },
+  {
+    "id": "dsa-24301",
+    "name": "GIDEÕES",
+    "city": "JAGUARIAÍVA",
+    "cityId": "2954"
+  },
+  {
+    "id": "dsa-21363",
+    "name": "GUERREIROS DA LUZ",
+    "city": "JAGUARIAÍVA",
+    "cityId": "2954"
+  },
+  {
+    "id": "dsa-1187",
+    "name": "JAGUAR",
+    "city": "JAGUARIAÍVA",
+    "cityId": "2954"
+  },
+  {
+    "id": "dsa-1189",
+    "name": "LAGO AZUL",
+    "city": "JAGUARIAÍVA",
+    "cityId": "2954"
+  },
+  {
+    "id": "dsa-1190",
+    "name": "RIOS CLAROS",
+    "city": "JAGUARIAÍVA",
+    "cityId": "2954"
+  },
+  {
+    "id": "dsa-1671",
+    "name": "ESTRELA DO VALE",
+    "city": "JANDAIA DO SUL",
+    "cityId": "2955"
+  },
+  {
+    "id": "dsa-25121",
+    "name": "JATAI",
+    "city": "JATAIZINHO",
+    "cityId": "2961"
+  },
+  {
+    "id": "dsa-54884",
+    "name": "BRAVOS DA SERRA",
+    "city": "JOAQUIM TÁVORA",
+    "cityId": "2963"
+  },
+  {
+    "id": "dsa-2329",
+    "name": "SOLDADOS DE GIDEÃO",
+    "city": "JURANDA",
+    "cityId": "2965"
+  },
+  {
+    "id": "dsa-1826",
+    "name": "EXCELÊNCIA DA CRIAÇÃO",
+    "city": "LAPA",
+    "cityId": "2968"
+  },
+  {
+    "id": "dsa-1219",
+    "name": "LUMINARES DO SUL",
+    "city": "LARANJEIRAS DO SUL",
+    "cityId": "2970"
+  },
+  {
+    "id": "dsa-21180",
+    "name": "ÁGUIA DOURADA",
+    "city": "LOANDA",
+    "cityId": "2974"
+  },
+  {
+    "id": "dsa-19614",
+    "name": "ÁGUIAS DE PRATA",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-1663",
+    "name": "AMBIENTAL CLUB",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-1711",
+    "name": "CAÇADORES DE TRILHAS",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-58045",
+    "name": "CHAMAS DO NORTE",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-53510",
+    "name": "COLÉGIO ADVENTISTA DE LONRINA",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-21243",
+    "name": "DEFENSORES DA NATUREZA",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-23622",
+    "name": "ESTRELA MAIOR",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-17484",
+    "name": "GUARDIÕES",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-1708",
+    "name": "GUERREIROS DO ROMA",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-43899",
+    "name": "INTEGRAÇÃO",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-1691",
+    "name": "INTERLAGOS",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-37738",
+    "name": "MONTE BELO",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-52093",
+    "name": "NATIVOS JAGUAR",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-1725",
+    "name": "PIONEIROS DO PARANÁ",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-27298",
+    "name": "REDENÇÃO",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-34864",
+    "name": "SEVEN CLUB",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-58047",
+    "name": "UNIÃO DA VITÓRIA",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-1737",
+    "name": "VITAL BRAZIL",
+    "city": "LONDRINA",
+    "cityId": "2976"
+  },
+  {
+    "id": "dsa-47543",
+    "name": "HARPIA",
+    "city": "LUIZIANA",
+    "cityId": "2977"
+  },
+  {
+    "id": "dsa-2333",
+    "name": "PICO DAS AGULHAS NEGRAS",
+    "city": "MAMBORÊ",
+    "cityId": "2981"
+  },
+  {
+    "id": "dsa-1716",
+    "name": "COLMÉIA",
+    "city": "MANDAGUAÇU",
+    "cityId": "2982"
+  },
+  {
+    "id": "dsa-25052",
+    "name": "ALVORECER",
+    "city": "MANDAGUARI",
+    "cityId": "2983"
+  },
+  {
+    "id": "dsa-54882",
+    "name": "CAMINHO DE ORION",
+    "city": "MANDAGUARI",
+    "cityId": "2983"
+  },
+  {
+    "id": "dsa-21313",
+    "name": "FORTALEZA",
+    "city": "MANDAGUARI",
+    "cityId": "2983"
+  },
+  {
+    "id": "dsa-1752",
+    "name": "GUERREIROS DO REI",
+    "city": "MANDAGUARI",
+    "cityId": "2983"
+  },
+  {
+    "id": "dsa-1687",
+    "name": "HERÓIS DA FÉ - MANDAGUARI",
+    "city": "MANDAGUARI",
+    "cityId": "2983"
+  },
+  {
+    "id": "dsa-19814",
+    "name": "GUARDIÕES DAS ARAUCÁRIAS",
+    "city": "MANGUEIRINHA",
+    "cityId": "2986"
+  },
+  {
+    "id": "dsa-2295",
+    "name": "CONQUISTADORES DA MATA",
+    "city": "MARECHAL CÂNDIDO RONDON",
+    "cityId": "2988"
+  },
+  {
+    "id": "dsa-58031",
+    "name": "EURICO BARROS MARIALVA",
+    "city": "MARIALVA",
+    "cityId": "2990"
+  },
+  {
+    "id": "dsa-1684",
+    "name": "GUARDIÕES DA PAZ",
+    "city": "MARIALVA",
+    "cityId": "2990"
+  },
+  {
+    "id": "dsa-1728",
+    "name": "REALEZA",
+    "city": "MARIALVA",
+    "cityId": "2990"
+  },
+  {
+    "id": "dsa-43251",
+    "name": "VIDEIRA",
+    "city": "MARIALVA",
+    "cityId": "2990"
+  },
+  {
+    "id": "dsa-2358",
+    "name": "SENTINELAS DE CRISTO",
+    "city": "MARILUZ",
+    "cityId": "2993"
+  },
+  {
+    "id": "dsa-30200",
+    "name": "180",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1658",
+    "name": "ADVENTURES",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-19399",
+    "name": "ÁGUIAS",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1662",
+    "name": "ALVORADA",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1664",
+    "name": "AMÉRICA",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-18520",
+    "name": "APOCALIPSE",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1710",
+    "name": "ARAUTOS DO REI",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-46462",
+    "name": "ASAFE",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1758",
+    "name": "ATALAIA INTERNACIONAL",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1713",
+    "name": "CASTELO FORTE",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1668",
+    "name": "CIDADE CANÇÃO",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-18543",
+    "name": "CIDADE VERDE",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-30115",
+    "name": "CLUBE TESTE",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-21312",
+    "name": "FALCÕES DO NORTE",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-30202",
+    "name": "GARRAS VERMELHAS",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1675",
+    "name": "GAVIÃO REAL",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1678",
+    "name": "GETSÊMANI",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1681",
+    "name": "GROUS",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1695",
+    "name": "LEÃO DE JUDÁ",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-58037",
+    "name": "LOBO GUARÁ",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1748",
+    "name": "MARANATA",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-21558",
+    "name": "MONTE REI",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1723",
+    "name": "PANTERA NEGRA",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-53379",
+    "name": "SUMARÉ",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-39713",
+    "name": "TRIBO DO NORTE",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1735",
+    "name": "UNIVERSO",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-1738",
+    "name": "VITÓRIA",
+    "city": "MARINGÁ",
+    "cityId": "2994"
+  },
+  {
+    "id": "dsa-49966",
+    "name": "VINHEDOS DO SUL",
+    "city": "MARIÓPOLIS",
+    "cityId": "2995"
+  },
+  {
+    "id": "dsa-57936",
+    "name": "SENTINELAS DO SUDOESTE",
+    "city": "MARMELEIRO",
+    "cityId": "2997"
+  },
+  {
+    "id": "dsa-18540",
+    "name": "ÁGUIA NEGRA",
+    "city": "MARUMBI",
+    "cityId": "2999"
+  },
+  {
+    "id": "dsa-1814",
+    "name": "ESTRELA DO MAR",
+    "city": "MATINHOS",
+    "cityId": "3001"
+  },
+  {
+    "id": "dsa-48046",
+    "name": "FAROL DO LITORAL",
+    "city": "MATINHOS",
+    "cityId": "3001"
+  },
+  {
+    "id": "dsa-28966",
+    "name": "QADASH",
+    "city": "MATINHOS",
+    "cityId": "3001"
+  },
+  {
+    "id": "dsa-57646",
+    "name": "VALENTES DE DAVI",
+    "city": "MATINHOS",
+    "cityId": "3001"
+  },
+  {
+    "id": "dsa-2351",
+    "name": "GARIMPEIROS DO SABER",
+    "city": "MEDIANEIRA",
+    "cityId": "3004"
+  },
+  {
+    "id": "dsa-57535",
+    "name": "MONTE SINAI",
+    "city": "MEDIANEIRA",
+    "cityId": "3004"
+  },
+  {
+    "id": "dsa-52104",
+    "name": "PELICANOS",
+    "city": "MEDIANEIRA",
+    "cityId": "3004"
+  },
+  {
+    "id": "dsa-47484",
+    "name": "TIGRES",
+    "city": "MOREIRA SALES",
+    "cityId": "3009"
+  },
+  {
+    "id": "dsa-24956",
+    "name": "ARAUTOS DA ESPERANÇA",
+    "city": "MORRETES",
+    "cityId": "3010"
+  },
+  {
+    "id": "dsa-1812",
+    "name": "ECOS DO MARUMBI",
+    "city": "MORRETES",
+    "cityId": "3010"
+  },
+  {
+    "id": "dsa-28670",
+    "name": "PÉROLAS NEGRA",
+    "city": "MORRETES",
+    "cityId": "3010"
+  },
+  {
+    "id": "dsa-34184",
+    "name": "SENTINELAS DO ITUPAVA",
+    "city": "MORRETES",
+    "cityId": "3010"
+  },
+  {
+    "id": "dsa-50262",
+    "name": "LUZEIROS DO PLANALTO",
+    "city": "NOVA CANTU",
+    "cityId": "3016"
+  },
+  {
+    "id": "dsa-1661",
+    "name": "ÁGUIA DE OURO",
+    "city": "NOVA ESPERANÇA",
+    "cityId": "3017"
+  },
+  {
+    "id": "dsa-47913",
+    "name": "ESPERANÇA DO SUDOESTE",
+    "city": "NOVA ESPERANÇA DO SUDOESTE",
+    "cityId": "3018"
+  },
+  {
+    "id": "dsa-18469",
+    "name": "ROCHA DO NOROESTE",
+    "city": "NOVA LONDRINA",
+    "cityId": "3021"
+  },
+  {
+    "id": "dsa-51477",
+    "name": "RIO DO TIGRE",
+    "city": "NOVA SANTA BÁRBARA",
+    "cityId": "3024"
+  },
+  {
+    "id": "dsa-47911",
+    "name": "BOM COMBATE",
+    "city": "ORTIGUEIRA",
+    "cityId": "3028"
+  },
+  {
+    "id": "dsa-1202",
+    "name": "MONTE MORIÁ",
+    "city": "ORTIGUEIRA",
+    "cityId": "3028"
+  },
+  {
+    "id": "dsa-55613",
+    "name": "OURO VERDE",
+    "city": "OURO VERDE DO OESTE",
+    "cityId": "3030"
+  },
+  {
+    "id": "dsa-22189",
+    "name": "FALCÃO",
+    "city": "PAIÇANDU",
+    "cityId": "3031"
+  },
+  {
+    "id": "dsa-47186",
+    "name": "NAVEGANTES",
+    "city": "PAIÇANDU",
+    "cityId": "3031"
+  },
+  {
+    "id": "dsa-21358",
+    "name": "PAYSANDÚ",
+    "city": "PAIÇANDU",
+    "cityId": "3031"
+  },
+  {
+    "id": "dsa-1739",
+    "name": "VOZES DO ARCANJO",
+    "city": "PAIÇANDU",
+    "cityId": "3031"
+  },
+  {
+    "id": "dsa-1777",
+    "name": "HÉLICE DO SUDOESTE",
+    "city": "PALMAS",
+    "cityId": "3032"
+  },
+  {
+    "id": "dsa-1172",
+    "name": "ATALAIAS DE ELOHIM",
+    "city": "PALMEIRA",
+    "cityId": "3033"
+  },
+  {
+    "id": "dsa-1285",
+    "name": "POLARIS",
+    "city": "PALMITAL",
+    "cityId": "3034"
+  },
+  {
+    "id": "dsa-47645",
+    "name": "DILIGENTES DO ALVORECER",
+    "city": "PALOTINA",
+    "cityId": "3035"
+  },
+  {
+    "id": "dsa-2337",
+    "name": "JOIA DO OESTE",
+    "city": "PALOTINA",
+    "cityId": "3035"
+  },
+  {
+    "id": "dsa-15195",
+    "name": "COSTA SUL",
+    "city": "PARANAGUÁ",
+    "cityId": "3038"
+  },
+  {
+    "id": "dsa-1939",
+    "name": "FAROL DA ILHA",
+    "city": "PARANAGUÁ",
+    "cityId": "3038"
+  },
+  {
+    "id": "dsa-1815",
+    "name": "FONTE DE ESPERANÇA",
+    "city": "PARANAGUÁ",
+    "cityId": "3038"
+  },
+  {
+    "id": "dsa-25116",
+    "name": "GUARDIÕES DA SERRA",
+    "city": "PARANAGUÁ",
+    "cityId": "3038"
+  },
+  {
+    "id": "dsa-1823",
+    "name": "IMPERIO DA CRIAÇÃO",
+    "city": "PARANAGUÁ",
+    "cityId": "3038"
+  },
+  {
+    "id": "dsa-1820",
+    "name": "LUZEIROS DO SUL",
+    "city": "PARANAGUÁ",
+    "cityId": "3038"
+  },
+  {
+    "id": "dsa-1959",
+    "name": "SERRA DA PRATA",
+    "city": "PARANAGUÁ",
+    "cityId": "3038"
+  },
+  {
+    "id": "dsa-15193",
+    "name": "SERRA DO MAR",
+    "city": "PARANAGUÁ",
+    "cityId": "3038"
+  },
+  {
+    "id": "dsa-1727",
+    "name": "RAMOS DO VALE",
+    "city": "PARANAVAÍ",
+    "cityId": "3040"
+  },
+  {
+    "id": "dsa-1730",
+    "name": "REMANESCENTES",
+    "city": "PARANAVAÍ",
+    "cityId": "3040"
+  },
+  {
+    "id": "dsa-1736",
+    "name": "VALE DO IVAÍ",
+    "city": "PARANAVAÍ",
+    "cityId": "3040"
+  },
+  {
+    "id": "dsa-52557",
+    "name": "YPÊ",
+    "city": "PARANAVAÍ",
+    "cityId": "3040"
+  },
+  {
+    "id": "dsa-2290",
+    "name": "LUZES DA AURORA",
+    "city": "PATO BRANCO",
+    "cityId": "3042"
+  },
+  {
+    "id": "dsa-36527",
+    "name": "MORRO DOS VENTOS",
+    "city": "PATO BRANCO",
+    "cityId": "3042"
+  },
+  {
+    "id": "dsa-37598",
+    "name": "FÊNIX",
+    "city": "PAULA FREITAS",
+    "cityId": "3043"
+  },
+  {
+    "id": "dsa-1948",
+    "name": "MENSAGEIROS DA ESPERANÇA (SM)",
+    "city": "PAULO FRONTIN",
+    "cityId": "3044"
+  },
+  {
+    "id": "dsa-2348",
+    "name": "CONSTELAÇÃO",
+    "city": "PÉROLA",
+    "cityId": "3047"
+  },
+  {
+    "id": "dsa-38202",
+    "name": "GAVIÕES DE PIEN",
+    "city": "PIÊN",
+    "cityId": "3049"
+  },
+  {
+    "id": "dsa-1792",
+    "name": "DIAMANTE DO REI",
+    "city": "PINHAIS",
+    "cityId": "3050"
+  },
+  {
+    "id": "dsa-35340",
+    "name": "EXPLORADORES",
+    "city": "PINHAIS",
+    "cityId": "3050"
+  },
+  {
+    "id": "dsa-1845",
+    "name": "LOCOMOTIVA",
+    "city": "PINHAIS",
+    "cityId": "3050"
+  },
+  {
+    "id": "dsa-31261",
+    "name": "NAVEGANTES",
+    "city": "PINHAIS",
+    "cityId": "3050"
+  },
+  {
+    "id": "dsa-1791",
+    "name": "VIDA JOVEM",
+    "city": "PINHAIS",
+    "cityId": "3050"
+  },
+  {
+    "id": "dsa-53497",
+    "name": "SEMEADORES",
+    "city": "PINHALÃO",
+    "cityId": "3052"
+  },
+  {
+    "id": "dsa-1191",
+    "name": "GETSÊMANI",
+    "city": "PIRAÍ DO SUL",
+    "cityId": "3054"
+  },
+  {
+    "id": "dsa-1786",
+    "name": "FERAS",
+    "city": "PIRAQUARA",
+    "cityId": "3055"
+  },
+  {
+    "id": "dsa-1843",
+    "name": "GUARDIÕES DO REI",
+    "city": "PIRAQUARA",
+    "cityId": "3055"
+  },
+  {
+    "id": "dsa-1900",
+    "name": "III ANJO",
+    "city": "PIRAQUARA",
+    "cityId": "3055"
+  },
+  {
+    "id": "dsa-28870",
+    "name": "M7 (MARCA 7)",
+    "city": "PIRAQUARA",
+    "cityId": "3055"
+  },
+  {
+    "id": "dsa-1788",
+    "name": "MIRANTE DA SERRA",
+    "city": "PIRAQUARA",
+    "cityId": "3055"
+  },
+  {
+    "id": "dsa-1789",
+    "name": "NOVO HORIZONTE",
+    "city": "PIRAQUARA",
+    "cityId": "3055"
+  },
+  {
+    "id": "dsa-1848",
+    "name": "PLANETA TERRA",
+    "city": "PIRAQUARA",
+    "cityId": "3055"
+  },
+  {
+    "id": "dsa-58001",
+    "name": "SENTINELAS DO AMANHÃ",
+    "city": "PIRAQUARA",
+    "cityId": "3055"
+  },
+  {
+    "id": "dsa-20957",
+    "name": "TEEN LIONS",
+    "city": "PIRAQUARA",
+    "cityId": "3055"
+  },
+  {
+    "id": "dsa-1982",
+    "name": "VILA REAL",
+    "city": "PIRAQUARA",
+    "cityId": "3055"
+  },
+  {
+    "id": "dsa-22725",
+    "name": "IMPERIAL",
+    "city": "PITANGA",
+    "cityId": "3056"
+  },
+  {
+    "id": "dsa-1168",
+    "name": "ADVENTURE",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-1167",
+    "name": "ÁGUIAS DA ESPERANÇA",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-1162",
+    "name": "AGUIAS DE ELOHIM",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-1174",
+    "name": "CAMPOS GERAIS",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-1165",
+    "name": "CONQUISTADORES",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-1166",
+    "name": "EVEREST",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-1170",
+    "name": "FERAS DO SUL",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-1173",
+    "name": "K2",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-20959",
+    "name": "KADOSH",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-1161",
+    "name": "LAGOA DOURADA",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-1175",
+    "name": "LEÕES DE JUDÁ",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-58025",
+    "name": "LUZEIRO DOS CAMPOS GERAIS",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-32274",
+    "name": "PILARES DA CRIAÇÃO",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-1163",
+    "name": "VILA VELHA",
+    "city": "PONTA GROSSA",
+    "cityId": "3060"
+  },
+  {
+    "id": "dsa-33014",
+    "name": "ATLANTICO",
+    "city": "PONTAL DO PARANÁ",
+    "cityId": "3061"
+  },
+  {
+    "id": "dsa-50421",
+    "name": "CAVALEIROS DO FAROL",
+    "city": "PONTAL DO PARANÁ",
+    "cityId": "3061"
+  },
+  {
+    "id": "dsa-1822",
+    "name": "PONTAL DO LESTE",
+    "city": "PONTAL DO PARANÁ",
+    "cityId": "3061"
+  },
+  {
+    "id": "dsa-1712",
+    "name": "CASTELO DO REI",
+    "city": "PRESIDENTE CASTELO BRANCO",
+    "cityId": "3069"
+  },
+  {
+    "id": "dsa-1714",
+    "name": "CIDADE DAS ÁGUAS",
+    "city": "PRIMEIRO DE MAIO",
+    "cityId": "3070"
+  },
+  {
+    "id": "dsa-1284",
+    "name": "FAVO DE MEL",
+    "city": "PRUDENTÓPOLIS",
+    "cityId": "3071"
+  },
+  {
+    "id": "dsa-1787",
+    "name": "DESBRAVADORES QUATRO BARRAS",
+    "city": "QUATRO BARRAS",
+    "cityId": "3074"
+  },
+  {
+    "id": "dsa-1785",
+    "name": "ESTRELA D`ALVA",
+    "city": "QUATRO BARRAS",
+    "cityId": "3074"
+  },
+  {
+    "id": "dsa-1914",
+    "name": "VALORES DE CRISTO",
+    "city": "QUATRO BARRAS",
+    "cityId": "3074"
+  },
+  {
+    "id": "dsa-39270",
+    "name": "ELEMENTARES",
+    "city": "QUEDAS DO IGUAÇU",
+    "cityId": "3076"
+  },
+  {
+    "id": "dsa-31469",
+    "name": "ÁGUIAS DO CAMPO",
+    "city": "QUITANDINHA",
+    "cityId": "3079"
+  },
+  {
+    "id": "dsa-57463",
+    "name": "GUARDIÕES DE QUITANDINHA",
+    "city": "QUITANDINHA",
+    "cityId": "3079"
+  },
+  {
+    "id": "dsa-2370",
+    "name": "ALFA REAL",
+    "city": "REALEZA",
+    "cityId": "3083"
+  },
+  {
+    "id": "dsa-48127",
+    "name": "ZYON",
+    "city": "REALEZA",
+    "cityId": "3083"
+  },
+  {
+    "id": "dsa-1669",
+    "name": "COLINA DO NORTE",
+    "city": "RIBEIRÃO CLARO",
+    "cityId": "3088"
+  },
+  {
+    "id": "dsa-57628",
+    "name": "GUARDIÕES DO IGUAÇU",
+    "city": "RIO BONITO DO IGUAÇU",
+    "cityId": "3092"
+  },
+  {
+    "id": "dsa-55079",
+    "name": "ESCUDEIROS DO REI",
+    "city": "RIO NEGRO",
+    "cityId": "3095"
+  },
+  {
+    "id": "dsa-1829",
+    "name": "GERAÇÃO DE HERÓIS",
+    "city": "RIO NEGRO",
+    "cityId": "3095"
+  },
+  {
+    "id": "dsa-1832",
+    "name": "RIOMAFRA",
+    "city": "RIO NEGRO",
+    "cityId": "3095"
+  },
+  {
+    "id": "dsa-1703",
+    "name": "NOVO HORIZONTE",
+    "city": "ROLÂNDIA",
+    "cityId": "3096"
+  },
+  {
+    "id": "dsa-47302",
+    "name": "ORIGENS",
+    "city": "ROLÂNDIA",
+    "cityId": "3096"
+  },
+  {
+    "id": "dsa-44421",
+    "name": "PINHEIROS",
+    "city": "ROLÂNDIA",
+    "cityId": "3096"
+  },
+  {
+    "id": "dsa-30833",
+    "name": "ELITE",
+    "city": "SABÁUDIA",
+    "cityId": "3100"
+  },
+  {
+    "id": "dsa-2349",
+    "name": "DESCENDENTES DE ABRAÃO",
+    "city": "SANTA HELENA",
+    "cityId": "3108"
+  },
+  {
+    "id": "dsa-51070",
+    "name": "TERRA DO SOL",
+    "city": "SANTA HELENA",
+    "cityId": "3108"
+  },
+  {
+    "id": "dsa-51362",
+    "name": "CURUCACAS",
+    "city": "SANTA MARIA DO OESTE",
+    "cityId": "3113"
+  },
+  {
+    "id": "dsa-47821",
+    "name": "ALBATROZ REAL",
+    "city": "SANTA TEREZA DO OESTE",
+    "cityId": "3116"
+  },
+  {
+    "id": "dsa-2334",
+    "name": "FALCON",
+    "city": "SANTA TEREZA DO OESTE",
+    "cityId": "3116"
+  },
+  {
+    "id": "dsa-12717",
+    "name": "ÁGUIAS",
+    "city": "SANTA TEREZINHA DE ITAIPU",
+    "cityId": "3117"
+  },
+  {
+    "id": "dsa-1334",
+    "name": "FORÇA REAL",
+    "city": "SANTANA DO ITARARÉ",
+    "cityId": "3118"
+  },
+  {
+    "id": "dsa-39585",
+    "name": "BELA MANHA",
+    "city": "SANTO ANTÔNIO DA PLATINA",
+    "cityId": "3119"
+  },
+  {
+    "id": "dsa-1733",
+    "name": "ROCHA ETERNA",
+    "city": "SANTO ANTÔNIO DA PLATINA",
+    "cityId": "3119"
+  },
+  {
+    "id": "dsa-2289",
+    "name": "GUARDIÕES DA PROMESSA",
+    "city": "SÃO JORGE D`OESTE",
+    "cityId": "3130"
+  },
+  {
+    "id": "dsa-34018",
+    "name": "MORIAH",
+    "city": "SÃO JORGE DO PATROCÍNIO",
+    "cityId": "3132"
+  },
+  {
+    "id": "dsa-1194",
+    "name": "FORTALEZA",
+    "city": "SÃO JOSÉ DA BOA VISTA",
+    "cityId": "3133"
+  },
+  {
+    "id": "dsa-1935",
+    "name": "ÁGUIAS DO SUL",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-1762",
+    "name": "ALPHA",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-53731",
+    "name": "AVENTURA NA SERRA",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-56144",
+    "name": "CENTURION",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-56940",
+    "name": "ESTRELA DO CRUZEIRO",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-20870",
+    "name": "GALAXY",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-47565",
+    "name": "GAVIÃO REAL",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-1764",
+    "name": "GETSÊMANI",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-1765",
+    "name": "GUERREIROS DA FÉ",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-15183",
+    "name": "GUERREIROS DA PAZ",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-1768",
+    "name": "LUZEIROS",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-29069",
+    "name": "MAANAIM",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-1918",
+    "name": "OURO FINO",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-1770",
+    "name": "PINHEIRO",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-1986",
+    "name": "PUMA",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-26998",
+    "name": "SIRIUS",
+    "city": "SÃO JOSÉ DOS PINHAIS",
+    "cityId": "3135"
+  },
+  {
+    "id": "dsa-35997",
+    "name": "MIRANTES DO IGUAÇU",
+    "city": "SÃO MATEUS DO SUL",
+    "cityId": "3137"
+  },
+  {
+    "id": "dsa-25448",
+    "name": "ARAUTOS DO IGUAÇU",
+    "city": "SÃO MIGUEL DO IGUAÇU",
+    "cityId": "3138"
+  },
+  {
+    "id": "dsa-18545",
+    "name": "ANJO AZUL",
+    "city": "SARANDI",
+    "cityId": "3145"
+  },
+  {
+    "id": "dsa-1666",
+    "name": "ÁQUILA",
+    "city": "SARANDI",
+    "cityId": "3145"
+  },
+  {
+    "id": "dsa-1692",
+    "name": "IRMÃOS DO REI",
+    "city": "SARANDI",
+    "cityId": "3145"
+  },
+  {
+    "id": "dsa-1699",
+    "name": "MANANCIAL",
+    "city": "SARANDI",
+    "cityId": "3145"
+  },
+  {
+    "id": "dsa-54060",
+    "name": "PRINCIPIOS",
+    "city": "SARANDI",
+    "cityId": "3145"
+  },
+  {
+    "id": "dsa-39697",
+    "name": "REFUGIUS",
+    "city": "SARANDI",
+    "cityId": "3145"
+  },
+  {
+    "id": "dsa-1729",
+    "name": "RELÂMPAGO DO NORTE",
+    "city": "SARANDI",
+    "cityId": "3145"
+  },
+  {
+    "id": "dsa-57882",
+    "name": "ROTA 7",
+    "city": "SARANDI",
+    "cityId": "3145"
+  },
+  {
+    "id": "dsa-15911",
+    "name": "LEÃO BRANCO",
+    "city": "SENGÉS",
+    "cityId": "3147"
+  },
+  {
+    "id": "dsa-1188",
+    "name": "PORTAL DO PARANÁ",
+    "city": "SENGÉS",
+    "cityId": "3147"
+  },
+  {
+    "id": "dsa-21879",
+    "name": "JASPE",
+    "city": "SIQUEIRA CAMPOS",
+    "cityId": "3151"
+  },
+  {
+    "id": "dsa-29425",
+    "name": "FLECHA DO GUERREIRO",
+    "city": "TAMARANA",
+    "cityId": "3153"
+  },
+  {
+    "id": "dsa-22265",
+    "name": "TESOURO REAL",
+    "city": "TAPEJARA",
+    "cityId": "3155"
+  },
+  {
+    "id": "dsa-1179",
+    "name": "GUERREIROS DO REI",
+    "city": "TELÊMACO BORBA",
+    "cityId": "3158"
+  },
+  {
+    "id": "dsa-1181",
+    "name": "SENTINELAS DA CRIAÇÃO",
+    "city": "TELÊMACO BORBA",
+    "cityId": "3158"
+  },
+  {
+    "id": "dsa-1717",
+    "name": "EVEREST",
+    "city": "TERRA BOA",
+    "cityId": "3159"
+  },
+  {
+    "id": "dsa-18343",
+    "name": "TRÊS MORRINHOS",
+    "city": "TERRA RICA",
+    "cityId": "3160"
+  },
+  {
+    "id": "dsa-2321",
+    "name": "LUZEIROS DO OESTE",
+    "city": "TERRA ROXA",
+    "cityId": "3161"
+  },
+  {
+    "id": "dsa-21884",
+    "name": "GERAÇÃO TIBAGI",
+    "city": "TIBAGI",
+    "cityId": "3162"
+  },
+  {
+    "id": "dsa-48515",
+    "name": "ARAÇATUBA",
+    "city": "TIJUCAS DO SUL",
+    "cityId": "3163"
+  },
+  {
+    "id": "dsa-48267",
+    "name": "LEÃO DA TRIBO",
+    "city": "TIJUCAS DO SUL",
+    "cityId": "3163"
+  },
+  {
+    "id": "dsa-1767",
+    "name": "SOLDADOS DA MATA",
+    "city": "TIJUCAS DO SUL",
+    "cityId": "3163"
+  },
+  {
+    "id": "dsa-48281",
+    "name": "ALCATEIA",
+    "city": "TOLEDO",
+    "cityId": "3164"
+  },
+  {
+    "id": "dsa-47613",
+    "name": "ALVORADA",
+    "city": "TOLEDO",
+    "cityId": "3164"
+  },
+  {
+    "id": "dsa-36747",
+    "name": "BOM PRINCÍPIO",
+    "city": "TOLEDO",
+    "cityId": "3164"
+  },
+  {
+    "id": "dsa-2316",
+    "name": "ESTRELA DO OESTE",
+    "city": "TOLEDO",
+    "cityId": "3164"
+  },
+  {
+    "id": "dsa-25223",
+    "name": "EVEREST",
+    "city": "TOLEDO",
+    "cityId": "3164"
+  },
+  {
+    "id": "dsa-42990",
+    "name": "ISRAEL",
+    "city": "TOLEDO",
+    "cityId": "3164"
+  },
+  {
+    "id": "dsa-2302",
+    "name": "LUZES DA AMÉRICA",
+    "city": "TOLEDO",
+    "cityId": "3164"
+  },
+  {
+    "id": "dsa-52945",
+    "name": "MARCO ZERO",
+    "city": "TOLEDO",
+    "cityId": "3164"
+  },
+  {
+    "id": "dsa-28362",
+    "name": "STARS",
+    "city": "TOLEDO",
+    "cityId": "3164"
+  },
+  {
+    "id": "dsa-2298",
+    "name": "ÁGUIA REAL",
+    "city": "TRÊS BARRAS DO PARANÁ",
+    "cityId": "3166"
+  },
+  {
+    "id": "dsa-39967",
+    "name": "ÔMEGA",
+    "city": "TUNEIRAS DO OESTE",
+    "cityId": "3168"
+  },
+  {
+    "id": "dsa-26413",
+    "name": "TRILHEIROS DA MATA",
+    "city": "TURVO",
+    "cityId": "3170"
+  },
+  {
+    "id": "dsa-2345",
+    "name": "ADVIR",
+    "city": "UBIRATÃ",
+    "cityId": "3171"
+  },
+  {
+    "id": "dsa-29271",
+    "name": "SÉTIMUS",
+    "city": "UBIRATÃ",
+    "cityId": "3171"
+  },
+  {
+    "id": "dsa-22957",
+    "name": "ALPHAVILLE",
+    "city": "UMUARAMA",
+    "cityId": "3172"
+  },
+  {
+    "id": "dsa-2327",
+    "name": "BANDEIRANTES",
+    "city": "UMUARAMA",
+    "cityId": "3172"
+  },
+  {
+    "id": "dsa-44981",
+    "name": "COROA REAL",
+    "city": "UMUARAMA",
+    "cityId": "3172"
+  },
+  {
+    "id": "dsa-48224",
+    "name": "FAROL DO NOROESTE",
+    "city": "UMUARAMA",
+    "cityId": "3172"
+  },
+  {
+    "id": "dsa-49983",
+    "name": "GIGANTES DO ALTO",
+    "city": "UMUARAMA",
+    "cityId": "3172"
+  },
+  {
+    "id": "dsa-2331",
+    "name": "MENSAGEIROS",
+    "city": "UMUARAMA",
+    "cityId": "3172"
+  },
+  {
+    "id": "dsa-43787",
+    "name": "SERRA DOURADA",
+    "city": "UMUARAMA",
+    "cityId": "3172"
+  },
+  {
+    "id": "dsa-57891",
+    "name": "ÁGUIA FIEL",
+    "city": "UNIÃO DA VITÓRIA",
+    "cityId": "3173"
+  },
+  {
+    "id": "dsa-25083",
+    "name": "ÔMEGA",
+    "city": "UNIÃO DA VITÓRIA",
+    "cityId": "3173"
+  },
+  {
+    "id": "dsa-1781",
+    "name": "SENTINELAS DE ÓRION",
+    "city": "UNIÃO DA VITÓRIA",
+    "cityId": "3173"
+  },
+  {
+    "id": "dsa-57574",
+    "name": "PIONEIROS DE URAÍ",
+    "city": "URAÍ",
+    "cityId": "3175"
+  },
+  {
+    "id": "dsa-55345",
+    "name": "ARAUCÁRIA",
+    "city": "VITORINO",
+    "cityId": "3180"
+  },
+  {
+    "id": "dsa-1195",
+    "name": "ÁGUIA REAL",
+    "city": "WENCESLAU BRAZ",
+    "cityId": "3181"
+  },
+  {
+    "id": "dsa-51135",
+    "name": "ÁGUIAS DE XAMBRÊ",
+    "city": "XAMBRÊ",
+    "cityId": "3182"
+  }
+]
