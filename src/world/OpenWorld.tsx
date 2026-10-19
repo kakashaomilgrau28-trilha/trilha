@@ -118,7 +118,9 @@ export default function OpenWorld(props: Props) {
       }
       if (!document.hidden) {
         if (renderer) {
-          const cameraBlocked = (x: number, z: number) => obstacles.some(o => o.polygon && pointInPolygon(x, z, o.polygon))
+          const cameraBlocked = (x: number, z: number) => obstacles.some(o => o.polygon
+            ? pointInPolygon(x, z, o.polygon)
+            : Math.abs(x-o.x) < o.width/2 && Math.abs(z-o.z) < o.depth/2)
           let clearDistance = distance
           for (let radius = 2; radius <= distance; radius += .8) {
             if (cameraBlocked(p.x + Math.sin(yaw) * Math.cos(pitch) * radius, p.y + Math.cos(yaw) * Math.cos(pitch) * radius)) {
@@ -189,10 +191,10 @@ export default function OpenWorld(props: Props) {
     surface.current?.focus({ preventScroll: true })
   }
   return <section className="open-world">
-    <div className="world-toolbar"><div><span className="world-live-dot" /> CENTRO DA LAPA <small>PARANÁ · BRASIL</small></div><div><span className="world-data-label">RUAS E EDIFÍCIOS REAIS</span><button onClick={() => { view.current = { yaw: -0.6, pitch: 0.5, distance: 20 }; surface.current?.focus({ preventScroll: true }) }} aria-label="Centralizar câmera">↺ Câmera</button><button onClick={() => setHelp(v => !v)} aria-label="Ajuda e controles">?</button></div></div>
+    <div className="world-toolbar"><div><span className="world-live-dot" /> CENTRO DA LAPA <small>PARANÁ · BRASIL</small></div><div><span className="world-data-label">CENTRO HISTÓRICO RECRIADO</span><button onClick={() => { view.current = { yaw: -0.6, pitch: 0.5, distance: 20 }; surface.current?.focus({ preventScroll: true }) }} aria-label="Centralizar câmera">↺ Câmera</button><button onClick={() => setHelp(v => !v)} aria-label="Ajuda e controles">?</button></div></div>
     <div className="world-surface" ref={surface} tabIndex={0} aria-label="Explorar Lapa. Use WASD ou setas para andar. Arraste para girar a câmera. No celular, analógico à esquerda e câmera à direita." onPointerDown={start} onPointerMove={move} onPointerUp={stop} onPointerCancel={stop} onLostPointerCapture={stop} onWheel={zoom}>
       <div ref={host} className="world-renderer" />
-      <div className="world-location"><small>01 / EXPLORE O MUNDO</small><b>Bem-vindo à Lapa.</b><span>Praça General Carneiro · ruas e prédios mapeados</span></div>
+      <div className="world-location"><small>01 / EXPLORE O MUNDO</small><b>Bem-vindo à Lapa.</b><span>Praça General Carneiro · monumento e marcos históricos</span></div>
       <div className="world-minimap" aria-label={`Posição virtual: ${coords.x}, ${coords.y} metros`}><span>N ↑</span><i style={{ left: `${coords.x / WORLD_SIZE * 100 + 50}%`, top: `${coords.y / WORLD_SIZE * 100 + 50}%` }} /><small>{coords.x} / {coords.y} m</small></div>
       <div className="world-control-hint"><span className="desktop-controls"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> andar · arraste para girar câmera · roda aproxima</span><span className="mobile-controls">Esquerda: andar · direita: girar câmera</span></div>
       <div className="floating-stick" ref={joystick} aria-hidden="true"><div ref={thumb} /></div>
@@ -200,7 +202,7 @@ export default function OpenWorld(props: Props) {
       <button className="world-run" aria-pressed={input.current.run} onClick={() => { input.current.run = !input.current.run; setCoords(v => ({ ...v })); surface.current?.focus({ preventScroll: true }) }}>Correr</button>
       {nearby && <button className="world-interact" onClick={() => props.onReward(nearby)}>E · {nearby.name} →</button>}
       {error && <div className="world-error" role="alert"><b>O cenário precisa de atenção</b><p>{error}</p><button onClick={() => setAttempt(v => v + 1)}>Tentar novamente</button></div>}
-      {help && <div className="world-help"><button onClick={() => setHelp(false)} aria-label="Fechar ajuda">×</button><h3>Uma pessoa, um mundo.</h3><p>Clique no cenário e use WASD ou as setas para andar na direção da câmera. Shift para correr. Arraste no cenário para girar a câmera; use a roda ou os botões + e − para aproximar e afastar. O botão Câmera restaura a vista inicial. No celular, arraste à esquerda para andar e à direita para girar a câmera. Aproxime-se das lembranças e pressione E.</p><p>O traçado das ruas, a Praça General Carneiro e os contornos dos edifícios vêm de dados do OpenStreetMap. A aparência dos prédios, vegetação e iluminação são interpretações artísticas. O percurso é virtual, sem GPS.</p><p>Os acompanhantes identificados como NPC são simulados. Não representam pessoas conectadas.</p></div>}
+      {help && <div className="world-help"><button onClick={() => setHelp(false)} aria-label="Fechar ajuda">×</button><h3>Uma pessoa, um mundo.</h3><p>Clique no cenário e use WASD ou as setas para andar na direção da câmera. Shift para correr. Arraste no cenário para girar a câmera; use a roda ou os botões + e − para aproximar e afastar. O botão Câmera restaura a vista inicial. No celular, arraste à esquerda para andar e à direita para girar a câmera. Aproxime-se das lembranças e pressione E.</p><p>As ruas, a praça e os contornos disponíveis de edifícios usam dados do OpenStreetMap. A igreja, o Theatro, o Museu Histórico, o Panteon e outras fachadas foram recriados com base em registros patrimoniais e fotografias. Casas sem contorno cadastrado compõem o casario ilustrativo; não indicam lotes exatos. Este é um percurso virtual, sem GPS.</p><p>Os acompanhantes identificados como NPC são simulados. Não representam pessoas conectadas.</p></div>}
     </div>
     <div className="world-caption"><span>Personagens 3D · caminhada livre · NPCs simulados</span><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors · ODbL</a></div>
   </section>
