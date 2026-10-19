@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type PointerEvent } from 'react'
+import { useEffect, useRef, useState, type PointerEvent, type WheelEvent } from 'react'
 import * as THREE from 'three'
 import { avatars } from '../gameData'
 import type { Player, Reward } from '../model'
@@ -18,6 +18,8 @@ export default function OpenWorld(props: Props) {
   const thumb = useRef<HTMLDivElement>(null)
   const input = useRef({ x: 0, z: 0, run: false })
   const touch = useRef<{ id: number; x: number; y: number } | null>(null)
+  const cameraDrag = useRef<{ id: number; x: number; y: number } | null>(null)
+  const view = useRef({ yaw: -0.6, pitch: 0.5, distance: 20 })
   const latest = useRef(props); latest.current = props
   const [error, setError] = useState('')
   const [nearby, setNearby] = useState<Reward | null>(null)
@@ -56,7 +58,7 @@ export default function OpenWorld(props: Props) {
     let renderer: THREE.WebGLRenderer | undefined
     const camera = new THREE.PerspectiveCamera(48, 1, .1, 600)
     const cameraTarget = new THREE.Vector3(), lookAt = new THREE.Vector3()
-    camera.position.set(p.x - 11, 12, p.y + 16)
+    camera.position.set(p.x - 11, 11.5, p.y + 16)
     const resize = () => {
       if (!renderer) return
       const w = container.clientWidth, h = container.clientHeight
@@ -71,7 +73,7 @@ export default function OpenWorld(props: Props) {
       container.appendChild(renderer.domElement); resize()
     } catch { setError('Este navegador não conseguiu iniciar o 3D. Ative a aceleração gráfica ou tente outro navegador.') }
     const observer = new ResizeObserver(resize); observer.observe(container)
-    const reset = () => { keys.clear(); input.current = { x: 0, z: 0, run: false }; touch.current = null; if (joystick.current) joystick.current.style.display = 'none' }
+    const reset = () => { keys.clear(); input.current = { x: 0, z: 0, run: false }; touch.current = null; cameraDrag.current = null; if (joystick.current) joystick.current.style.display = 'none' }
     const keyCode = (e: KeyboardEvent) => e.code || ({ w: 'KeyW', a: 'KeyA', s: 'KeyS', d: 'KeyD', e: 'KeyE', Shift: 'ShiftLeft' }[e.key] ?? e.key)
     const keyDown = (e: KeyboardEvent) => {
       if (latest.current.paused || !(document.activeElement === surface.current || surface.current?.contains(document.activeElement))) return
@@ -96,9 +98,12 @@ export default function OpenWorld(props: Props) {
       const enabled = !latest.current.paused && !document.hidden
       const dx = enabled ? Number(keys.has('KeyD') || keys.has('ArrowRight')) - Number(keys.has('KeyA') || keys.has('ArrowLeft')) + input.current.x : 0
       const dz = enabled ? Number(keys.has('KeyS') || keys.has('ArrowDown')) - Number(keys.has('KeyW') || keys.has('ArrowUp')) + input.current.z : 0
-      const next = stepPosition(p, dx, dz, dt, keys.has('ShiftLeft') || keys.has('ShiftRight') || input.current.run ? 8 : 4.2, obstacles)
+      const { yaw, pitch, distance } = view.current
+      const worldDx = dx * Math.cos(yaw) + dz * Math.sin(yaw)
+      const worldDz = -dx * Math.sin(yaw) + dz * Math.cos(yaw)
+      const next = stepPosition(p, worldDx, worldDz, dt, keys.has('ShiftLeft') || keys.has('ShiftRight') || input.current.run ? 8 : 4.2, obstacles)
       const moving = Math.hypot(next.x-p.x, next.y-p.y) > .0001
-      if (moving) actor.root.rotation.y = Math.atan2(dx, dz)
+      if (moving) actor.root.rotation.y = Math.atan2(worldDx, worldDz)
       p = next; actor.root.position.set(p.x, 0, p.y); actor.animate(now / 1000, moving)
       npcs.forEach(npc => npc.animate(now / 1000, false))
       for (const { reward, mesh } of rewardMeshes) {
@@ -114,9 +119,15 @@ export default function OpenWorld(props: Props) {
       if (!document.hidden) {
         if (renderer) {
           const cameraBlocked = (x: number, z: number) => obstacles.some(o => o.polygon && pointInPolygon(x, z, o.polygon))
-          const cameraDistance = [16, 10, 5, 2].find(distance => !cameraBlocked(p.x - distance * .7, p.y + distance)) ?? 2
-          cameraTarget.set(p.x - cameraDistance * .7, 12, p.y + cameraDistance); camera.position.lerp(cameraTarget, 1 - Math.exp(-6 * dt))
-          lookAt.set(p.x + 8, 1, p.y - 3); camera.lookAt(lookAt); renderer.render(scene, camera)
+          let clearDistance = distance
+          for (let radius = 2; radius <= distance; radius += .8) {
+            if (cameraBlocked(p.x + Math.sin(yaw) * Math.cos(pitch) * radius, p.y + Math.cos(yaw) * Math.cos(pitch) * radius)) {
+              clearDistance = Math.max(2, radius - .8); break
+            }
+          }
+          cameraTarget.set(p.x + Math.sin(yaw) * Math.cos(pitch) * clearDistance, 1.6 + Math.sin(pitch) * clearDistance, p.y + Math.cos(yaw) * Math.cos(pitch) * clearDistance)
+          camera.position.lerp(cameraTarget, 1 - Math.exp(-8 * dt))
+          lookAt.set(p.x, 1.6, p.y); camera.lookAt(lookAt); renderer.render(scene, camera)
         }
       }
       frame = requestAnimationFrame(tick)
@@ -132,16 +143,30 @@ export default function OpenWorld(props: Props) {
   }, [props.avatar, props.nickname, rewardKey, playerKey, attempt])
 
   function start(e: PointerEvent<HTMLDivElement>) {
-    if (latest.current.paused || (e.target as HTMLElement).closest('button,a,summary,details') || touch.current) return
+    if (latest.current.paused || (e.target as HTMLElement).closest('button,a,summary,details,.world-help,.world-error')) return
     e.currentTarget.focus({ preventScroll: true })
-    if (e.pointerType === 'mouse') return
+    if (e.pointerType === 'mouse' && e.button !== 0) return
     const rect = e.currentTarget.getBoundingClientRect()
+    if (e.pointerType === 'mouse' || e.clientX - rect.left >= rect.width * .48) {
+      if (cameraDrag.current) return
+      cameraDrag.current = { id: e.pointerId, x: e.clientX, y: e.clientY }
+      e.currentTarget.setPointerCapture(e.pointerId)
+      return
+    }
+    if (touch.current) return
     touch.current = { id: e.pointerId, x: e.clientX, y: e.clientY }
     e.currentTarget.setPointerCapture(e.pointerId)
     if (joystick.current) { joystick.current.style.cssText = `display:block;left:${e.clientX-rect.left}px;top:${e.clientY-rect.top}px` }
     if (thumb.current) thumb.current.style.transform = 'translate(0,0)'
   }
   function move(e: PointerEvent<HTMLDivElement>) {
+    if (cameraDrag.current?.id === e.pointerId) {
+      const drag = cameraDrag.current
+      view.current.yaw -= (e.clientX - drag.x) * .006
+      view.current.pitch = Math.max(.08, Math.min(1.25, view.current.pitch + (e.clientY - drag.y) * .004))
+      drag.x = e.clientX; drag.y = e.clientY
+      return
+    }
     if (!touch.current || touch.current.id !== e.pointerId) return
     const dx = e.clientX - touch.current.x, dy = e.clientY - touch.current.y
     const length = Math.hypot(dx, dy), scale = Math.max(1, length / 45)
@@ -149,22 +174,33 @@ export default function OpenWorld(props: Props) {
     if (thumb.current) thumb.current.style.transform = `translate(${dx/scale}px,${dy/scale}px)`
   }
   function stop(e: PointerEvent<HTMLDivElement>) {
+    if (cameraDrag.current?.id === e.pointerId) cameraDrag.current = null
     if (touch.current?.id !== e.pointerId) return
     touch.current = null; input.current.x = 0; input.current.z = 0
     if (joystick.current) joystick.current.style.display = 'none'
   }
+  function zoom(e: WheelEvent<HTMLDivElement>) {
+    if (latest.current.paused || (e.target as HTMLElement).closest('button,.world-help,.world-error')) return
+    e.preventDefault()
+    view.current.distance = Math.max(5, Math.min(34, view.current.distance + Math.sign(e.deltaY) * 2))
+  }
+  function changeZoom(amount: number) {
+    view.current.distance = Math.max(5, Math.min(34, view.current.distance + amount))
+    surface.current?.focus({ preventScroll: true })
+  }
   return <section className="open-world">
-    <div className="world-toolbar"><div><span className="world-live-dot" /> CENTRO DA LAPA <small>PARANÁ · BRASIL</small></div><div><span className="world-data-label">RUAS E EDIFÍCIOS REAIS</span><button onClick={() => setHelp(v => !v)} aria-label="Ajuda e controles">?</button></div></div>
-    <div className="world-surface" ref={surface} tabIndex={0} aria-label="Explorar Lapa. Clique aqui e use WASD ou setas. No celular, toque e arraste para andar." onPointerDown={start} onPointerMove={move} onPointerUp={stop} onPointerCancel={stop} onLostPointerCapture={stop}>
+    <div className="world-toolbar"><div><span className="world-live-dot" /> CENTRO DA LAPA <small>PARANÁ · BRASIL</small></div><div><span className="world-data-label">RUAS E EDIFÍCIOS REAIS</span><button onClick={() => { view.current = { yaw: -0.6, pitch: 0.5, distance: 20 }; surface.current?.focus({ preventScroll: true }) }} aria-label="Centralizar câmera">↺ Câmera</button><button onClick={() => setHelp(v => !v)} aria-label="Ajuda e controles">?</button></div></div>
+    <div className="world-surface" ref={surface} tabIndex={0} aria-label="Explorar Lapa. Use WASD ou setas para andar. Arraste para girar a câmera. No celular, analógico à esquerda e câmera à direita." onPointerDown={start} onPointerMove={move} onPointerUp={stop} onPointerCancel={stop} onLostPointerCapture={stop} onWheel={zoom}>
       <div ref={host} className="world-renderer" />
       <div className="world-location"><small>01 / EXPLORE O MUNDO</small><b>Bem-vindo à Lapa.</b><span>Praça General Carneiro · ruas e prédios mapeados</span></div>
       <div className="world-minimap" aria-label={`Posição virtual: ${coords.x}, ${coords.y} metros`}><span>N ↑</span><i style={{ left: `${coords.x / WORLD_SIZE * 100 + 50}%`, top: `${coords.y / WORLD_SIZE * 100 + 50}%` }} /><small>{coords.x} / {coords.y} m</small></div>
-      <div className="world-control-hint"><span className="desktop-controls"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> andar · <kbd>Shift</kbd> correr</span><span className="mobile-controls">Toque e arraste para andar</span></div>
+      <div className="world-control-hint"><span className="desktop-controls"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> andar · arraste para girar câmera · roda aproxima</span><span className="mobile-controls">Esquerda: andar · direita: girar câmera</span></div>
       <div className="floating-stick" ref={joystick} aria-hidden="true"><div ref={thumb} /></div>
+      <div className="world-zoom" aria-label="Distância da câmera"><button onClick={() => changeZoom(-3)} aria-label="Aproximar câmera">+</button><button onClick={() => changeZoom(3)} aria-label="Afastar câmera">−</button></div>
       <button className="world-run" aria-pressed={input.current.run} onClick={() => { input.current.run = !input.current.run; setCoords(v => ({ ...v })); surface.current?.focus({ preventScroll: true }) }}>Correr</button>
       {nearby && <button className="world-interact" onClick={() => props.onReward(nearby)}>E · {nearby.name} →</button>}
       {error && <div className="world-error" role="alert"><b>O cenário precisa de atenção</b><p>{error}</p><button onClick={() => setAttempt(v => v + 1)}>Tentar novamente</button></div>}
-      {help && <div className="world-help"><button onClick={() => setHelp(false)} aria-label="Fechar ajuda">×</button><h3>Uma pessoa, um mundo.</h3><p>Clique no cenário e use WASD ou as setas. Shift para correr. No celular, toque e arraste: o analógico aparece sob seu dedo. Aproxime-se das lembranças e pressione E.</p><p>O traçado das ruas, a Praça General Carneiro e os contornos dos edifícios vêm de dados do OpenStreetMap. A aparência dos prédios, vegetação e iluminação são interpretações artísticas. O percurso é virtual, sem GPS.</p><p>Os acompanhantes identificados como NPC são simulados. Não representam pessoas conectadas.</p></div>}
+      {help && <div className="world-help"><button onClick={() => setHelp(false)} aria-label="Fechar ajuda">×</button><h3>Uma pessoa, um mundo.</h3><p>Clique no cenário e use WASD ou as setas para andar na direção da câmera. Shift para correr. Arraste no cenário para girar a câmera; use a roda ou os botões + e − para aproximar e afastar. O botão Câmera restaura a vista inicial. No celular, arraste à esquerda para andar e à direita para girar a câmera. Aproxime-se das lembranças e pressione E.</p><p>O traçado das ruas, a Praça General Carneiro e os contornos dos edifícios vêm de dados do OpenStreetMap. A aparência dos prédios, vegetação e iluminação são interpretações artísticas. O percurso é virtual, sem GPS.</p><p>Os acompanhantes identificados como NPC são simulados. Não representam pessoas conectadas.</p></div>}
     </div>
     <div className="world-caption"><span>Personagens 3D · caminhada livre · NPCs simulados</span><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors · ODbL</a></div>
   </section>
