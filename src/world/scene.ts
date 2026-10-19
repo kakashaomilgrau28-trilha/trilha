@@ -316,6 +316,8 @@ function contextHouses(scene: THREE.Scene, obstacles: Obstacle[]) {
           const corners = [[-width/2, 0], [width/2, 0], [width/2, -depth], [-width/2, -depth]]
             .map(([u, v]) => [frontX + Math.cos(yaw)*u + Math.sin(yaw)*v, frontZ - Math.sin(yaw)*u + Math.cos(yaw)*v] as [number, number])
           const centerX = frontX + nx*depth/2, centerZ = frontZ + nz*depth/2
+          // Keep the documented square, church, theater and museum unobstructed.
+          if (Math.hypot(centerX, centerZ) < 105) continue
           const xs = corners.map(c => c[0]), zs = corners.map(c => c[1])
           const x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs)
           if (lapa.parks.some(park => [...corners, [centerX,centerZ]].some(([x,z]) => pointInPolygon(x,z,park.points as [number,number][])))) continue
