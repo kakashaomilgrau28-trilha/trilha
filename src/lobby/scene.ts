@@ -1,7 +1,11 @@
 import * as T from "three";
-import { box, label } from "../world/character";
+import { box as plainBox, label } from "../world/character";
 import type { Obstacle } from "../world/physics";
 import {buildLandscape} from './landscape';
+import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
+import {polishCamp} from './ambience';
+import {batchStaticWorld} from './rendering';
+function box(...args:Parameters<typeof plainBox>){const mesh=plainBox(...args);const [,w,h,d]=args;if(Math.min(w,h,d)>.08&&Math.max(w,h,d)<12){mesh.geometry.dispose();mesh.geometry=new RoundedBoxGeometry(w,h,d,1,Math.min(.045,w/5,h/5,d/5))}return mesh}
 import {destinations} from './exploration';
 export {SIZE} from './exploration';
 export const places = [
@@ -59,7 +63,7 @@ function cylinder(
   y: number,
   z: number,
   color: string,
-  segments = 10,
+  segments = 16,
 ) {
   const m = new T.Mesh(new T.CylinderGeometry(r, r, h, segments), mat(color));
   m.position.set(x, y, z);
@@ -74,7 +78,7 @@ function sphere(
   z: number,
   color: string,
 ) {
-  const m = new T.Mesh(new T.IcosahedronGeometry(r, 1), mat(color));
+  const m = new T.Mesh(new T.SphereGeometry(r, 16, 10), mat(color));
   m.position.set(x, y, z);
   parent.add(m);
   return m;
@@ -104,7 +108,7 @@ function tree(scene: T.Scene, x: number, z: number, seed: number) {
   cylinder(scene, 0.23, h, x, h / 2, z, "#73573d");
   for (let i = 0; i < 3; i++) {
     const m = new T.Mesh(
-      new T.ConeGeometry(2.5 - i * 0.4, 3, 9),
+      new T.ConeGeometry(2.5 - i * 0.4, 3, 14),
       mat(["#375d40", "#426d49", "#568057"][seed % 3]),
     );
     m.position.set(x, h - 1 + i * 1.2, z);
@@ -186,6 +190,7 @@ export function buildLobby(scene: T.Scene, vip: boolean) {
   }
   const flames = new T.Group();
   scene.add(flames);
+  flames.userData.dynamic=true;
   for (let i = 0; i < 6; i++) {
     const flame = new T.Mesh(
       new T.ConeGeometry(0.5 - i * 0.055, 1.7 - i * 0.1, 7),
@@ -346,9 +351,11 @@ export function buildLobby(scene: T.Scene, vip: boolean) {
       y = 5.7 - Math.sin((i / 17) * Math.PI) * 1.1;
     sphere(scene, 0.12, x, y, 8, i % 3 ? "#f8dda2" : "#c6d9b6");
   }
+  const atmosphere=polishCamp(scene);batchStaticWorld(scene);
   return {
     obstacles,
-    animate(time: number) {
+    animate(time: number,camera:T.Camera,caveBlend=0) {
+      atmosphere(time,camera,caveBlend);
       flames.scale.y = 1 + Math.sin(time * 7) * 0.08;
       flames.rotation.y = time * 0.2;
       firelight.intensity = 15 + Math.sin(time * 9);

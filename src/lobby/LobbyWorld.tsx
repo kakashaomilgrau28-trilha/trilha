@@ -10,13 +10,15 @@ import {
   LocateFixed,
 } from "lucide-react";
 import { person, label, disposeScene } from "../world/character";
-import { stepPosition } from "../world/physics";
+import {createMotion,advanceMotion,obstacleIndex,dampAngle} from './motion';
+import {configureRenderer,type GraphicQuality} from './rendering';
 import { avatars } from "../gameData";
 import { buildLobby, equipment, places, SIZE } from "./scene";
 import type { Profile, Visitor } from "./useLobby";
 import {BOUNDARY, terrainHeight, caveAt, ropeCrossing, discoveries, type Discovery} from './exploration';
 import {movementSpeed,energyStep,gearIds} from './gear';
 import FieldMap from './FieldMap';
+import {frameProfiler} from './diagnostics';
 type Props = {
   profile: Profile;
   players: Visitor[];
@@ -39,7 +41,12 @@ export default function LobbyWorld(props: Props) {
   const latest = useRef(props);
   latest.current = props;
   const view = useRef({ yaw: 0, pitch: 0.65, distance: 22 }),
-    input = useRef({ x: 0, z: 0, run: false });
+    input = useRef({ x: 0, z: 0, run: false, jump:false });
+  const [quality,setQuality]=useState<GraphicQuality>(()=>{try{const saved=localStorage.getItem("trilha.graphics");return saved==="high"||saved==="economy"?saved:"auto"}catch{return "auto"}});
+  const qualityRef=useRef(quality);qualityRef.current=quality;
+  const [showPerformance,setShowPerformance]=useState(false),[performanceText,setPerformanceText]=useState("Amostrando…");
+  const showPerformanceRef=useRef(false);showPerformanceRef.current=showPerformance;
+  const [joystick,setJoystick]=useState<{x:number;y:number}|null>(null),stick=useRef<HTMLDivElement>(null);
   const touches = useRef(
     new Map<number, { x: number; y: number; kind: "walk" | "camera" }>(),
   );
@@ -84,9 +91,10 @@ export default function LobbyWorld(props: Props) {
     const container = host.current,
       scene = new T.Scene();
     scene.background = new T.Color("#c2d4c6");
-    scene.fog = new T.Fog("#c2d4c6", 220, 700);
-    const ambient=new T.HemisphereLight("#fff3d9", "#4e7054", 2.4); scene.add(ambient);
-    const sun = new T.DirectionalLight("#fff2d2", 3);
+    scene.fog = new T.Fog("#d4dbcc", 120, 550);
+    const ambient=new T.HemisphereLight("#d9e8ec", "#687853", 1.65); scene.add(ambient);
+    const sun = new T.DirectionalLight("#ffe4b2", 2.6);
+    sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=sun.shadow.camera.bottom=-32;sun.shadow.camera.right=sun.shadow.camera.top=32;sun.shadow.camera.near=1;sun.shadow.camera.far=140;sun.shadow.normalBias=.04;sun.shadow.bias=-.00012;sun.shadow.radius=2;scene.add(sun.target);
     sun.position.set(-25, 45, 20);
     scene.add(sun);
     const world = buildLobby(scene, props.vip);
@@ -122,6 +130,7 @@ export default function LobbyWorld(props: Props) {
       itemId = latest.current.item;
     actor.root.add(equipped);
     const beam=new T.SpotLight('#fff0bf',80,38,.6,.5,1.3);beam.position.set(.25,1.6,.2);beam.target.position.set(0,1.2,12);actor.root.add(beam,beam.target);
+    const lampFill=new T.PointLight('#e6d4ad',1.6,4,2);lampFill.position.set(0,2.1,.15);actor.root.add(lampFill);
 
     let p = {
         x: props.initialPosition?.x ?? Math.random() * 4 - 2,
@@ -130,6 +139,14 @@ export default function LobbyWorld(props: Props) {
       frame = 0,
       last = performance.now(),
       published = 0;
+    const groundHeight=(x:number,z:number)=>terrainHeight(x,z)+(Math.hypot(x,z)<43?.17:0);
+    const motion=createMotion(p.x,p.y,groundHeight),queryObstacles=obstacleIndex(world.obstacles);
+    const lookTarget=new T.Vector3(p.x,groundHeight(p.x,p.y)+1,p.y),desiredLook=new T.Vector3(),peerTarget=new T.Vector3();
+    const daylight=new T.Color('#d4dbcc'),night=new T.Color('#1e2824');
+    let caveBlend=0,cameraDistance=view.current.distance,cameraPitch=view.current.pitch,cameraYaw=view.current.yaw,autoScale=1,lastTuning=0,appliedQuality=qualityRef.current,cameraClearance=view.current.distance;
+    const raycaster=new T.Raycaster(),cameraRay=new T.Vector3();
+    const cameraObstacles:T.Object3D[]=[];scene.traverse(node=>{if(node instanceof T.Mesh&&!(node instanceof T.InstancedMesh)&&node.castShadow){for(let parent:T.Object3D|null=node;parent;parent=parent.parent)if(parent===actor.root)return;cameraObstacles.push(node)}});
+
     useItem.current=()=>{
       const r=resources.current,item=latest.current.item;
       const tell=(text:string)=>{r.message=text;r.messageUntil=performance.now()+4000};
@@ -157,8 +174,7 @@ export default function LobbyWorld(props: Props) {
         antialias: true,
         powerPreference: "high-performance",
       });
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
-      renderer.toneMapping = T.ACESFilmicToneMapping;
+      configureRenderer(renderer,qualityRef.current);
       renderer.domElement.setAttribute(
         "aria-label",
         "Lobby 3D com fogueira, barracas, lago, oficina e jogadores conectados",
@@ -171,6 +187,7 @@ export default function LobbyWorld(props: Props) {
       disposeScene(scene);
       return;
     }
+    const profileFrame=frameProfiler(renderer,container);
     const resize = () => {
       const w = container.clientWidth,
         h = container.clientHeight;
@@ -183,8 +200,8 @@ export default function LobbyWorld(props: Props) {
     observer.observe(container);
     const reset = () => {
       keys.clear();
-      input.current.x = input.current.z = 0;
-      touches.current.clear();
+      input.current.x = input.current.z = 0;input.current.jump=false;
+      touches.current.clear();setJoystick(null);
     };
     const down = (e: KeyboardEvent) => {
       if(e.code==='KeyM'&&surface.current?.contains(document.activeElement)){e.preventDefault();setMapExpanded(v=>!v);return}
@@ -211,6 +228,7 @@ export default function LobbyWorld(props: Props) {
         e.preventDefault();
         keys.add(e.code);
       }
+      if(e.code==='Space'&&!e.repeat){e.preventDefault();input.current.jump=true}
       if(e.code==='KeyF'&&!e.repeat){e.preventDefault();useItem.current()}
       if(e.code==='KeyE'&&!e.repeat){if(caveAt(p.x,p.y)&&!(['lanterna','capacete'].includes(latest.current.item)&&resources.current.light))return;const reward=discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5);if(reward)latest.current.onDiscover(reward)}
     };
@@ -219,7 +237,7 @@ export default function LobbyWorld(props: Props) {
     window.addEventListener("keyup", up);
     window.addEventListener("blur", reset);
     const tick = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000);
+      const dt = Math.max(0,Math.min(0.1, (now - last) / 1000));
       last = now;
       if (latest.current.paused || document.hidden) reset();
       const enabled = !latest.current.paused && !document.hidden;
@@ -240,23 +258,28 @@ export default function LobbyWorld(props: Props) {
       const slope=Math.abs(terrainHeight(p.x+Math.sin(actor.root.rotation.y)*2,p.y+Math.cos(actor.root.rotation.y)*2)-terrainHeight(p.x,p.y))/2;
       const sprint=input.current.run||keys.has('ShiftLeft');
       const speed=movementSpeed(bike?'bicicleta':latest.current.item==='bicicleta'?'':latest.current.item,sprint,r.energy,slope,!!cave);
-      const closeObstacles=world.obstacles.filter(o=>Math.abs(o.x-p.x)<o.width/2+4&&Math.abs(o.z-p.y)<o.depth/2+4);
-      let next=stepPosition(p,wx,wz,dt,speed,closeObstacles,BOUNDARY);
-      if(!enabled&&r.crossing)r.crossing.start+=dt*1000;
-      if(r.crossing){const t=Math.min(1,(now-r.crossing.start)/2400);next={x:r.crossing.from.x+(r.crossing.to.x-r.crossing.from.x)*t,y:r.crossing.from.y+(r.crossing.to.y-r.crossing.from.y)*t};if(t>=1)r.crossing=null}
-      const moving = Math.hypot(next.x - p.x, next.y - p.y) > 0.001;
-      if (moving) actor.root.rotation.y = Math.atan2(wx, wz);
-      p = next;
-      const altitude=terrainHeight(p.x,p.y);
-      actor.root.position.set(p.x, altitude, p.y);
-      actor.animate(now / 1000, moving, latest.current.gesture,bike);
+      advanceMotion(motion,{x:wx,z:wz,speed,jump:input.current.jump,enabled,bike},dt,groundHeight,queryObstacles,BOUNDARY);input.current.jump=false;
+      if(r.crossing){
+        if(!enabled)r.crossing.start+=dt*1000;
+        const t=Math.min(1,(now-r.crossing.start)/2400),smooth=t*t*(3-2*t);
+        motion.x=r.crossing.from.x+(r.crossing.to.x-r.crossing.from.x)*smooth;motion.z=r.crossing.from.y+(r.crossing.to.y-r.crossing.from.y)*smooth;
+        motion.y=groundHeight(motion.x,motion.z)+Math.sin(t*Math.PI)*.35;motion.vx=motion.vz=0;
+        if(t>=1)r.crossing=null;
+      }
+      const moved=Math.hypot(motion.x-p.x,motion.z-p.y),moving=moved>.0005,actualSpeed=moved/Math.max(dt,.001);
+      if(moving)actor.root.rotation.y=dampAngle(actor.root.rotation.y,Math.atan2(motion.x-p.x,motion.z-p.y),bike?9:18,dt);
+      p.x=motion.x;p.y=motion.z;
+      const altitude=groundHeight(p.x,p.y),air=Math.max(0,motion.y-altitude);
+      actor.root.position.set(p.x,motion.y,p.y);
+      actor.animate(now/1000,moving,latest.current.gesture,bike,{speed:actualSpeed,air,landing:motion.landing});
       if(enabled)r.energy=energyStep(r.energy,moving,sprint,bike,dt);
-      const inside=caveAt(p.x,p.y);
-      const hasLight=['lanterna','capacete'].includes(latest.current.item)&&r.light;
-      beam.visible=hasLight;beam.intensity=latest.current.item==='capacete'?120:80;
-      ambient.intensity=inside ? .12 : 2.4;sun.intensity=inside ? .05 : 3;
-      const fog=scene.fog as T.Fog;fog.color.set(inside?'#1e2824':'#c2d4c6');fog.near=inside?10:220;fog.far=inside?75:1300;
-      (scene.background as T.Color).set(inside?'#1e2824':'#c2d4c6');
+      const inside=caveAt(p.x,p.y),hasLight=['lanterna','capacete'].includes(latest.current.item)&&r.light;
+      beam.visible=hasLight;lampFill.visible=hasLight&&!!inside;beam.intensity=latest.current.item==='capacete'?120:80;
+      caveBlend+=(Number(!!inside)-caveBlend)*(1-Math.exp(-4*dt));
+      ambient.intensity=T.MathUtils.lerp(1.65,.22,caveBlend);sun.intensity=T.MathUtils.lerp(2.6,.05,caveBlend);
+      const fog=scene.fog as T.Fog;fog.color.copy(daylight).lerp(night,caveBlend);fog.near=T.MathUtils.lerp(120,8,caveBlend);fog.far=T.MathUtils.lerp(550,60,caveBlend);
+      (scene.background as T.Color).copy(fog.color);
+      const shadowX=Math.round(p.x*16)/16,shadowZ=Math.round(p.y*16)/16;sun.position.set(shadowX-28,altitude+48,shadowZ+22);sun.target.position.set(shadowX,altitude,shadowZ);
       if (itemId !== latest.current.item) {
         actor.root.remove(equipped);
         disposeScene(equipped);
@@ -266,7 +289,7 @@ export default function LobbyWorld(props: Props) {
       }
       if(itemId==='bicicleta'){
         equipped.visible=!inside;equipped.position.x=r.mounted?0:.8;
-        for(const wheel of equipped.userData.wheels??[])if(moving&&bike)wheel.rotation.x+=speed*dt/.48;
+        for(const wheel of equipped.userData.wheels??[])if(moving&&bike)wheel.rotation.x+=moved/.48;
       }
       if (itemId === "pet") {
         equipped.rotation.y = Math.sin(now * 0.003) * 0.15;
@@ -317,17 +340,13 @@ export default function LobbyWorld(props: Props) {
           };
           actors.set(peer.id, a);
         }
-        const dest = new T.Vector3(
-            ((peer.x - 50) * SIZE) / 100,
-            0,
-            ((peer.y - 50) * SIZE) / 100,
-          ),
-          delta = dest.clone().sub(a.actor.root.position),
-          walk = Math.hypot(delta.x, delta.z) > 0.1;
-        dest.y=terrainHeight(dest.x,dest.z);
-        if (walk) a.actor.root.rotation.y = Math.atan2(delta.x, delta.z);
-        a.actor.root.position.lerp(dest, 1 - Math.exp(-6 * dt));
-        a.actor.animate(now / 1000, walk, peer.gesture,peer.item==="bicicleta"&&!caveAt(dest.x,dest.z));
+        const dest=peerTarget.set(((peer.x-50)*SIZE)/100,0,((peer.y-50)*SIZE)/100);
+        const deltaX=dest.x-a.actor.root.position.x,deltaZ=dest.z-a.actor.root.position.z,walk=Math.hypot(deltaX,deltaZ)>.1;
+        dest.y=groundHeight(dest.x,dest.z);
+        if(walk)a.actor.root.rotation.y=dampAngle(a.actor.root.rotation.y,Math.atan2(deltaX,deltaZ),12,dt);
+        const peerSpeed=Math.min(14,Math.hypot(deltaX,deltaZ)*6);a.actor.root.position.lerp(dest,1-Math.exp(-6*dt));
+        a.actor.root.visible=Math.hypot(dest.x-p.x,dest.z-p.y)<200;
+        if(a.actor.root.visible)a.actor.animate(now/1000,walk,peer.gesture,peer.item==='bicicleta'&&!caveAt(dest.x,dest.z),{speed:peerSpeed,air:0,landing:0});
         if(a.itemId==='bicicleta'){a.item.visible=!caveAt(dest.x,dest.z);for(const wheel of a.item.userData.wheels??[])if(walk)wheel.rotation.x+=14*dt/.48}
         if (a.itemId !== peer.item) {
           a.actor.root.remove(a.item);
@@ -340,7 +359,8 @@ export default function LobbyWorld(props: Props) {
       if (now - published > 150) {
         published = now;
         latest.current.onMove((p.x / SIZE) * 100 + 50, (p.y / SIZE) * 100 + 50);
-        setCoords({ x: Math.round(p.x), z: Math.round(p.y) });
+        setCoords(prev=>prev.x===Math.round(p.x)&&prev.z===Math.round(p.y)?prev:{x:Math.round(p.x),z:Math.round(p.y)});
+        if(showPerformanceRef.current&&container.dataset.performance){const stats=JSON.parse(container.dataset.performance);setPerformanceText(`${stats.fps} FPS · quadro p95 ${stats.p95} ms · ${stats.calls} desenhos · ${stats.triangles.toLocaleString('pt-BR')} triângulos`)}
         const goal=discoveries.filter(g=>!latest.current.foundIds.includes(g.id)).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.y)-Math.hypot(b.x-p.x,b.z-p.y))[0];
         const bearing=goal?Math.atan2(goal.x-p.x,-(goal.z-p.y))*180/Math.PI:0;
         setHud({energy:Math.round(r.energy),water:r.water,cave:inside?.name??'',heading:actor.root.rotation.y,light:r.light,observing:r.observing,mounted:r.mounted,message:r.messageUntil>now?r.message:'',bearing:goal?`${goal.name} · ${Math.round((bearing+360)%360)}°`:'Coleção completa',distance:goal?Math.round(Math.hypot(goal.x-p.x,goal.z-p.y)):0});
@@ -353,18 +373,38 @@ export default function LobbyWorld(props: Props) {
           ),
         );
       }
-      world.animate(now / 1000);
+      world.animate(now/1000,camera,caveBlend);
       for(const {reward,root,gem,tag} of treasureMeshes){root.visible=!latest.current.foundIds.includes(reward.id);root.position.y=terrainHeight(reward.x,reward.z)+1.1+Math.sin(now*.002+reward.x)*.13;gem.rotation.y=now*.001;tag.visible=Math.hypot(reward.x-p.x,reward.z-p.y)<22}
       const firstPerson=r.observing&&latest.current.item==='binoculos';
-      const actualDistance=inside?3.4:distance,actualPitch=inside ? .22 : pitch;
-      target.set(p.x+Math.sin(yaw)*Math.cos(actualPitch)*actualDistance,altitude+1.5+Math.sin(actualPitch)*actualDistance,p.y+Math.cos(yaw)*Math.cos(actualPitch)*actualDistance);
-      camera.position.lerp(target,1-Math.exp(-8*dt));
-      camera.position.y=Math.max(camera.position.y,terrainHeight(camera.position.x,camera.position.z)+2);
-      const fov=firstPerson?20:48;if(camera.fov!==fov){camera.fov=fov;camera.updateProjectionMatrix()}actor.root.visible=!firstPerson;
-      if(firstPerson){camera.position.set(p.x,altitude+1.75,p.y);camera.lookAt(p.x-Math.sin(yaw)*50,altitude+1.75+(pitch-.65)*30,p.y-Math.cos(yaw)*50)}
-      else if(inside){camera.position.y=altitude+2.8;camera.lookAt(p.x-Math.sin(yaw)*3,altitude+1.5,p.y-Math.cos(yaw)*3)}
-      else camera.lookAt(p.x,altitude+1,p.y-2);
+      name.visible=!inside&&Math.min(distance,cameraClearance)>13;
+      cameraDistance+=( (firstPerson?.05:inside?2.8:distance)-cameraDistance)*(1-Math.exp(-10*dt));
+      cameraPitch+=((inside?.2:pitch)-cameraPitch)*(1-Math.exp(-14*dt));cameraYaw=dampAngle(cameraYaw,yaw,18,dt);
+      desiredLook.set(p.x,motion.y+1.2-motion.landing*.035,p.y);
+      lookTarget.lerp(desiredLook,1-Math.exp(-20*dt));
+      target.set(lookTarget.x+Math.sin(cameraYaw)*Math.cos(cameraPitch)*cameraDistance,lookTarget.y+Math.sin(cameraPitch)*cameraDistance,lookTarget.z+Math.cos(cameraYaw)*Math.cos(cameraPitch)*cameraDistance);
+      if(!inside){
+        cameraRay.copy(target).sub(lookTarget);const length=cameraRay.length();cameraRay.normalize();let clear=length;
+        for(let d=.8;d<length;d+=.6){
+          const x=lookTarget.x+cameraRay.x*d,z=lookTarget.z+cameraRay.z*d,y=lookTarget.y+cameraRay.y*d;
+          const trees=queryObstacles(x,z,4);
+          if(y<groundHeight(x,z)+.35||trees.some(o=>o.canopy&&Math.hypot(o.x-x,o.z-z)<o.canopy&&y>terrainHeight(o.x,o.z)+2.8&&y<terrainHeight(o.x,o.z)+(o.height??0))){clear=Math.max(.8,d-.45);break}
+        }
+        cameraClearance=clear<cameraClearance?clear:cameraClearance+(clear-cameraClearance)*(1-Math.exp(-5*dt));
+        target.copy(lookTarget).addScaledVector(cameraRay,Math.min(length,cameraClearance));
+      }
+      if(inside||cameraDistance<16){
+        cameraRay.copy(target).sub(lookTarget);const length=cameraRay.length();raycaster.set(lookTarget,cameraRay.normalize());raycaster.far=length;
+        const hit=raycaster.intersectObjects(cameraObstacles,false)[0];if(hit&&hit.distance<length)target.copy(lookTarget).addScaledVector(cameraRay,Math.max(.25,hit.distance-.3));
+      }
+      camera.position.copy(target);camera.position.y=Math.max(camera.position.y,groundHeight(camera.position.x,camera.position.z)+.5);
+      const fov=firstPerson?22:48+(sprint&&moving&&!bike?2:0);camera.fov+=(fov-camera.fov)*(1-Math.exp(-10*dt));camera.updateProjectionMatrix();actor.root.visible=!firstPerson;
+      if(firstPerson){camera.position.set(p.x,motion.y+1.75,p.y);camera.lookAt(p.x-Math.sin(cameraYaw)*50,motion.y+1.75+(pitch-.65)*30,p.y-Math.cos(cameraYaw)*50)}
+      else if(inside)camera.lookAt(lookTarget.x-Math.sin(cameraYaw)*2,lookTarget.y,lookTarget.z-Math.cos(cameraYaw)*2);
+      else camera.lookAt(lookTarget);
+      if(appliedQuality!==qualityRef.current){appliedQuality=qualityRef.current;autoScale=1;configureRenderer(renderer,appliedQuality,autoScale)}
+      if(now-lastTuning>6000&&appliedQuality==='auto'&&container.dataset.performance){lastTuning=now;const stats=JSON.parse(container.dataset.performance);autoScale=T.MathUtils.clamp(autoScale+(stats.fps<42?-.1:stats.fps>58?.05:0),.75,1);configureRenderer(renderer,appliedQuality,autoScale)}
       if (!document.hidden) renderer.render(scene, camera);
+      profileFrame(now);
       frame = requestAnimationFrame(tick);
     };
     camera.position.set(0, 18, 24);
@@ -375,7 +415,7 @@ export default function LobbyWorld(props: Props) {
       window.removeEventListener("keydown", down);
       window.removeEventListener("keyup", up);
       window.removeEventListener("blur", reset);
-      renderer.dispose();
+      sun.shadow.dispose();renderer.dispose();
       container.replaceChildren();
       disposeScene(scene);
     };
@@ -393,6 +433,7 @@ export default function LobbyWorld(props: Props) {
         ? "walk"
         : "camera";
     touches.current.set(e.pointerId, { x: e.clientX, y: e.clientY, kind });
+    if(kind==="walk")setJoystick({x:e.clientX-rect.left,y:e.clientY-rect.top});
     e.currentTarget.setPointerCapture(e.pointerId);
   }
   function move(e: PointerEvent<HTMLDivElement>) {
@@ -412,11 +453,12 @@ export default function LobbyWorld(props: Props) {
       const scale = Math.max(1, Math.hypot(dx, dy) / 45);
       input.current.x = dx / scale / 45;
       input.current.z = dy / scale / 45;
+      if(stick.current)stick.current.style.transform=`translate(${dx/scale}px,${dy/scale}px)`;
     }
   }
   function stop(e: PointerEvent<HTMLDivElement>) {
     const t = touches.current.get(e.pointerId);
-    if (t?.kind === "walk") input.current.x = input.current.z = 0;
+    if (t?.kind === "walk"){input.current.x=input.current.z=0;setJoystick(null)}
     touches.current.delete(e.pointerId);
   }
   const nearby = props.players.filter(
@@ -441,6 +483,7 @@ export default function LobbyWorld(props: Props) {
           >
             <RotateCcw size={17} />
           </button>
+          <select className="graphics-select" aria-label="Qualidade gráfica" value={quality} onChange={e=>{const q=e.target.value as GraphicQuality;setQuality(q);try{localStorage.setItem('trilha.graphics',q)}catch{}surface.current?.focus()}}><option value="auto">Gráficos: auto</option><option value="high">Gráficos: alta</option><option value="economy">Gráficos: leve</option></select>
           <button onClick={() => setMapExpanded(v=>!v)} aria-label="Abrir mapa de localização detalhado"><MapIcon size={17}/></button>
           <button
             onClick={() => setHelp(!help)}
@@ -484,6 +527,8 @@ export default function LobbyWorld(props: Props) {
         }}
       >
         <div className="lobby-renderer" ref={host} />
+        {joystick&&<div className="floating-stick" style={{left:joystick.x,top:joystick.y}} aria-hidden="true"><div ref={stick}/></div>}
+        <button className="jump-button" aria-label="Pular" onClick={()=>{input.current.jump=true;surface.current?.focus()}}>Pular <small>Espaço</small></button>
         <div className="place-caption">
           <strong>{near.name}</strong>
           <span>{near.description}</span>
@@ -570,6 +615,7 @@ export default function LobbyWorld(props: Props) {
             ))}
           </div>
         )}
+        {showPerformance&&<output className="performance-readout">{performanceText}</output>}
         {error && (
           <div className="map-help" role="alert">
             {error}
@@ -588,6 +634,8 @@ export default function LobbyWorld(props: Props) {
               mapa de campo mostra os lugares; a bicicleta aumenta a velocidade;
               o pet acompanha você e fareja descobertas. Use F ou os botões para montar a bicicleta, beber água, acender a luz e fixar a corda na ravina. Cavernas são exploradas a pé; leve lanterna ou capacete com luz.
             </p>
+            <label className="performance-toggle"><input type="checkbox" checked={showPerformance} onChange={e=>setShowPerformance(e.target.checked)}/> Exibir desempenho medido neste aparelho</label>
+            <p>Espaço ou Pular: salto. Gráficos automáticos ajustam a resolução durante a exploração. Use Alta para priorizar detalhes ou Leve para reduzir o custo gráfico.</p>
             <button onClick={() => setHelp(false)}>Entendi</button>
           </div>
         )}

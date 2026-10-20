@@ -1,5 +1,5 @@
 export type Position = { x: number; y: number }
-export type Obstacle = { x: number; z: number; width: number; depth: number; polygon?: [number, number][] }
+export type Obstacle = { x: number; z: number; width: number; depth: number; height?: number; canopy?: number; polygon?: [number, number][] }
 export const WORLD_SIZE = 600
 export const LAPA = { lat: -25.7675993, lng: -49.7164928 }
 export function geographicPosition(x: number, z: number) {

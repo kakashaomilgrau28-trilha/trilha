@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import {RoundedBoxGeometry} from "three/addons/geometries/RoundedBoxGeometry.js";
+import {mergeGeometries} from "three/addons/utils/BufferGeometryUtils.js";
 
 export const looks = [
   { shirt: "#d59b57", skin: "#bb825b", hair: "#332921" },
@@ -32,94 +34,78 @@ export function box(
   return mesh;
 }
 export function person(index: number) {
-  const colors = looks[index % looks.length];
-  const root = new THREE.Group();
-  const body = new THREE.Group();
-  root.add(body);
-  box(body, 0.53, 0.65, 0.28, 0, 1.12, 0, colors.shirt);
-  box(body, 0.48, 0.12, 0.3, 0, 0.82, 0, "#344d46");
-  box(body, 0.13, 0.12, 0.16, 0, 1.48, 0, colors.skin);
-  const head = new THREE.Mesh(
-    new THREE.SphereGeometry(0.23, 16, 12),
-    material(colors.skin),
-  );
-  head.scale.set(0.9, 1.1, 0.9);
-  head.position.y = 1.71;
-  body.add(head);
-  head.castShadow = true;
-  const hair = new THREE.Mesh(
-    new THREE.SphereGeometry(0.235, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2),
-    material(colors.hair),
-  );
-  hair.position.y = 1.76;
-  body.add(hair);
-  for (const x of [-0.08, 0.08])
-    box(body, 0.035, 0.04, 0.025, x, 1.72, 0.19, "#252b28");
-  box(body, 0.065, 0.06, 0.06, 0, 1.65, 0.2, colors.skin);
-  box(body, 0.09, 0.02, 0.025, 0, 1.58, 0.18, "#855347");
-  // Yellow scarf and backpack, with articulated limb pivots.
-  const scarf = box(body, 0.15, 0.27, 0.035, 0, 1.3, 0.165, "#f3cb5d");
-  scarf.rotation.z = -0.25;
-  box(body, 0.37, 0.46, 0.18, 0, 1.13, -0.22, "#3f6353");
-  // Uniform seams, pockets, scarf ring, badges, backpack straps and boot soles.
-  box(body, 0.018, 0.55, 0.012, 0, 1.13, 0.15, "#b8a17a");
-  for (const side of [-1, 1]) {
-    box(body, 0.15, 0.16, 0.03, side * 0.15, 1.21, 0.16, colors.shirt);
-    box(body, 0.15, 0.025, 0.04, side * 0.15, 1.28, 0.18, "#e0c99c");
-    box(body, 0.045, 0.5, 0.045, side * 0.2, 1.17, 0.17, "#3e5948");
-    const ear = new THREE.Mesh(
-      new THREE.SphereGeometry(0.055, 8, 6),
-      material(colors.skin),
-    );
-    ear.position.set(side * 0.21, 1.7, 0);
-    body.add(ear);
+  const colors=looks[((index%looks.length)+looks.length)%looks.length],root=new THREE.Group(),body=new THREE.Group();root.add(body);
+  const mats=new Map<string,THREE.MeshStandardMaterial>();
+  const mat=(color:string)=>{let m=mats.get(color);if(!m){m=material(color);m.roughness=color===colors.skin?.72:.88;mats.set(color,m)}return m};
+  function rounded(parent:THREE.Object3D,w:number,h:number,d:number,x:number,y:number,z:number,color:string,r=.04){
+    const mesh=new THREE.Mesh(new RoundedBoxGeometry(w,h,d,2,Math.min(r,w/3,h/3,d/3)),mat(color));mesh.position.set(x,y,z);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh;
   }
-  box(body, 0.12, 0.09, 0.05, 0, 1.35, 0.2, "#b39252");
-  box(body, 0.09, 0.09, 0.025, -0.14, 1.34, 0.19, "#d8b85e");
-  box(body, 0.31, 0.15, 0.07, 0, 1.01, -0.33, "#567a60");
-  for (const y of [1.03, 1.13, 1.23])
-    box(body, 0.025, 0.025, 0.02, 0, y, 0.17, "#d9ccb0");
-  const legs: THREE.Group[] = [],
-    arms: THREE.Group[] = [];
-  for (const side of [-1, 1]) {
-    const leg = new THREE.Group();
-    leg.position.set(side * 0.145, 0.8, 0);
-    body.add(leg);
-    box(leg, 0.21, 0.63, 0.23, 0, -0.31, 0, "#334b50");
-    box(leg, 0.23, 0.14, 0.34, 0, -0.73, 0.05, "#292c2a");
-    legs.push(leg);
-    const arm = new THREE.Group();
-    arm.position.set(side * 0.36, 1.4, 0);
-    body.add(arm);
-    box(arm, 0.18, 0.3, 0.22, 0, -0.14, 0, colors.shirt);
-    box(arm, 0.14, 0.3, 0.17, 0, -0.43, 0, colors.skin);
-    arms.push(arm);
+  function oval(parent:THREE.Object3D,r:number,x:number,y:number,z:number,color:string,sx=1,sy=1,sz=1){
+    const mesh=new THREE.Mesh(new THREE.SphereGeometry(r,20,14),mat(color));mesh.position.set(x,y,z);mesh.scale.set(sx,sy,sz);mesh.castShadow=true;parent.add(mesh);return mesh;
   }
-  return {
-    root,
-    animate(time: number, moving: boolean, gesture = "", cycling = false) {
-      const stride = moving ? Math.sin(time * 10) * 0.65 : 0;
-      legs[0].rotation.x = stride;
-      legs[1].rotation.x = -stride;
-      arms[0].rotation.x = -stride;
-      arms[1].rotation.x = stride;
-      body.position.y = moving
-        ? Math.abs(Math.sin(time * 10)) * 0.045
-        : Math.sin(time * 2) * 0.012;
-      arms[1].rotation.z =
-        gesture === "Acenar" || gesture === "Celebrar"
-          ? -2.3 + Math.sin(time * 8) * 0.25
-          : 0;
-      arms[0].rotation.z =
-        gesture === "Celebrar" ? 2.3 + Math.sin(time * 8) * 0.25 : 0;
-      body.rotation.x = cycling ? .12 : 0;
-      if(cycling){body.position.y=.35;legs[0].rotation.x=-.8+Math.sin(time*9)*.3;legs[1].rotation.x=-.8-Math.sin(time*9)*.3;arms[0].rotation.x=arms[1].rotation.x=-1.15;}
-      if (!cycling && gesture === "Sentar") {
-        body.position.y = -0.5;
-        legs[0].rotation.x = legs[1].rotation.x = -1.4;
-      }
-    },
-  };
+  function limb(parent:THREE.Object3D,r:number,length:number,y:number,color:string){const mesh=new THREE.Mesh(new THREE.CapsuleGeometry(r,length,4,10),mat(color));mesh.position.y=y;mesh.castShadow=true;parent.add(mesh);return mesh}
+  rounded(body,.54,.65,.31,0,1.12,0,colors.shirt,.09);
+  rounded(body,.47,.17,.3,0,.81,0,'#344d46');
+  oval(body,.09,0,1.48,0,colors.skin,.85,1.1,.85);
+  oval(body,.23,0,1.71,0,colors.skin,.92,1.12,.94);
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(.242,24,12,0,Math.PI*2,0,Math.PI*.56),mat(colors.hair));hair.position.y=1.75;hair.scale.z=.96;hair.castShadow=true;body.add(hair);
+  for(const side of [-1,1]){
+    oval(body,.05,side*.215,1.7,0,colors.skin,.7,1,1);
+    rounded(body,.07,.014,.025,side*.081,1.763,.203,colors.hair,.005);
+    rounded(body,.15,.15,.035,side*.15,1.22,.16,colors.shirt,.018);
+    rounded(body,.15,.025,.045,side*.15,1.28,.18,'#e0c99c',.008);
+    rounded(body,.045,.48,.035,side*.2,1.18,.17,'#3e5948',.012);
+  }
+  const eyes=new THREE.Group();eyes.position.y=1.72;body.add(eyes);
+  for(const side of [-1,1]){oval(eyes,.025,side*.077,0,.207,'#292e2a',.7,1,.45);oval(eyes,.008,side*.077-.005,.008,.219,'#fff4df',1,1,.4)}
+  oval(body,.035,0,1.665,.219,colors.skin,.75,1,1.05);
+  rounded(body,.075,.012,.018,0,1.604,.202,'#855347',.005);
+  const scarf=rounded(body,.14,.26,.035,0,1.29,.184,'#f3cb5d',.012);scarf.rotation.z=-.22;
+  rounded(body,.11,.075,.05,0,1.36,.2,'#b39252',.018);
+  rounded(body,.09,.09,.025,-.14,1.35,.19,'#d8b85e',.015);
+  rounded(body,.39,.48,.21,0,1.12,-.23,'#3f6353',.07);
+  rounded(body,.31,.15,.07,0,1.01,-.35,'#567a60',.03);
+  for(const y of [1.03,1.13,1.23])oval(body,.013,0,y,.169,'#d9ccb0');
+  const legs:THREE.Group[]=[],knees:THREE.Group[]=[],arms:THREE.Group[]=[],elbows:THREE.Group[]=[];
+  for(const side of [-1,1]){
+    const hip=new THREE.Group();hip.position.set(side*.145,.81,0);body.add(hip);legs.push(hip);
+    limb(hip,.105,.20,-.17,'#334b50');
+    const knee=new THREE.Group();knee.position.y=-.36;hip.add(knee);knees.push(knee);
+    limb(knee,.086,.20,-.15,'#334b50');rounded(knee,.23,.14,.34,0,-.37,.065,'#323731',.045);rounded(knee,.235,.035,.35,0,-.445,.07,'#242a25',.012);
+    const shoulder=new THREE.Group();shoulder.position.set(side*.32,1.39,0);body.add(shoulder);arms.push(shoulder);
+    limb(shoulder,.095,.16,-.12,colors.shirt);
+    const elbow=new THREE.Group();elbow.position.y=-.27;shoulder.add(elbow);elbows.push(elbow);
+    limb(elbow,.069,.17,-.12,colors.skin);oval(elbow,.077,0,-.26,0,colors.skin,.85,1.1,.8);
+  }
+  // Bake non-articulated pieces per joint into one draw, retaining vertex colours.
+  const joints:THREE.Object3D[]=[body,eyes,...legs,...knees,...arms,...elbows];
+  for(const joint of joints){const pieces=joint.children.filter(n=>n instanceof THREE.Mesh&&n!==scarf) as THREE.Mesh[];if(!pieces.length)continue;
+    const geos=pieces.map(piece=>{piece.updateMatrix();const geo=piece.geometry.index?piece.geometry.toNonIndexed():piece.geometry.clone();geo.applyMatrix4(piece.matrix);geo.deleteAttribute('uv');const color=(piece.material as THREE.MeshStandardMaterial).color,values=new Float32Array(geo.attributes.position.count*3);for(let i=0;i<values.length;i+=3){values[i]=color.r;values[i+1]=color.g;values[i+2]=color.b}geo.setAttribute('color',new THREE.BufferAttribute(values,3));return geo});
+    const geo=mergeGeometries(geos);geos.forEach(g=>g.dispose());if(geo){const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.82}));mesh.castShadow=true;mesh.receiveShadow=true;joint.add(mesh);pieces.forEach(p=>{joint.remove(p);p.geometry.dispose()})}
+  }
+  for(const [color,m] of mats)if(color!=='#f3cb5d')m.dispose();
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=64;const ctx=canvas.getContext('2d')!,gradient=ctx.createRadialGradient(32,32,2,32,32,31);gradient.addColorStop(0,'rgba(18,34,24,.35)');gradient.addColorStop(1,'rgba(18,34,24,0)');ctx.fillStyle=gradient;ctx.fillRect(0,0,64,64);
+  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1.8,1.8),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(canvas),transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1}));shadow.rotation.x=-Math.PI/2;shadow.position.y=.19;root.add(shadow);
+  let previous=0,phase=0,weight=0;
+  const ease=(current:number,target:number,dt:number)=>THREE.MathUtils.lerp(current,target,1-Math.exp(-14*dt));
+  return {root,animate(time:number,moving:boolean,gesture='',cycling=false,motion?:{speed:number;air:number;landing:number}){
+    const dt=previous?Math.min(.1,Math.max(0,time-previous)):1/60;previous=time;
+    const speed=motion?.speed??(moving?3.6:0),air=motion?.air??0,landing=motion?.landing??0;
+    weight=ease(weight,moving?Math.min(1,speed/2):0,dt);phase+=speed*dt*(cycling?2.8:2.7);
+    const stride=Math.sin(phase)*.62*weight,seated=!moving&&gesture==='Sentar'&&!cycling,run=speed>5&&!cycling;
+    for(let i=0;i<2;i++){const sign=i===0?1:-1,swing=stride*sign;
+      legs[i].rotation.x=ease(legs[i].rotation.x,seated?-1.35:cycling?-.65+swing*.6:air>.1?-.25+swing*.15:swing,dt);
+      knees[i].rotation.x=ease(knees[i].rotation.x,seated?1.3:cycling?1.1-swing*.75:air>.1?.65:Math.max(0,-Math.sin(phase+(i?Math.PI:0)))*weight*(run?1:.65)+landing*.35,dt);
+      arms[i].rotation.x=ease(arms[i].rotation.x,cycling?-1.03:seated?-.25:-swing*(run?1.05:.65),dt);
+      elbows[i].rotation.x=ease(elbows[i].rotation.x,cycling?-.35:run?-.7:-.15,dt);
+      const raised=gesture==='Celebrar'||(gesture==='Acenar'&&i===1);
+      arms[i].rotation.z=ease(arms[i].rotation.z,raised?(i? -1:1)*(2.3+Math.sin(time*7)*.18):(i?-.07:.07),dt);
+    }
+    body.position.y=ease(body.position.y,(seated?-.39:cycling?.14:Math.abs(Math.sin(phase))*weight*(run?.055:.025)+Math.sin(time*2.2)*.009)-landing*.11,dt);
+    body.rotation.x=ease(body.rotation.x,cycling?.18:run?.065:0,dt);body.rotation.z=Math.sin(phase)*weight*(cycling?.012:.018);
+    scarf.rotation.x=Math.sin(phase+.5)*weight*.13;eyes.scale.y=Math.sin(time*.7)> .996?.12:1;
+    shadow.position.y=.19-air;shadow.scale.setScalar(1+Math.min(air,.8)*.3);shadow.material.opacity=1-Math.min(air*.2,.6);
+  }};
 }
 
 export function label(text: string) {
@@ -145,15 +131,12 @@ export function label(text: string) {
 }
 
 export function disposeScene(scene: THREE.Object3D) {
-  scene.traverse((node) => {
-    if (node instanceof THREE.Mesh || node instanceof THREE.Sprite) {
-      if (node instanceof THREE.Mesh) node.geometry.dispose();
-      for (const mat of Array.isArray(node.material)
-        ? node.material
-        : [node.material]) {
-        if ("map" in mat && mat.map instanceof THREE.Texture) mat.map.dispose();
-        mat.dispose();
-      }
+  const geometries=new Set<THREE.BufferGeometry>(),materials=new Set<THREE.Material>(),textures=new Set<THREE.Texture>();
+  scene.traverse(node=>{
+    if(node instanceof THREE.Mesh||node instanceof THREE.Points||node instanceof THREE.Line||node instanceof THREE.Sprite){
+      if(node instanceof THREE.Mesh||node instanceof THREE.Points||node instanceof THREE.Line)geometries.add(node.geometry);
+      for(const mat of Array.isArray(node.material)?node.material:[node.material]){materials.add(mat);for(const value of Object.values(mat))if(value instanceof THREE.Texture)textures.add(value)}
     }
   });
+  geometries.forEach(g=>g.dispose());textures.forEach(t=>t.dispose());materials.forEach(m=>m.dispose());
 }
