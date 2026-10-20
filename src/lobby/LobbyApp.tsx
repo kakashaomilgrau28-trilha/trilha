@@ -222,7 +222,7 @@ export default function LobbyApp() {
         return;
       }
       setOtpSent(true);
-      setNotice("Verifique seu e-mail e digite o código de acesso.");
+      setNotice("Abra o link de acesso recebido por e-mail. Se recebeu um código, você também pode digitá-lo abaixo.");
     } else {
       const { error } = await db.auth.verifyOtp({
         email,
@@ -1101,7 +1101,7 @@ export default function LobbyApp() {
       )}
       {adminLogin && (
         <div className="camp-overlay">
-          <form className="person-dialog" onSubmit={adminSignIn}>
+          <form className="person-dialog" onSubmit={adminSignIn} role="dialog" aria-modal="true" aria-labelledby="admin-title">
             <button
               type="button"
               className="dialog-close"
@@ -1111,7 +1111,7 @@ export default function LobbyApp() {
               <X size={20} />
             </button>
             <Shield size={30} />
-            <h2>Acesso da administração</h2>
+            <h2 id="admin-title">Acesso da administração</h2>
             <p>
               Use o e-mail previamente cadastrado como administrador. Entrar por
               e-mail não concede privilégios.
@@ -1127,7 +1127,8 @@ export default function LobbyApp() {
             />
             {otpSent && (
               <>
-                <label htmlFor="admin-code">Código recebido por e-mail</label>
+                <p>Abra o link recebido para entrar. Ao voltar ao Trilha, escolha seu servidor para acessar a administração. Se o e-mail trouxer um código, você pode usá-lo abaixo.</p>
+                <label htmlFor="admin-code">Código, se recebido no e-mail</label>
                 <input
                   id="admin-code"
                   inputMode="numeric"
@@ -1139,7 +1140,7 @@ export default function LobbyApp() {
               </>
             )}
             <button className="camp-primary">
-              {otpSent ? "Verificar código" : "Enviar código de acesso"}
+              {otpSent ? "Verificar código" : "Enviar acesso por e-mail"}
             </button>
           </form>
         </div>
@@ -1155,4 +1156,5 @@ export default function LobbyApp() {
     </div>
   );
 }
+
 
