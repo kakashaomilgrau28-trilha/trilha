@@ -1,3 +1,16 @@
+# Lobby Trilha — atualização
+
+A entrada atual usa servidores escolhíveis e jogadores reais com Supabase Auth e canais privados. O clube é apenas uma identificação opcional. Há conversa por sala, gestos, equipamentos experimentais e tela cheia do mapa. O mapa da Lapa foi preservado, desativado para o público e com liberação pela administração.
+
+O VIP está definido em R$ 14,90 por pagamento único, mas as vendas estão desativadas a pedido do proprietário. Nenhuma compra é simulada como pagamento realizado. Os equipamentos estão disponíveis para experimentar enquanto a monetização é preparada.
+
+Para operar, leia [docs/lobby-operations.md](docs/lobby-operations.md). Para o objetivo de até 20 mil simultâneos, leia [docs/scaling-20000.md](docs/scaling-20000.md): trata-se de um plano, sem teste de carga ou provisionamento dessa capacidade.
+
+Validação: `npm run build`; `node scripts/check-lobby.mjs`. O segundo comando usa o projeto Trilha, cria identidades anônimas de teste e retira suas participações das salas no fim. A aplicação precisa das variáveis públicas descritas em `.env.example`.
+
+Abaixo permanece a documentação histórica da versão anterior e do catálogo.
+
+---
 # Trilha · demonstração do jogo
 
 Um MVP de espaço virtual para Desbravadores, com catálogo conectado ao Supabase e publicação na Vercel. O projeto é uma demonstração independente, não oficial e sem aprovação atribuída à organização do VI Campori Sul-Americano. A stack é React, TypeScript e Vite. Perfil, progresso, chat e compras simuladas ficam neste navegador; esta versão ainda não oferece multiplayer.
@@ -77,3 +90,4 @@ O script scripts/import-dsa-clubs.mjs percorre o formulário público do diretó
 O Google Maps não aparece no site nem é usado como fonte para traçar ruas ou edifícios. Os termos da plataforma restringem extrair esse material para criar outra representação; o OpenStreetMap licencia o recorte usado no jogo.
 
 Verificação: node scripts/check-world.mjs confirma velocidade diagonal, independência da taxa de quadros, colisões, limites e conversão geográfica; pnpm build verifica TypeScript e bundle. O fluxo local no navegador validou seleção de clube, caminhada por WASD, interação e resgate.
+

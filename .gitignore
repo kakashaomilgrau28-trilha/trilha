@@ -5,3 +5,8 @@ dist/
 .env
 .env.*
 !.env.example
+
+qa-mobile.html
+.impeccable/review/
+package-lock.json
+scripts/qa-peer.mjs

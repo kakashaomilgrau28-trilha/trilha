@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-20T04:15:08.4769929-03:00",
+  "title": "Design System: Trilha",
+  "extensions": {
+    "colorMeta": {
+      "camp-green": {
+        "role": "primary",
+        "displayName": "Camp green"
+      },
+      "camp-ink": {
+        "role": "primary",
+        "displayName": "Camp ink"
+      },
+      "camp-mute": {
+        "role": "neutral",
+        "displayName": "Muted woodland"
+      },
+      "camp-gold": {
+        "role": "secondary",
+        "displayName": "Camp gold"
+      },
+      "camp-paper": {
+        "role": "neutral",
+        "displayName": "Warm camp paper"
+      },
+      "camp-line": {
+        "role": "neutral",
+        "displayName": "Leaf divider"
+      },
+      "warm-surface": {
+        "role": "neutral",
+        "displayName": "Warm surface"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Arrival headline",
+        "purpose": "Main arrival copy."
+      },
+      "headline": {
+        "displayName": "Page headline",
+        "purpose": "Top-level section titles."
+      },
+      "title": {
+        "displayName": "Panel title",
+        "purpose": "Arrival form and profile dialogs."
+      },
+      "body": {
+        "displayName": "Interface body",
+        "purpose": "Default application text."
+      },
+      "label": {
+        "displayName": "Action label",
+        "purpose": "Primary and secondary actions."
+      }
+    },
+    "shadows": [
+      {
+        "name": "map-help",
+        "value": "0 12px 40px #213b3440",
+        "purpose": "Instruction panel above the map."
+      },
+      {
+        "name": "toast",
+        "value": "0 8px 30px #23452a33",
+        "purpose": "Status feedback above the page."
+      },
+      {
+        "name": "expanded-field-map",
+        "value": "0 8px 30px #28412b30",
+        "purpose": "Readable field-map legend above the scene."
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-transition",
+        "value": "background 0.15s, color 0.15s",
+        "purpose": "Button state changes; disabled under prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-min",
+        "value": "1650px"
+      },
+      {
+        "name": "compact-desktop-max",
+        "value": "1200px"
+      },
+      {
+        "name": "mobile-max",
+        "value": "800px"
+      },
+      {
+        "name": "narrow-mobile-max",
+        "value": "450px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Forest green action with a clear text label.",
+      "html": "<button class=\"camp-primary\">Abrir conversa</button>",
+      "css": ".camp-primary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;padding:11px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;line-height:1.4;background:var(--camp-green,#2b5542);color:#fff;border:0;transition:background .15s,color .15s}.camp-primary:hover:not(:disabled){filter:brightness(.96)}.camp-primary:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.camp-primary:disabled{opacity:.58}@media(prefers-reduced-motion:reduce){.camp-primary{transition:none}}"
+    },
+    {
+      "name": "Secondary action",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Outlined action for supporting tasks.",
+      "html": "<button class=\"camp-secondary\">Copiar convite</button>",
+      "css": ".camp-secondary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;padding:11px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;line-height:1.4;background:transparent;border:1px solid #bdc8b5;color:#36523c;transition:background .15s,color .15s}.camp-secondary:hover:not(:disabled){filter:brightness(.96)}.camp-secondary:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.camp-secondary:disabled{opacity:.58}@media(prefers-reduced-motion:reduce){.camp-secondary{transition:none}}"
+    },
+    {
+      "name": "Profile field",
+      "kind": "input",
+      "description": "Cream field for arrival and administration forms.",
+      "html": "<label class=\"field-label\" for=\"demo-nickname\">Seu apelido</label><input class=\"camp-field\" id=\"demo-nickname\" placeholder=\"Como a turma chama você?\" />",
+      "css": ".field-label{display:block;font:600 11px 'DM Sans',sans-serif;color:var(--camp-ink,#243e32);margin:16px 0 8px}.camp-field{width:100%;height:44px;border:1px solid #cbd4c0;border-radius:7px;padding:0 12px;background:#fbfcf7;color:var(--camp-ink,#243e32);font:13px 'DM Sans',sans-serif;caret-color:#315d46}.camp-field::placeholder{color:#677b65;opacity:1}.camp-field:focus-visible{outline:3px solid #ac823e;outline-offset:4px}"
+    },
+    {
+      "name": "Expanded field map",
+      "kind": "custom",
+      "description": "Expanded equipped map with full location legend. The application toggles aria-expanded and pauses movement while open; this snippet previews the open state.",
+      "html": "<div class=\"field-map is-open\"><button class=\"field-map-toggle\" aria-expanded=\"true\" aria-label=\"Recolher mapa de campo\"><b>Mapa de campo</b><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M8 3v5H3m18 8h-5v5M3 8l6-6m6 20 6-6\"/></svg></button><div class=\"map-paper\"><span style=\"left:50%;top:50%\">V</span><i style=\"left:35%;top:65%\"></i></div><div class=\"field-map-legend\"><div><b>V</b><span>Refúgio VIP</span></div><p>O ponto dourado mostra onde você está.</p></div></div>",
+      "css": ".field-map{width:min(330px,calc(100% - 30px));padding:16px;background:#fff9e8;border-radius:8px;color:#4c6044;box-shadow:0 8px 30px #28412b30;font-family:\"DM Sans\",sans-serif}.field-map-toggle{display:flex;align-items:center;justify-content:space-between;gap:5px;width:100%;min-height:34px;background:transparent;border:0;padding:0;color:var(--camp-ink,#243e32);text-align:left;font-size:13px;transition:background .15s,color .15s}.field-map-toggle b{font-size:13px}.field-map-toggle:hover:not(:disabled){filter:brightness(.96)}.field-map-toggle:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.map-paper{height:180px;position:relative;margin-top:12px;background:#e2dfbf;border-radius:5px}.map-paper>span{position:absolute;font-size:12px;background:#d5dfbc;color:var(--camp-ink,#243e32);border-radius:50%;width:24px;height:24px;text-align:center;line-height:24px;transform:translate(-50%,-50%);font-weight:700}.map-paper i{position:absolute;width:8px;height:8px;border-radius:50%;background:#b4763e;outline:2px solid #fff6d6;transform:translate(-50%,-50%)}.field-map-legend{display:grid;gap:8px;margin-top:15px;font-size:12px;color:var(--camp-ink,#243e32)}.field-map-legend>div{display:flex;align-items:center;gap:9px}.field-map-legend>div>b{display:grid;place-items:center;width:22px;height:22px;font-size:12px;background:#d5dfbc;border-radius:50%}.field-map-legend p{font-size:11px;line-height:1.5;margin:5px 0 0}@media(prefers-reduced-motion:reduce){.field-map-toggle{transition:none}}"
+    }
+  ],
+  "narrative": {
+    "overview": "Trilha extends its established forest-and-cream identity into a shared virtual camp. Dark green typography, warm paper surfaces, leaf-toned selections and occasional gold details support approachable Portuguese interactions. The map is immersive while the surrounding interface uses restrained tonal separation. This records source inspection, without a new creative metaphor or browser verification.",
+    "keyCharacteristics": [
+      "Forest greens over warm cream",
+      "Manrope headings and DM Sans supporting text",
+      "Soft rectangular controls and circular portraits",
+      "Sparse overlay shadows",
+      "Responsive map and persistent mobile navigation"
+    ],
+    "rules": [
+      {
+        "name": "The Forest and Paper Rule",
+        "body": "Extend the incumbent greens and cream surfaces when adding interface regions; preserve the Trilha identity established in PRODUCT.md.",
+        "section": "colors"
+      }
+    ],
+    "dos": [
+      "Do preserve the Trilha forest and cream identity and Portuguese labels.",
+      "Do reuse the action hierarchy and visible keyboard focus.",
+      "Do preserve circular portraits and player identification.",
+      "Do retain responsive navigation, map fullscreen and reduced-motion support."
+    ],
+    "donts": [
+      "Don't introduce an unrelated visual identity while extending this lobby.",
+      "Don't present disabled payment preparation as an active purchase.",
+      "Don't imply source extraction verifies browser rendering or runtime capacity."
+    ]
+  }
+}
