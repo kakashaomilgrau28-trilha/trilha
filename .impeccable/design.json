@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-20T04:15:08.4769929-03:00",
+  "generatedAt": "2026-10-20T07:04:41.6643148-03:00",
   "title": "Design System: Trilha",
   "extensions": {
     "colorMeta": {
@@ -70,6 +70,11 @@
         "name": "expanded-field-map",
         "value": "0 8px 30px #28412b30",
         "purpose": "Readable field-map legend above the scene."
+      },
+      {
+        "name": "nearby-discovery",
+        "value": "0 6px 24px #20352133",
+        "purpose": "Contextual discovery collection action above the landscape."
       }
     ],
     "motion": [
@@ -95,6 +100,14 @@
       {
         "name": "narrow-mobile-max",
         "value": "450px"
+      },
+      {
+        "name": "collection-two-columns-max",
+        "value": "1000px"
+      },
+      {
+        "name": "collection-single-column-max",
+        "value": "600px"
       }
     ]
   },
@@ -125,19 +138,28 @@
     {
       "name": "Expanded field map",
       "kind": "custom",
-      "description": "Expanded equipped map with full location legend. The application toggles aria-expanded and pauses movement while open; this snippet previews the open state.",
-      "html": "<div class=\"field-map is-open\"><button class=\"field-map-toggle\" aria-expanded=\"true\" aria-label=\"Recolher mapa de campo\"><b>Mapa de campo</b><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M8 3v5H3m18 8h-5v5M3 8l6-6m6 20 6-6\"/></svg></button><div class=\"map-paper\"><span style=\"left:50%;top:50%\">V</span><i style=\"left:35%;top:65%\"></i></div><div class=\"field-map-legend\"><div><b>V</b><span>Refúgio VIP</span></div><p>O ponto dourado mostra onde você está.</p></div></div>",
-      "css": ".field-map{width:min(330px,calc(100% - 30px));padding:16px;background:#fff9e8;border-radius:8px;color:#4c6044;box-shadow:0 8px 30px #28412b30;font-family:\"DM Sans\",sans-serif}.field-map-toggle{display:flex;align-items:center;justify-content:space-between;gap:5px;width:100%;min-height:34px;background:transparent;border:0;padding:0;color:var(--camp-ink,#243e32);text-align:left;font-size:13px;transition:background .15s,color .15s}.field-map-toggle b{font-size:13px}.field-map-toggle:hover:not(:disabled){filter:brightness(.96)}.field-map-toggle:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.map-paper{height:180px;position:relative;margin-top:12px;background:#e2dfbf;border-radius:5px}.map-paper>span{position:absolute;font-size:12px;background:#d5dfbc;color:var(--camp-ink,#243e32);border-radius:50%;width:24px;height:24px;text-align:center;line-height:24px;transform:translate(-50%,-50%);font-weight:700}.map-paper i{position:absolute;width:8px;height:8px;border-radius:50%;background:#b4763e;outline:2px solid #fff6d6;transform:translate(-50%,-50%)}.field-map-legend{display:grid;gap:8px;margin-top:15px;font-size:12px;color:var(--camp-ink,#243e32)}.field-map-legend>div{display:flex;align-items:center;gap:9px}.field-map-legend>div>b{display:grid;place-items:center;width:22px;height:22px;font-size:12px;background:#d5dfbc;border-radius:50%}.field-map-legend p{font-size:11px;line-height:1.5;margin:5px 0 0}@media(prefers-reduced-motion:reduce){.field-map-toggle{transition:none}}"
+      "description": "Expanded field atlas with region/camp views, dashed routes and full location legend. The application toggles aria-expanded and aria-pressed and pauses movement while open; this snippet previews the region state.",
+      "html": "<div class=\"field-map is-open\"><button class=\"field-map-toggle\" aria-expanded=\"true\" aria-label=\"Recolher mapa de campo\"><b>Mapa de campo</b><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M8 3v5H3m18 8h-5v5M3 8l6-6m6 20 6-6\"/></svg></button><div class=\"map-view-tabs\"><button aria-pressed=\"true\">Região</button><button aria-pressed=\"false\">Acampamento</button></div><div class=\"map-paper\"><svg viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><polyline points=\"50,50 40,35 30,20\" fill=\"none\" stroke=\"#9b8053\" stroke-width=\"1\" stroke-dasharray=\"2 1\"/></svg><span style=\"left:50%;top:50%\">V</span><i style=\"left:35%;top:65%\"></i></div><div class=\"field-map-legend\"><div><b>V</b><span>Refúgio VIP</span></div><p>Ponto dourado: você · tracejado: trilhas.</p></div></div>",
+      "css": ".field-map{width:min(330px,calc(100% - 30px));padding:16px;background:#fff9e8;border-radius:8px;color:#4c6044;box-shadow:0 8px 30px #28412b30;font-family:\"DM Sans\",sans-serif}.field-map-toggle{display:flex;align-items:center;justify-content:space-between;gap:5px;width:100%;min-height:34px;background:transparent;border:0;padding:0;color:var(--camp-ink,#243e32);text-align:left;font-size:13px;transition:background .15s,color .15s}.field-map-toggle b{font-size:13px}.field-map-toggle:hover:not(:disabled){filter:brightness(.96)}.field-map-toggle:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.map-paper{height:170px;position:relative;margin-top:12px;background:#e2dfbf;border-radius:5px}.map-paper>span{position:absolute;font-size:12px;background:#d5dfbc;color:var(--camp-ink,#243e32);border-radius:50%;width:24px;height:24px;text-align:center;line-height:24px;transform:translate(-50%,-50%);font-weight:700}.map-paper i{position:absolute;width:8px;height:8px;border-radius:50%;background:#b4763e;outline:2px solid #fff6d6;transform:translate(-50%,-50%)}.field-map-legend{display:grid;gap:8px;margin-top:15px;font-size:12px;color:var(--camp-ink,#243e32)}.field-map-legend>div{display:flex;align-items:center;gap:9px}.field-map-legend>div>b{display:grid;place-items:center;width:22px;height:22px;font-size:12px;background:#d5dfbc;border-radius:50%}.field-map-legend p{font-size:11px;line-height:1.5;margin:5px 0 0}@media(prefers-reduced-motion:reduce){.field-map-toggle{transition:none}}.field-map.is-open{max-height:calc(100% - 30px);overflow:auto;touch-action:pan-y}.map-paper{overflow:hidden}.map-paper>svg{position:absolute;inset:0;width:100%;height:100%}.map-view-tabs{display:flex;gap:6px;margin:8px 0}.map-view-tabs button{flex:1;border:1px solid #a8b58d;background:transparent;border-radius:6px;padding:7px;color:#243e32;font-size:12px}.map-view-tabs button[aria-pressed=true]{background:#243e32;color:#fff9e8}.map-view-tabs button:hover{filter:brightness(.96)}.map-view-tabs button:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.field-map-legend{gap:6px}@media(max-width:600px){.field-map.is-open .map-paper{height:150px}}"
+    },
+    {
+      "name": "Discovery collection card",
+      "kind": "card",
+      "description": "Pending local discovery: ordinal and rarity remain visible while the title and text supply a hint. Found cards show the name and story with a solid gold border.",
+      "html": "<article class=\"discovery\"><span class=\"discovery-number\">01 · Comum</span><svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"8\" r=\"6\"/><path d=\"m8.2 13-1.1 9L12 19l4.9 3-1.1-9\"/></svg><h3>Ainda por descobrir</h3><p>Um brilho dourado perto da roda da fogueira.</p><b>Siga a pista</b></article>",
+      "css": ".discovery{padding:24px;border:1px dashed #b7bfaa;border-radius:14px;display:flex;flex-direction:column;align-items:start;gap:12px;background:#eeeee4;color:var(--camp-ink,#243e32);font-family:\"DM Sans\",sans-serif}.discovery.found{border-style:solid;background:#fff9e9;border-color:#b8a464}.discovery-number{font-size:11px;color:#5a6a53}.discovery h3{font-size:17px;margin:0}.discovery p{font-size:13px;line-height:1.65;margin:0;flex:1}.discovery>b{font-size:11px;color:#4d6d42}.discovery>svg{color:#7b8c68}.discovery.found>svg{color:#9a6a28}"
     }
   ],
   "narrative": {
-    "overview": "Trilha extends its established forest-and-cream identity into a shared virtual camp. Dark green typography, warm paper surfaces, leaf-toned selections and occasional gold details support approachable Portuguese interactions. The map is immersive while the surrounding interface uses restrained tonal separation. This records source inspection, without a new creative metaphor or browser verification.",
+    "overview": "Trilha extends its established forest-and-cream identity into a shared virtual camp. Dark green typography, warm paper surfaces, leaf-toned selections and occasional gold details support approachable Portuguese interactions. The map is immersive while the surrounding interface uses restrained tonal separation. This records source inspection, without a new creative metaphor or browser verification. The exploration extension preserves the forest world and cream interface across five trails, six outer destinations and twelve local discoveries. A region/camp atlas orients the player; collection cards reveal stories as discoveries are found. Source restores the latest same-room position on return to the scene; this is not persistent multi-room pose history.",
     "keyCharacteristics": [
       "Forest greens over warm cream",
       "Manrope headings and DM Sans supporting text",
       "Soft rectangular controls and circular portraits",
       "Sparse overlay shadows",
-      "Responsive map and persistent mobile navigation"
+      "Responsive map and persistent mobile navigation",
+      "Five forest trails and six outer destinations extend the familiar camp",
+      "Twelve identity-scoped local discoveries with rarity text, hints and progress"
     ],
     "rules": [
       {

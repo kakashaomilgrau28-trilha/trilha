@@ -14,6 +14,7 @@ import { stepPosition } from "../world/physics";
 import { avatars } from "../gameData";
 import { buildLobby, equipment, places, SIZE } from "./scene";
 import type { Profile, Visitor } from "./useLobby";
+import {BOUNDARY, terrainHeight, mapPercent, mapCode, trails, discoveries, type Discovery} from './exploration';
 type Props = {
   profile: Profile;
   players: Visitor[];
@@ -24,6 +25,9 @@ type Props = {
   onMove: (x: number, y: number) => void;
   onPlayer: (p: Visitor) => void;
   onVip: () => void;
+  initialPosition?: {x:number;z:number};
+  foundIds: string[];
+  onDiscover: (reward: Discovery) => void;
 };
 export default function LobbyWorld(props: Props) {
   const section = useRef<HTMLElement>(null),
@@ -43,6 +47,8 @@ export default function LobbyWorld(props: Props) {
     [run, setRun] = useState(false),
     [help, setHelp] = useState(false),
     [mapExpanded, setMapExpanded] = useState(false);
+  const [mapView,setMapView] = useState<'camp'|'region'>('region');
+  const [nearReward,setNearReward] = useState<Discovery|null>(null);
   const [coords, setCoords] = useState({ x: 0, z: 7 });
   const [petAction, setPetAction] = useState(""),
     petUntil = useRef(0);
@@ -73,12 +79,18 @@ export default function LobbyWorld(props: Props) {
     const container = host.current,
       scene = new T.Scene();
     scene.background = new T.Color("#c2d4c6");
-    scene.fog = new T.Fog("#c2d4c6", 65, 145);
+    scene.fog = new T.Fog("#c2d4c6", 220, 700);
     scene.add(new T.HemisphereLight("#fff3d9", "#4e7054", 2.4));
     const sun = new T.DirectionalLight("#fff2d2", 3);
     sun.position.set(-25, 45, 20);
     scene.add(sun);
     const world = buildLobby(scene, props.vip);
+    const treasureMeshes = discoveries.map(reward => {
+      const root=new T.Group();root.position.set(reward.x,terrainHeight(reward.x,reward.z)+1.1,reward.z);
+      const gem=new T.Mesh(new T.OctahedronGeometry(.45),new T.MeshStandardMaterial({color:reward.rarity==='Raro'?'#87b9b1':'#e9bd61',emissive:'#8a5d23',emissiveIntensity:.2,metalness:.3,roughness:.4}));root.add(gem);
+      const ring=new T.Mesh(new T.TorusGeometry(.7,.025,5,24),new T.MeshStandardMaterial({color:'#e6c777'}));ring.rotation.x=Math.PI/2;ring.position.y=-.6;root.add(ring);
+      const tag=label(reward.name);tag.position.y=1;tag.scale.set(3,.5,1);root.add(tag);scene.add(root);return {reward,root,gem,tag};
+    });
     const actor = person(
       Math.max(
         0,
@@ -105,13 +117,13 @@ export default function LobbyWorld(props: Props) {
       itemId = latest.current.item;
     actor.root.add(equipped);
     let p = {
-        x: Math.random() * 4 - 2,
-        y: props.vip ? -31 : 7 + Math.random() * 2,
+        x: props.initialPosition?.x ?? Math.random() * 4 - 2,
+        y: props.initialPosition?.z ?? (props.vip ? -31 : 7 + Math.random() * 2),
       },
       frame = 0,
       last = performance.now(),
       published = 0;
-    const camera = new T.PerspectiveCamera(48, 1, 0.1, 200),
+    const camera = new T.PerspectiveCamera(48, 1, 0.1, 800),
       keys = new Set<string>(),
       target = new T.Vector3();
     let renderer: T.WebGLRenderer;
@@ -172,6 +184,7 @@ export default function LobbyWorld(props: Props) {
         e.preventDefault();
         keys.add(e.code);
       }
+      if(e.code==='KeyE'&&!e.repeat){const reward=discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5);if(reward)latest.current.onDiscover(reward)}
     };
     const up = (e: KeyboardEvent) => keys.delete(e.code);
     window.addEventListener("keydown", down);
@@ -207,12 +220,13 @@ export default function LobbyWorld(props: Props) {
             : 3.6,
         world.obstacles,
       );
-      next.x = Math.max(-38, Math.min(38, next.x));
-      next.y = Math.max(-38, Math.min(38, next.y));
+      next.x = Math.max(-BOUNDARY, Math.min(BOUNDARY, next.x));
+      next.y = Math.max(-BOUNDARY, Math.min(BOUNDARY, next.y));
       const moving = Math.hypot(next.x - p.x, next.y - p.y) > 0.001;
       if (moving) actor.root.rotation.y = Math.atan2(wx, wz);
       p = next;
-      actor.root.position.set(p.x, 0, p.y);
+      const altitude=terrainHeight(p.x,p.y);
+      actor.root.position.set(p.x, altitude, p.y);
       actor.animate(now / 1000, moving, latest.current.gesture);
       if (itemId !== latest.current.item) {
         actor.root.remove(equipped);
@@ -276,7 +290,8 @@ export default function LobbyWorld(props: Props) {
             ((peer.y - 50) * SIZE) / 100,
           ),
           delta = dest.clone().sub(a.actor.root.position),
-          walk = delta.length() > 0.1;
+          walk = Math.hypot(delta.x, delta.z) > 0.1;
+        dest.y=terrainHeight(dest.x,dest.z);
         if (walk) a.actor.root.rotation.y = Math.atan2(delta.x, delta.z);
         a.actor.root.position.lerp(dest, 1 - Math.exp(-6 * dt));
         a.actor.animate(now / 1000, walk, peer.gesture);
@@ -292,6 +307,7 @@ export default function LobbyWorld(props: Props) {
         published = now;
         latest.current.onMove((p.x / SIZE) * 100 + 50, (p.y / SIZE) * 100 + 50);
         setCoords({ x: Math.round(p.x), z: Math.round(p.y) });
+        setNearReward(discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5)??null);
         setNear(
           places.reduce((a, b) =>
             Math.hypot(p.x - a.x, p.y - a.z) < Math.hypot(p.x - b.x, p.y - b.z)
@@ -301,13 +317,15 @@ export default function LobbyWorld(props: Props) {
         );
       }
       world.animate(now / 1000);
+      for(const {reward,root,gem,tag} of treasureMeshes){root.visible=!latest.current.foundIds.includes(reward.id);root.position.y=terrainHeight(reward.x,reward.z)+1.1+Math.sin(now*.002+reward.x)*.13;gem.rotation.y=now*.001;tag.visible=Math.hypot(reward.x-p.x,reward.z-p.y)<22}
       target.set(
         p.x + Math.sin(yaw) * Math.cos(pitch) * distance,
-        1.5 + Math.sin(pitch) * distance,
+        altitude + 1.5 + Math.sin(pitch) * distance,
         p.y + Math.cos(yaw) * Math.cos(pitch) * distance,
       );
       camera.position.lerp(target, 1 - Math.exp(-8 * dt));
-      camera.lookAt(p.x, 1, p.y - 2);
+      camera.position.y=Math.max(camera.position.y,terrainHeight(camera.position.x,camera.position.z)+2);
+      camera.lookAt(p.x, altitude+1, p.y - 2);
       if (!document.hidden) renderer.render(scene, camera);
       frame = requestAnimationFrame(tick);
     };
@@ -364,8 +382,10 @@ export default function LobbyWorld(props: Props) {
     touches.current.delete(e.pointerId);
   }
   const nearby = props.players.filter(
-    (p) => Math.hypot(p.x - 50 - coords.x, p.y - 50 - coords.z) < 12,
+    (p) => Math.hypot((p.x - 50)*SIZE/100 - coords.x, (p.y - 50)*SIZE/100 - coords.z) < 12,
   );
+  const atlasSpan=mapExpanded&&mapView==='region'?SIZE:100;
+  const atlasPlaces=places.filter(p=>mapExpanded&&mapView==='region'?p.id==='fogueira'||Math.hypot(p.x,p.z)>45:Math.abs(p.x)<45&&Math.abs(p.z)<45);
   return (
     <section
       ref={section}
@@ -385,6 +405,7 @@ export default function LobbyWorld(props: Props) {
           >
             <RotateCcw size={17} />
           </button>
+          <button onClick={() => {view.current={yaw:.3,pitch:1.05,distance:300}}} aria-label="Ver paisagem da região"><MapIcon size={17}/></button>
           <button
             onClick={() => setHelp(!help)}
             aria-label="Ajuda de controles"
@@ -411,6 +432,7 @@ export default function LobbyWorld(props: Props) {
       <div
         ref={surface}
         className="lobby-surface"
+        style={{touchAction:mapExpanded?"pan-y":"none"}}
         tabIndex={0}
         aria-label="Mapa do lobby. WASD ou setas para andar. Arraste para girar a câmera."
         onPointerDown={start}
@@ -421,7 +443,7 @@ export default function LobbyWorld(props: Props) {
         onWheel={(e) => {
           view.current.distance = Math.max(
             7,
-            Math.min(40, view.current.distance + Math.sign(e.deltaY) * 2),
+            Math.min(300, view.current.distance + Math.sign(e.deltaY) * 2),
           );
         }}
       >
@@ -435,21 +457,13 @@ export default function LobbyWorld(props: Props) {
             <button className="field-map-toggle" aria-expanded={mapExpanded} aria-label={mapExpanded ? "Recolher mapa de campo" : "Ampliar mapa de campo"} onClick={() => setMapExpanded(v => !v)}>
               <MapIcon size={15}/><b>Mapa de campo</b>{mapExpanded ? <Minimize size={15}/> : <Maximize size={15}/>}
             </button>
+            {mapExpanded && <div className="map-view-tabs"><button aria-pressed={mapView==='region'} onClick={()=>setMapView('region')}>Região</button><button aria-pressed={mapView==='camp'} onClick={()=>setMapView('camp')}>Acampamento</button></div>}
             <div className="map-paper">
-              {places.map((p) => (
-                <span
-                  key={p.id}
-                  style={{ left: `${p.x + 50}%`, top: `${p.z + 50}%` }}
-                  title={p.name}
-                >
-                  {p.id === "vip" ? "V" : p.name.slice(0, 1)}
-                </span>
-              ))}
-              <i
-                style={{ left: `${coords.x + 50}%`, top: `${coords.z + 50}%` }}
-              />
+              <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">{trails.map(t=><polyline key={t.name} points={t.points.map(([x,z])=>`${mapPercent(x,atlasSpan)},${mapPercent(z,atlasSpan)}`).join(' ')} fill="none" stroke="#9b8053" strokeWidth="1" strokeDasharray="2 1"/>)}</svg>
+              {atlasPlaces.map(p=><span key={p.id} style={{left:`${mapPercent(p.x,atlasSpan)}%`,top:`${mapPercent(p.z,atlasSpan)}%`}} title={p.name}>{mapCode(p.id)}</span>)}
+              {Math.abs(coords.x)<atlasSpan/2 && Math.abs(coords.z)<atlasSpan/2 && <i style={{left:`${mapPercent(coords.x,atlasSpan)}%`,top:`${mapPercent(coords.z,atlasSpan)}%`}}/>}
             </div>
-            {mapExpanded ? <div className="field-map-legend">{places.map(p => <div key={p.id}><b>{p.id === "vip" ? "V" : p.name.slice(0,1)}</b><span>{p.name}</span></div>)}<p>O ponto dourado mostra onde você está.</p></div> : <small>Toque para ampliar</small>}
+            {mapExpanded ? <div className="field-map-legend">{atlasPlaces.map(p=><div key={p.id}><b>{mapCode(p.id)}</b><span>{p.name}</span></div>)}<p>Ponto dourado: você · tracejado: trilhas.</p><small>Região com 15× a área original.</small></div> : <small>Toque para ver a região</small>}
           </div>
         )}
         <div className="lobby-zoom">
@@ -463,7 +477,7 @@ export default function LobbyWorld(props: Props) {
           </button>
           <button
             onClick={() =>
-              (view.current.distance = Math.min(40, view.current.distance + 3))
+              (view.current.distance = Math.min(300, view.current.distance + 3))
             }
             aria-label="Afastar câmera"
           >
@@ -497,6 +511,7 @@ export default function LobbyWorld(props: Props) {
             →
           </button>
         )}
+        {nearReward && !props.foundIds.includes(nearReward.id) && !mapExpanded && <button className="discover-button" onClick={()=>props.onDiscover(nearReward)}><span>Descoberta por perto</span><strong>Recolher {nearReward.name}</strong><small>E ou toque aqui</small></button>}
         {props.item === "pet" && (
           <button
             className="pet-interact"
@@ -533,7 +548,7 @@ export default function LobbyWorld(props: Props) {
             <h3>Encontre sua turma.</h3>
             <p>
               Clique no mapa e use WASD ou as setas. Arraste para girar a câmera
-              e use + e − para aproximar. No celular, arraste o lado esquerdo
+              e use + e − para aproximar. Pressione E perto de uma descoberta para recolher. O ícone de mapa na barra abre a vista da região. No celular, arraste o lado esquerdo
               para andar e o direito para olhar.
             </p>
             <p>

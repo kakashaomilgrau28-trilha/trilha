@@ -7,7 +7,7 @@ Web, including mobile browsers. Portuguese interface.
 A shared virtual camp for Desbravadores to meet, walk, chat and interact through detailed characters and field equipment.
 
 ## Confirmed product decisions
-- Entry through a compact camp lobby, with selectable named servers and separate conversations.
+- Entry through a central camp lobby in an expanded explorable region, with selectable named servers and separate conversations.
 - Players see real connected visitors on their chosen server. Club membership is optional identification only.
 - Preserve Lapa as a separate, initially closed map; only the administrator can release it.
 - Field map, bicycle, interactive pet, flashlight, canteen and rope are useful equipment. During payment setup they are explicitly free trials, not paid purchases.
@@ -20,3 +20,6 @@ Retain React 18, Vite, TypeScript, Three.js, Supabase, GitHub and Vercel from th
 
 ## Constraints and current limits
 The current realtime implementation targets a small pilot. It uses private Supabase channels, membership checks, server-controlled chat and room capacity. Movement and gestures are ephemeral client-reported cosmetic state; never use them to authorize rewards, purchases or VIP. Full load and mobile hardware performance remain unverified. Administration requires a verified owner email; no localStorage admin/VIP bypass.
+
+## Exploration expansion — 20 October 2026
+The walkable square covers exactly 15 times the original area (each side multiplied by sqrt(15)). Five connected trails lead to six destinations: two mountain lookouts, creek valley, flower meadow, pioneer shelter and waterfall. Twelve one-time cosmetic discoveries form a scrapbook with clues, rarity and completion progress. Collection is localStorage per current authenticated identity in this browser, not account-wide server persistence, currency or VIP entitlement. Terrain follows the player and camera; returning from equipment or collection preserves position within the current room until reload.

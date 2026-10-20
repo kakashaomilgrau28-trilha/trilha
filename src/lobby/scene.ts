@@ -1,7 +1,9 @@
 import * as T from "three";
 import { box, label } from "../world/character";
 import type { Obstacle } from "../world/physics";
-export const SIZE = 100;
+import {buildLandscape} from './landscape';
+import {destinations} from './exploration';
+export {SIZE} from './exploration';
 export const places = [
   {
     id: "fogueira",
@@ -46,6 +48,7 @@ export const places = [
     description: "Jardim reservado, lounge e observatório exclusivo.",
   },
 ];
+places.push(...destinations);
 const mat = (color: string) =>
   new T.MeshStandardMaterial({ color, roughness: 0.85 });
 function cylinder(
@@ -142,9 +145,7 @@ function tent(scene: T.Scene, x: number, z: number, color: string) {
 }
 export function buildLobby(scene: T.Scene, vip: boolean) {
   const obstacles: Obstacle[] = [];
-  const ground = new T.Mesh(new T.PlaneGeometry(110, 110), mat("#81966b"));
-  ground.rotation.x = -Math.PI / 2;
-  scene.add(ground);
+  buildLandscape(scene);
   const island = cylinder(scene, 43, 0.22, 0, -0.02, 0, "#a0ae7c", 64);
   island.receiveShadow = true;
   cylinder(scene, 11, 0.05, 0, 0.13, 0, "#d2be94", 48);
@@ -332,7 +333,7 @@ export function buildLobby(scene: T.Scene, vip: boolean) {
   }
   cylinder(scene, 1, 0.7, 0, 1, -33, "#956b48", 16);
   sphere(scene, 0.6, 0, 1.8, -33, "#d5bd72");
-  for (const p of places)
+  for (const p of places.filter(p=>Math.hypot(p.x,p.z)<45))
     sign(
       scene,
       p.name,

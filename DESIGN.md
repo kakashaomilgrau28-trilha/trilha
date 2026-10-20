@@ -126,6 +126,10 @@ Observed responsive thresholds:
 
 The desktop map surface uses height (clamp(480px, 65vh, 800px)). Fullscreen applies to the map container: (100vw) by (100dvh), with its toolbar retained and the scene height reduced by (52px).
 
+The exploration extension enlarges the original region's area by (15×), scaling its linear span by the square root of that factor. It retains the familiar camp as the central arrival space and adds five paths and six outer destinations. The landscape continues the incumbent forest world with muted green slopes, grey-green rocky heights, warm earth paths, timber viewpoints, a stream, bridge, wildflowers and a cascade. These scene materials do not replace the cream interface palette.
+
+The discovery collection uses three columns with gaps (18px). At most (1000px), it becomes two columns and its summary wraps; at most (600px), it becomes one column with summary gaps (12px) and a smaller summary heading (20px). These collection-specific breakpoints supplement the established application breakpoints.
+
 ## Elevation & Depth
 
 Persistent regions mainly use cream/green tonal layers and thin borders. The map is clipped within its rounded frame. Transient overlays receive stronger separation: a dark translucent forest scrim for profile dialogs, and shadows for map help and status toasts.
@@ -134,6 +138,7 @@ Persistent regions mainly use cream/green tonal layers and thin borders. The map
 - **Map help:** (0 12px 40px #213b3440), lifting instructions above the scene.
 - **Toast:** (0 8px 30px #23452a33), separating status feedback from the page.
 - **Expanded field map:** (0 8px 30px #28412b30), lifting the readable location legend above the scene.
+- **Nearby discovery action:** (0 6px 24px #20352133), separating the contextual collection action from the landscape.
 
 ## Shapes
 
@@ -157,7 +162,16 @@ The map has a dark forest toolbar, softly translucent paper captions and an opti
 
 The map is focusable and uses its own inset ochre focus outline. Map-only fullscreen removes the rounded frame; a fixed expanded fallback covers the viewport. Touch controls and keyboard control help belong to the scene rather than the persistent page navigation.
 
-The equipped field map has a button with accessible expand/collapse labels and `aria-expanded`. Its compact mobile title, hint and letter markers use (10px) text; markers use camp ink on pale leaf (#d5dfbc). Expanding the card gives it width (min(330px, calc(100% - 30px))), padding (16px), warm paper fill (#fff9e8) and a lifted shadow. The expanded map is (180px) high, with letter markers (24px) across and text (12px). A full location legend pairs circular letter badges with names in (12px) text; a smaller explanation identifies the gold player-position dot. Movement pauses while the field map is expanded. This field-map expansion is separate from map-container fullscreen.
+The equipped field map has a button with accessible expand/collapse labels and `aria-expanded`. Its compact mobile title, hint and letter markers use (10px) text; markers use camp ink on pale leaf (#d5dfbc). Expanding the card gives it width (min(330px, calc(100% - 30px))), padding (16px), warm paper fill (#fff9e8) and a lifted shadow. The expanded map is (170px) high, reduced to (150px) at most (600px), with letter markers (24px) across and text (12px). The card scrolls within maximum height (calc(100% - 30px)) and permits vertical touch panning. Movement pauses while the field map is expanded. This field-map expansion is separate from map-container fullscreen.
+
+Expanded atlas controls offer **Região** and **Acampamento** views using buttons with `aria-pressed`. The selected view has camp-ink fill and cream text; unselected controls are transparent with a muted green border, curved corners (6px), padding (7px) and labels (12px). The region view shows the outer destinations and the campfire reference; the camp view focuses on the original central area. Dashed earth-colored routes connect letter-coded markers, accompanied by a full-name legend in (12px). The gold position dot appears when the player is within the selected view. The compact map remains a camp view; expanding initially selects the region.
+
+### Discoveries and collection
+The expansion defines **12 local discoveries**, with the text rarities **Comum**, **Incomum** and **Raro**. In the scene, collectible crystals have a small gold ring; rare crystals use muted teal and the others use gold. Labels become visible nearby, and collected crystals disappear. A nearby discovery exposes a warm cream action with an ochre border, rounded corners (12px), and a short label, discovery name and **E ou toque aqui** hint. The action is hidden while the atlas is open.
+
+The **Descobertas** navigation entry opens a summary showing the collected count out of twelve, an accessible progress element and a **Continuar explorando** action. Progress is a thin bar (8px) with green accent (#416f48). Each collection card includes a two-digit ordinal and rarity, an award icon, a title, supporting text and a status. Pending cards use a pale neutral fill (#eeeee4), dashed green-grey border (#b7bfaa), corners (14px), padding (24px) and gaps (12px); their title is **Ainda por descobrir** and their text gives a location hint. Found cards switch to cream (#fff9e9), a solid muted gold border (#b8a464), the discovery name and its story. The explicit status text distinguishes **Siga a pista** from **Na sua coleção** without depending on color alone.
+
+The collection's storage explanation states that these memories are saved in this browser for the current identity and do not award currency or VIP. Returning from another page can restore the latest recorded position when its room matches the active room. Source stores that latest room and position in an application ref; it does not establish a persistent multi-room pose history or restore camera orientation.
 
 ### People and profiles
 The people rail uses circular portraits, nickname, optional club identification, and small presence dots. Clicking a person in the rail or selecting a player in the scene opens the same cream profile dialog. The dialog provides wave, server conversation, mute and report actions, with a top-right close button. Dialog behavior includes Escape dismissal and focus management in LobbyApp.tsx. Selected profiles pause the lobby scene.
@@ -179,4 +193,4 @@ Server and equipment views pair illustrated scenes with concise labels and actio
 - **Don't** describe payment preparation controls as active purchases; their disabled state is part of the implemented interface.
 - **Don't** imply that documentation extraction verifies rendering, mobile hardware performance or runtime capacity.
 
-Source evidence: PRODUCT.md, src/lobby/lobby.css, src/lobby/LobbyApp.tsx and src/lobby/LobbyWorld.tsx. This document records source inspection; no browser inspection was performed for this extraction.
+Source evidence: PRODUCT.md, src/lobby/lobby.css, src/lobby/LobbyApp.tsx, src/lobby/LobbyWorld.tsx, src/lobby/exploration.ts and src/lobby/landscape.ts. This document records source inspection; no browser inspection was performed for this extraction.

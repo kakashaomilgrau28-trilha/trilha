@@ -7,6 +7,7 @@ import {
   type FormEvent,
 } from "react";
 import {
+  Award,
   Compass,
   Users,
   MessageCircle,
@@ -39,6 +40,7 @@ import { realClubs, paranaCities } from "../realClubs";
 import { HumanPortrait } from "../world/HumanPortrait";
 import { db, useLobby, type Profile, type Visitor } from "./useLobby";
 import "./lobby.css";
+import {SIZE, discoveries, type Discovery} from "./exploration";
 const LobbyWorld = lazy(() => import("./LobbyWorld"));
 const LapaWorld = lazy(() => import("../world/OpenWorld"));
 const items = [
@@ -113,7 +115,8 @@ export default function LobbyApp() {
   const [profile, setProfile] = useState<Profile>(savedProfile),
     [draft, setDraft] = useState<Profile>(savedProfile);
   const lobby = useLobby(profile);
-  const [page, setPage] = useState<"world" | "chat" | "kit" | "vip" | "admin">(
+  const lastPosition=useRef({room:"",x:0,z:8});
+  const [page, setPage] = useState<"world" | "chat" | "kit" | "vip" | "admin" | "collection">(
       "world",
     ),
     [editing, setEditing] = useState(false),
@@ -134,6 +137,26 @@ export default function LobbyApp() {
     [otp, setOtp] = useState(""),
     [otpSent, setOtpSent] = useState(false),
     [adminLogin, setAdminLogin] = useState(false);
+  const [collection, setCollection] = useState<{owner:string; ids:string[]}>({owner:'',ids:[]});
+  const foundIds=collection.owner===lobby.userId?collection.ids:[];
+  useEffect(()=>{
+    const owner=lobby.userId;
+    if(!owner)return;
+    let ids:string[]=[];
+    try{const saved=JSON.parse(localStorage.getItem(`trilha-discoveries-v1:${owner}`)||'[]');if(Array.isArray(saved))ids=discoveries.filter(r=>saved.includes(r.id)).map(r=>r.id)}catch{}
+    setCollection({owner,ids});
+  },[lobby.userId]);
+  function discover(reward:Discovery){
+    if(!lobby.userId)return;
+    setCollection(previous=>{
+      const ids=previous.owner===lobby.userId?previous.ids:[];
+      if(ids.includes(reward.id))return previous;
+      const next=[...ids,reward.id];
+      try{localStorage.setItem(`trilha-discoveries-v1:${lobby.userId}`,JSON.stringify(next))}catch{}
+      return {owner:lobby.userId,ids:next};
+    });
+    setNotice(`Descoberta guardada: ${reward.name}. Veja sua coleção!`);
+  }
   const bottom = useRef<HTMLDivElement>(null);
   useEffect(() => {
     try {
@@ -240,6 +263,7 @@ export default function LobbyApp() {
   const nav = [
     { id: "world" as const, label: "Lobby", icon: Compass },
     { id: "chat" as const, label: "Conversa", icon: MessageCircle },
+    { id: "collection" as const, label: "Descobertas", icon: Award },
     { id: "kit" as const, label: "Equipamentos", icon: Backpack },
     { id: "vip" as const, label: "Refúgio VIP", icon: Crown },
   ];
@@ -580,7 +604,7 @@ export default function LobbyApp() {
                       ? `Chegue mais, ${profile.nickname}.`
                       : page === "chat"
                         ? "Uma boa conversa vai longe."
-                        : page === "kit"
+                        : page === "collection" ? "Toda trilha guarda uma descoberta." : page === "kit"
                           ? "Pronto para a próxima aventura."
                           : page === "vip"
                             ? "Um refúgio para chamar de seu."
@@ -591,7 +615,7 @@ export default function LobbyApp() {
                       ? "A fogueira está acesa. Sua próxima amizade pode estar logo ali."
                       : page === "chat"
                         ? `Conversa do servidor ${lobby.room.name}.`
-                        : page === "kit"
+                        : page === "collection" ? "Explore, encontre e guarde lembranças da sua aventura." : page === "kit"
                           ? "Equipamentos que fazem parte da vida de campo."
                           : page === "vip"
                             ? "Um espaço especial dentro do mesmo mundo."
@@ -641,13 +665,17 @@ export default function LobbyApp() {
                         </>
                       ) : (
                         <LobbyWorld
+                          key={lobby.room.id}
+                          initialPosition={lastPosition.current.room===lobby.room.id?lastPosition.current:undefined}
+                          foundIds={foundIds}
+                          onDiscover={discover}
                           profile={profile}
                           players={visible}
                           item={item}
                           gesture={gesture}
                           paused={!!selected}
                           vip={lobby.room.id.startsWith("vip-")}
-                          onMove={(x, y) => lobby.move(x, y, item)}
+                          onMove={(x, y) => {lastPosition.current={room:lobby.room!.id,x:(x-50)*SIZE/100,z:(y-50)*SIZE/100};lobby.move(x,y,item)}}
                           onPlayer={setSelected}
                           onVip={() => setPage("vip")}
                         />
@@ -684,7 +712,7 @@ export default function LobbyApp() {
                     <div className="camp-field-note">
                       <TreePine size={17} />
                       <span>
-                        Um lugar pequeno. Muitas histórias para viver.
+                        15× mais área para explorar. Trilhas, montanhas e 12 descobertas.
                       </span>
                     </div>
                   </div>
@@ -767,6 +795,7 @@ export default function LobbyApp() {
                   </aside>
                 </div>
               )}
+              {page === "collection" && <section className="collection-panel"><div className="collection-summary"><Award size={32}/><div><h2>{foundIds.length} de {discoveries.length} descobertas</h2><p>Procure os cristais pelo mapa. Aproxime-se e pressione E ou toque em Recolher.</p></div><button className="camp-primary" onClick={()=>setPage('world')}>Continuar explorando <ArrowRight size={16}/></button></div><progress value={foundIds.length} max={discoveries.length} aria-label="Progresso das descobertas"/><p className="collection-storage">Coleção de lembranças salva neste navegador para sua identidade atual. Não gera moedas ou acesso VIP.</p><div className="discovery-grid">{discoveries.map((r,index)=>{const found=foundIds.includes(r.id);return <article key={r.id} className={found?'discovery found':'discovery'}><span className="discovery-number">{String(index+1).padStart(2,'0')} · {r.rarity}</span><Award size={32}/><h3>{found?r.name:'Ainda por descobrir'}</h3><p>{found?r.story:r.hint}</p><b>{found?'Na sua coleção':'Siga a pista'}</b></article>})}</div></section>}
               {page === "chat" && (
                 <section className="camp-chat">
                   <div className="chat-room-title">
@@ -1156,5 +1185,4 @@ export default function LobbyApp() {
     </div>
   );
 }
-
 
