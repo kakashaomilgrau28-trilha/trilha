@@ -2,6 +2,10 @@
 
 A entrada atual usa servidores escolhíveis e jogadores reais com Supabase Auth e canais privados. O clube é apenas uma identificação opcional. Há conversa por sala, gestos, equipamentos experimentais e tela cheia do mapa. O mapa da Lapa foi preservado, desativado para o público e com liberação pela administração.
 
+A região de exploração tem 10 vezes a área da versão anterior (150 vezes a área inicial), com cerca de 931 m por lado explorável, nove trilhas, mata fechada, duas cavernas cobertas, uma travessia de corda e 16 descobertas. O mapa de localização reproduz os dados do cenário 3D, com relevo, floresta, trilhas, água e plantas das cavernas; oferece zoom, arraste, escala e posição do jogador. É o acampamento fictício, não um mapa geográfico da Lapa.
+
+Os dez equipamentos experimentais incluem bicicleta com pedalada, lanterna, capacete com luz, cantil recarregável, corda para a ravina, bússola de descobertas, binóculos e botas. A bicicleta acelera o deslocamento fora das cavernas. Corrida e pedalada consomem energia; descanso e água recuperam. Use WASD/setas ou o analógico no celular, arraste para olhar, F para usar o equipamento e M para abrir o mapa.
+
 O VIP está definido em R$ 14,90 por pagamento único, mas as vendas estão desativadas a pedido do proprietário. Nenhuma compra é simulada como pagamento realizado. Os equipamentos estão disponíveis para experimentar enquanto a monetização é preparada.
 
 Para operar, leia [docs/lobby-operations.md](docs/lobby-operations.md). Para o objetivo de até 20 mil simultâneos, leia [docs/scaling-20000.md](docs/scaling-20000.md): trata-se de um plano, sem teste de carga ou provisionamento dessa capacidade.

@@ -5,9 +5,9 @@ export const LAPA = { lat: -25.7675993, lng: -49.7164928 }
 export function geographicPosition(x: number, z: number) {
   return { lat: LAPA.lat - z / 111320, lng: LAPA.lng + x / (111320 * Math.cos(LAPA.lat * Math.PI / 180)) }
 }
-export function stepPosition(p: Position, dx: number, dz: number, seconds: number, speed: number, obstacles: Obstacle[]) {
+export function stepPosition(p: Position, dx: number, dz: number, seconds: number, speed: number, obstacles: Obstacle[], boundary = WORLD_SIZE / 2 - 4) {
   const length = Math.max(1, Math.hypot(dx, dz))
-  const blocked = (x: number, z: number) => Math.abs(x) > WORLD_SIZE / 2 - 4 || Math.abs(z) > WORLD_SIZE / 2 - 4 || obstacles.some(o => {
+  const blocked = (x: number, z: number) => Math.abs(x) > boundary || Math.abs(z) > boundary || obstacles.some(o => {
     if (Math.abs(x - o.x) >= o.width / 2 + .5 || Math.abs(z - o.z) >= o.depth / 2 + .5) return false
     if (!o.polygon) return true
     // Polygon containment plus a half-meter clearance around mapped buildings.

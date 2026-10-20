@@ -97,7 +97,7 @@ export function person(index: number) {
   }
   return {
     root,
-    animate(time: number, moving: boolean, gesture = "") {
+    animate(time: number, moving: boolean, gesture = "", cycling = false) {
       const stride = moving ? Math.sin(time * 10) * 0.65 : 0;
       legs[0].rotation.x = stride;
       legs[1].rotation.x = -stride;
@@ -112,7 +112,9 @@ export function person(index: number) {
           : 0;
       arms[0].rotation.z =
         gesture === "Celebrar" ? 2.3 + Math.sin(time * 8) * 0.25 : 0;
-      if (gesture === "Sentar") {
+      body.rotation.x = cycling ? .12 : 0;
+      if(cycling){body.position.y=.35;legs[0].rotation.x=-.8+Math.sin(time*9)*.3;legs[1].rotation.x=-.8-Math.sin(time*9)*.3;arms[0].rotation.x=arms[1].rotation.x=-1.15;}
+      if (!cycling && gesture === "Sentar") {
         body.position.y = -0.5;
         legs[0].rotation.x = legs[1].rotation.x = -1.4;
       }

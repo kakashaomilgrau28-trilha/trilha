@@ -14,11 +14,14 @@ import { stepPosition } from "../world/physics";
 import { avatars } from "../gameData";
 import { buildLobby, equipment, places, SIZE } from "./scene";
 import type { Profile, Visitor } from "./useLobby";
-import {BOUNDARY, terrainHeight, mapPercent, mapCode, trails, discoveries, type Discovery} from './exploration';
+import {BOUNDARY, terrainHeight, caveAt, ropeCrossing, discoveries, type Discovery} from './exploration';
+import {movementSpeed,energyStep,gearIds} from './gear';
+import FieldMap from './FieldMap';
 type Props = {
   profile: Profile;
   players: Visitor[];
   item: string;
+  onEquip: (id:string)=>void;
   gesture: string;
   paused: boolean;
   vip: boolean;
@@ -47,7 +50,9 @@ export default function LobbyWorld(props: Props) {
     [run, setRun] = useState(false),
     [help, setHelp] = useState(false),
     [mapExpanded, setMapExpanded] = useState(false);
-  const [mapView,setMapView] = useState<'camp'|'region'>('region');
+  const resources=useRef({energy:100,water:3,light:true,observing:false,mounted:true,message:'',messageUntil:0,crossing:null as null|{from:{x:number;y:number};to:{x:number;y:number};start:number}});
+  const useItem=useRef<()=>void>(()=>{});
+  const [hud,setHud]=useState({energy:100,water:3,cave:'',heading:0,light:true,observing:false,mounted:true,message:'',bearing:'',distance:0});
   const [nearReward,setNearReward] = useState<Discovery|null>(null);
   const [coords, setCoords] = useState({ x: 0, z: 7 });
   const [petAction, setPetAction] = useState(""),
@@ -80,7 +85,7 @@ export default function LobbyWorld(props: Props) {
       scene = new T.Scene();
     scene.background = new T.Color("#c2d4c6");
     scene.fog = new T.Fog("#c2d4c6", 220, 700);
-    scene.add(new T.HemisphereLight("#fff3d9", "#4e7054", 2.4));
+    const ambient=new T.HemisphereLight("#fff3d9", "#4e7054", 2.4); scene.add(ambient);
     const sun = new T.DirectionalLight("#fff2d2", 3);
     sun.position.set(-25, 45, 20);
     scene.add(sun);
@@ -116,6 +121,8 @@ export default function LobbyWorld(props: Props) {
     let equipped = equipment(latest.current.item),
       itemId = latest.current.item;
     actor.root.add(equipped);
+    const beam=new T.SpotLight('#fff0bf',80,38,.6,.5,1.3);beam.position.set(.25,1.6,.2);beam.target.position.set(0,1.2,12);actor.root.add(beam,beam.target);
+
     let p = {
         x: props.initialPosition?.x ?? Math.random() * 4 - 2,
         y: props.initialPosition?.z ?? (props.vip ? -31 : 7 + Math.random() * 2),
@@ -123,7 +130,25 @@ export default function LobbyWorld(props: Props) {
       frame = 0,
       last = performance.now(),
       published = 0;
-    const camera = new T.PerspectiveCamera(48, 1, 0.1, 800),
+    useItem.current=()=>{
+      const r=resources.current,item=latest.current.item;
+      const tell=(text:string)=>{r.message=text;r.messageUntil=performance.now()+4000};
+      if(item==='lanterna'||item==='capacete'){r.light=!r.light;tell(r.light?'Luz ligada':'Luz desligada')}
+      else if(item==='bicicleta'){r.mounted=!r.mounted;tell(r.mounted?'Bicicleta montada: pedale com WASD ou analógico':'Você desceu da bicicleta')}
+      else if(item==='binoculos')r.observing=!r.observing;
+      else if(item==='cantil'){
+        const waters=[{x:-24,z:18},...places.filter(v=>['rio','cachoeira'].includes(v.id))];
+        if(waters.some(v=>Math.hypot(v.x-p.x,v.z-p.y)<15)&&r.water<3){r.water=3;tell('Cantil reabastecido: 3 doses')}
+        else if(r.water>0){r.water--;r.energy=Math.min(100,r.energy+45);tell('Você bebeu água e recuperou energia')}
+        else tell('Cantil vazio. Reabasteça perto do lago ou do riacho');
+      }else if(item==='corda'){
+        const from=ropeCrossing.from,to=ropeCrossing.to;
+        const a=Math.hypot(p.x-from.x,p.y-from.z),b=Math.hypot(p.x-to.x,p.y-to.z);
+        if(Math.min(a,b)<7&&!r.crossing){const dest=a<b?to:from;r.crossing={from:{...p},to:{x:dest.x,y:dest.z},start:performance.now()};tell('Corda fixada: atravessando a ravina')}
+        else tell('Leve a corda a um ponto de ancoragem da ravina');
+      }
+    };
+    const camera = new T.PerspectiveCamera(48, 1, 0.1, 2400),
       keys = new Set<string>(),
       target = new T.Vector3();
     let renderer: T.WebGLRenderer;
@@ -162,6 +187,8 @@ export default function LobbyWorld(props: Props) {
       touches.current.clear();
     };
     const down = (e: KeyboardEvent) => {
+      if(e.code==='KeyM'&&surface.current?.contains(document.activeElement)){e.preventDefault();setMapExpanded(v=>!v);return}
+      if(e.code==='Escape'){setMapExpanded(false);resources.current.observing=false;return}
       if (
         latest.current.paused ||
         !surface.current?.contains(document.activeElement) ||
@@ -184,7 +211,8 @@ export default function LobbyWorld(props: Props) {
         e.preventDefault();
         keys.add(e.code);
       }
-      if(e.code==='KeyE'&&!e.repeat){const reward=discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5);if(reward)latest.current.onDiscover(reward)}
+      if(e.code==='KeyF'&&!e.repeat){e.preventDefault();useItem.current()}
+      if(e.code==='KeyE'&&!e.repeat){if(caveAt(p.x,p.y)&&!(['lanterna','capacete'].includes(latest.current.item)&&resources.current.light))return;const reward=discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5);if(reward)latest.current.onDiscover(reward)}
     };
     const up = (e: KeyboardEvent) => keys.delete(e.code);
     window.addEventListener("keydown", down);
@@ -208,32 +236,37 @@ export default function LobbyWorld(props: Props) {
       const { yaw, pitch, distance } = view.current,
         wx = dx * Math.cos(yaw) + dz * Math.sin(yaw),
         wz = -dx * Math.sin(yaw) + dz * Math.cos(yaw);
-      const next = stepPosition(
-        p,
-        wx,
-        wz,
-        dt,
-        latest.current.item === "bicicleta"
-          ? 8
-          : input.current.run || keys.has("ShiftLeft")
-            ? 6
-            : 3.6,
-        world.obstacles,
-      );
-      next.x = Math.max(-BOUNDARY, Math.min(BOUNDARY, next.x));
-      next.y = Math.max(-BOUNDARY, Math.min(BOUNDARY, next.y));
+      const r=resources.current,cave=caveAt(p.x,p.y),bike=latest.current.item==='bicicleta'&&r.mounted&&!cave;
+      const slope=Math.abs(terrainHeight(p.x+Math.sin(actor.root.rotation.y)*2,p.y+Math.cos(actor.root.rotation.y)*2)-terrainHeight(p.x,p.y))/2;
+      const sprint=input.current.run||keys.has('ShiftLeft');
+      const speed=movementSpeed(bike?'bicicleta':latest.current.item==='bicicleta'?'':latest.current.item,sprint,r.energy,slope,!!cave);
+      const closeObstacles=world.obstacles.filter(o=>Math.abs(o.x-p.x)<o.width/2+4&&Math.abs(o.z-p.y)<o.depth/2+4);
+      let next=stepPosition(p,wx,wz,dt,speed,closeObstacles,BOUNDARY);
+      if(!enabled&&r.crossing)r.crossing.start+=dt*1000;
+      if(r.crossing){const t=Math.min(1,(now-r.crossing.start)/2400);next={x:r.crossing.from.x+(r.crossing.to.x-r.crossing.from.x)*t,y:r.crossing.from.y+(r.crossing.to.y-r.crossing.from.y)*t};if(t>=1)r.crossing=null}
       const moving = Math.hypot(next.x - p.x, next.y - p.y) > 0.001;
       if (moving) actor.root.rotation.y = Math.atan2(wx, wz);
       p = next;
       const altitude=terrainHeight(p.x,p.y);
       actor.root.position.set(p.x, altitude, p.y);
-      actor.animate(now / 1000, moving, latest.current.gesture);
+      actor.animate(now / 1000, moving, latest.current.gesture,bike);
+      if(enabled)r.energy=energyStep(r.energy,moving,sprint,bike,dt);
+      const inside=caveAt(p.x,p.y);
+      const hasLight=['lanterna','capacete'].includes(latest.current.item)&&r.light;
+      beam.visible=hasLight;beam.intensity=latest.current.item==='capacete'?120:80;
+      ambient.intensity=inside ? .12 : 2.4;sun.intensity=inside ? .05 : 3;
+      const fog=scene.fog as T.Fog;fog.color.set(inside?'#1e2824':'#c2d4c6');fog.near=inside?10:220;fog.far=inside?75:1300;
+      (scene.background as T.Color).set(inside?'#1e2824':'#c2d4c6');
       if (itemId !== latest.current.item) {
         actor.root.remove(equipped);
         disposeScene(equipped);
-        itemId = latest.current.item;
+        itemId = latest.current.item; r.observing=false;r.mounted=true;
         equipped = equipment(itemId);
         actor.root.add(equipped);
+      }
+      if(itemId==='bicicleta'){
+        equipped.visible=!inside;equipped.position.x=r.mounted?0:.8;
+        for(const wheel of equipped.userData.wheels??[])if(moving&&bike)wheel.rotation.x+=speed*dt/.48;
       }
       if (itemId === "pet") {
         equipped.rotation.y = Math.sin(now * 0.003) * 0.15;
@@ -294,7 +327,8 @@ export default function LobbyWorld(props: Props) {
         dest.y=terrainHeight(dest.x,dest.z);
         if (walk) a.actor.root.rotation.y = Math.atan2(delta.x, delta.z);
         a.actor.root.position.lerp(dest, 1 - Math.exp(-6 * dt));
-        a.actor.animate(now / 1000, walk, peer.gesture);
+        a.actor.animate(now / 1000, walk, peer.gesture,peer.item==="bicicleta"&&!caveAt(dest.x,dest.z));
+        if(a.itemId==='bicicleta'){a.item.visible=!caveAt(dest.x,dest.z);for(const wheel of a.item.userData.wheels??[])if(walk)wheel.rotation.x+=14*dt/.48}
         if (a.itemId !== peer.item) {
           a.actor.root.remove(a.item);
           disposeScene(a.item);
@@ -307,7 +341,10 @@ export default function LobbyWorld(props: Props) {
         published = now;
         latest.current.onMove((p.x / SIZE) * 100 + 50, (p.y / SIZE) * 100 + 50);
         setCoords({ x: Math.round(p.x), z: Math.round(p.y) });
-        setNearReward(discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5)??null);
+        const goal=discoveries.filter(g=>!latest.current.foundIds.includes(g.id)).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.y)-Math.hypot(b.x-p.x,b.z-p.y))[0];
+        const bearing=goal?Math.atan2(goal.x-p.x,-(goal.z-p.y))*180/Math.PI:0;
+        setHud({energy:Math.round(r.energy),water:r.water,cave:inside?.name??'',heading:actor.root.rotation.y,light:r.light,observing:r.observing,mounted:r.mounted,message:r.messageUntil>now?r.message:'',bearing:goal?`${goal.name} · ${Math.round((bearing+360)%360)}°`:'Coleção completa',distance:goal?Math.round(Math.hypot(goal.x-p.x,goal.z-p.y)):0});
+        setNearReward((!inside||hasLight)?discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5)??null:null);
         setNear(
           places.reduce((a, b) =>
             Math.hypot(p.x - a.x, p.y - a.z) < Math.hypot(p.x - b.x, p.y - b.z)
@@ -318,14 +355,15 @@ export default function LobbyWorld(props: Props) {
       }
       world.animate(now / 1000);
       for(const {reward,root,gem,tag} of treasureMeshes){root.visible=!latest.current.foundIds.includes(reward.id);root.position.y=terrainHeight(reward.x,reward.z)+1.1+Math.sin(now*.002+reward.x)*.13;gem.rotation.y=now*.001;tag.visible=Math.hypot(reward.x-p.x,reward.z-p.y)<22}
-      target.set(
-        p.x + Math.sin(yaw) * Math.cos(pitch) * distance,
-        altitude + 1.5 + Math.sin(pitch) * distance,
-        p.y + Math.cos(yaw) * Math.cos(pitch) * distance,
-      );
-      camera.position.lerp(target, 1 - Math.exp(-8 * dt));
+      const firstPerson=r.observing&&latest.current.item==='binoculos';
+      const actualDistance=inside?3.4:distance,actualPitch=inside ? .22 : pitch;
+      target.set(p.x+Math.sin(yaw)*Math.cos(actualPitch)*actualDistance,altitude+1.5+Math.sin(actualPitch)*actualDistance,p.y+Math.cos(yaw)*Math.cos(actualPitch)*actualDistance);
+      camera.position.lerp(target,1-Math.exp(-8*dt));
       camera.position.y=Math.max(camera.position.y,terrainHeight(camera.position.x,camera.position.z)+2);
-      camera.lookAt(p.x, altitude+1, p.y - 2);
+      const fov=firstPerson?20:48;if(camera.fov!==fov){camera.fov=fov;camera.updateProjectionMatrix()}actor.root.visible=!firstPerson;
+      if(firstPerson){camera.position.set(p.x,altitude+1.75,p.y);camera.lookAt(p.x-Math.sin(yaw)*50,altitude+1.75+(pitch-.65)*30,p.y-Math.cos(yaw)*50)}
+      else if(inside){camera.position.y=altitude+2.8;camera.lookAt(p.x-Math.sin(yaw)*3,altitude+1.5,p.y-Math.cos(yaw)*3)}
+      else camera.lookAt(p.x,altitude+1,p.y-2);
       if (!document.hidden) renderer.render(scene, camera);
       frame = requestAnimationFrame(tick);
     };
@@ -345,7 +383,7 @@ export default function LobbyWorld(props: Props) {
   function start(e: PointerEvent<HTMLDivElement>) {
     if (
       latest.current.paused ||
-      (e.target as HTMLElement).closest("button,a,details,.field-map")
+      (e.target as HTMLElement).closest("button,a,details,input,select,.field-map,.gear-hud")
     )
       return;
     surface.current?.focus();
@@ -384,8 +422,6 @@ export default function LobbyWorld(props: Props) {
   const nearby = props.players.filter(
     (p) => Math.hypot((p.x - 50)*SIZE/100 - coords.x, (p.y - 50)*SIZE/100 - coords.z) < 12,
   );
-  const atlasSpan=mapExpanded&&mapView==='region'?SIZE:100;
-  const atlasPlaces=places.filter(p=>mapExpanded&&mapView==='region'?p.id==='fogueira'||Math.hypot(p.x,p.z)>45:Math.abs(p.x)<45&&Math.abs(p.z)<45);
   return (
     <section
       ref={section}
@@ -405,7 +441,7 @@ export default function LobbyWorld(props: Props) {
           >
             <RotateCcw size={17} />
           </button>
-          <button onClick={() => {view.current={yaw:.3,pitch:1.05,distance:300}}} aria-label="Ver paisagem da região"><MapIcon size={17}/></button>
+          <button onClick={() => setMapExpanded(v=>!v)} aria-label="Abrir mapa de localização detalhado"><MapIcon size={17}/></button>
           <button
             onClick={() => setHelp(!help)}
             aria-label="Ajuda de controles"
@@ -443,7 +479,7 @@ export default function LobbyWorld(props: Props) {
         onWheel={(e) => {
           view.current.distance = Math.max(
             7,
-            Math.min(300, view.current.distance + Math.sign(e.deltaY) * 2),
+            Math.min(1100, view.current.distance + Math.sign(e.deltaY) * 2),
           );
         }}
       >
@@ -452,20 +488,16 @@ export default function LobbyWorld(props: Props) {
           <strong>{near.name}</strong>
           <span>{near.description}</span>
         </div>
-        {props.item === "mapa" && (
-          <div className={`field-map ${mapExpanded ? "is-open" : ""}`}>
-            <button className="field-map-toggle" aria-expanded={mapExpanded} aria-label={mapExpanded ? "Recolher mapa de campo" : "Ampliar mapa de campo"} onClick={() => setMapExpanded(v => !v)}>
-              <MapIcon size={15}/><b>Mapa de campo</b>{mapExpanded ? <Minimize size={15}/> : <Maximize size={15}/>}
-            </button>
-            {mapExpanded && <div className="map-view-tabs"><button aria-pressed={mapView==='region'} onClick={()=>setMapView('region')}>Região</button><button aria-pressed={mapView==='camp'} onClick={()=>setMapView('camp')}>Acampamento</button></div>}
-            <div className="map-paper">
-              <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">{trails.map(t=><polyline key={t.name} points={t.points.map(([x,z])=>`${mapPercent(x,atlasSpan)},${mapPercent(z,atlasSpan)}`).join(' ')} fill="none" stroke="#9b8053" strokeWidth="1" strokeDasharray="2 1"/>)}</svg>
-              {atlasPlaces.map(p=><span key={p.id} style={{left:`${mapPercent(p.x,atlasSpan)}%`,top:`${mapPercent(p.z,atlasSpan)}%`}} title={p.name}>{mapCode(p.id)}</span>)}
-              {Math.abs(coords.x)<atlasSpan/2 && Math.abs(coords.z)<atlasSpan/2 && <i style={{left:`${mapPercent(coords.x,atlasSpan)}%`,top:`${mapPercent(coords.z,atlasSpan)}%`}}/>}
-            </div>
-            {mapExpanded ? <div className="field-map-legend">{atlasPlaces.map(p=><div key={p.id}><b>{mapCode(p.id)}</b><span>{p.name}</span></div>)}<p>Ponto dourado: você · tracejado: trilhas.</p><small>Região com 15× a área original.</small></div> : <small>Toque para ver a região</small>}
-          </div>
-        )}
+        <FieldMap x={coords.x} z={coords.z} heading={hud.heading} expanded={mapExpanded} onToggle={()=>setMapExpanded(v=>!v)}/>
+        {!mapExpanded&&<div className="gear-hud">
+          <label>Equipamento <select value={props.item} onChange={e=>{props.onEquip(e.target.value);surface.current?.focus()}}><option value="">Mãos livres</option>{gearIds.map(id=><option key={id} value={id}>{({mapa:'Mapa',bicicleta:'Bicicleta',pet:'Companheiro',lanterna:'Lanterna',cantil:'Cantil',corda:'Corda',bussola:'Bússola',binoculos:'Binóculos',botas:'Botas',capacete:'Capacete com luz'} as Record<string,string>)[id]}</option>)}</select></label>
+          <span>Energia {hud.energy}% <progress value={hud.energy} max={100}/></span>
+          {hud.cave&&<strong>{hud.cave} · {['lanterna','capacete'].includes(props.item)&&hud.light?'luz ligada':'equipe uma fonte de luz'}</strong>}
+          {props.item==='bussola'&&<strong>↑ N · {hud.bearing} · {hud.distance} m</strong>}
+          {props.item==='pet'&&hud.distance<30&&<strong>Seu companheiro encontrou uma pista a {hud.distance} m</strong>}
+          {['bicicleta','lanterna','capacete','binoculos','cantil','corda'].includes(props.item)&&<button onClick={()=>{useItem.current();surface.current?.focus()}}>{props.item==='bicicleta'?(hud.mounted?'Descer da bicicleta':'Montar bicicleta'):props.item==='cantil'?`Beber / reabastecer · ${hud.water}/3`:props.item==='corda'?'Fixar corda na ravina':props.item==='binoculos'?(hud.observing?'Guardar binóculos':'Observar com binóculos'):(hud.light?'Desligar luz':'Ligar luz')} · F</button>}
+          {hud.message&&<p role="status">{hud.message}</p>}
+        </div>}
         <div className="lobby-zoom">
           <button
             onClick={() =>
@@ -477,7 +509,7 @@ export default function LobbyWorld(props: Props) {
           </button>
           <button
             onClick={() =>
-              (view.current.distance = Math.min(300, view.current.distance + 3))
+              (view.current.distance = Math.min(1100, view.current.distance + 3))
             }
             aria-label="Afastar câmera"
           >
@@ -554,7 +586,7 @@ export default function LobbyWorld(props: Props) {
             <p>
               Escolha um jogador na lista para acenar, conversar ou silenciar. O
               mapa de campo mostra os lugares; a bicicleta aumenta a velocidade;
-              o pet acompanha você e brinca.
+              o pet acompanha você e fareja descobertas. Use F ou os botões para montar a bicicleta, beber água, acender a luz e fixar a corda na ravina. Cavernas são exploradas a pé; leve lanterna ou capacete com luz.
             </p>
             <button onClick={() => setHelp(false)}>Entendi</button>
           </div>

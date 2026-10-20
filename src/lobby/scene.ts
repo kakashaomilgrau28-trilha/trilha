@@ -144,8 +144,7 @@ function tent(scene: T.Scene, x: number, z: number, color: string) {
   box(g, 1.8, 0.06, 1.1, 0, 0.04, 2.8, "#b98a5a");
 }
 export function buildLobby(scene: T.Scene, vip: boolean) {
-  const obstacles: Obstacle[] = [];
-  buildLandscape(scene);
+  const obstacles: Obstacle[] = buildLandscape(scene);
   const island = cylinder(scene, 43, 0.22, 0, -0.02, 0, "#a0ae7c", 64);
   island.receiveShadow = true;
   cylinder(scene, 11, 0.05, 0, 0.13, 0, "#d2be94", 48);
@@ -359,48 +358,15 @@ export function buildLobby(scene: T.Scene, vip: boolean) {
 export function equipment(item: string) {
   const root = new T.Group();
   if (item === "bicicleta") {
-    for (const z of [-0.85, 0.85]) {
-      const wheel = new T.Mesh(
-        new T.TorusGeometry(0.48, 0.055, 6, 24),
-        mat("#343e37"),
-      );
-      wheel.rotation.y = Math.PI / 2;
-      wheel.position.set(0.55, 0.5, z);
-      root.add(wheel);
-      for (let i = 0; i < 8; i++) {
-        const a = (i * Math.PI) / 4;
-        pole(
-          root,
-          new T.Vector3(0.55, 0.5, z),
-          new T.Vector3(0.55, 0.5 + Math.cos(a) * 0.43, z + Math.sin(a) * 0.43),
-          0.012,
-          "#b8bdb4",
-        );
-      }
+    const wheels:T.Group[]=[];
+    for(const z of [-.85,.85]){
+      const pivot=new T.Group();pivot.position.set(0,.5,z);root.add(pivot);wheels.push(pivot);
+      const wheel=new T.Mesh(new T.TorusGeometry(.48,.055,7,28),mat('#343e37'));wheel.rotation.y=Math.PI/2;pivot.add(wheel);
+      for(let i=0;i<10;i++){const a=i*Math.PI/5;pole(pivot,new T.Vector3(0,0,0),new T.Vector3(0,Math.cos(a)*.43,Math.sin(a)*.43),.012,'#bcc5bd')}
     }
-    for (const [a, b] of [
-      [
-        [-0.0, 0.95, 0],
-        [0, 0.5, -0.85],
-      ],
-      [
-        [0, 0.5, -0.85],
-        [0, 0.5, 0.85],
-      ],
-      [
-        [0, 0.5, 0.85],
-        [0, 0.95, 0],
-      ],
-    ])
-      pole(
-        root,
-        new T.Vector3(a[0] + 0.55, a[1], a[2]),
-        new T.Vector3(b[0] + 0.55, b[1], b[2]),
-        0.045,
-        "#bb7d47",
-      );
-    box(root, 0.35, 0.08, 0.3, 0.55, 1.1, 0, "#384738");
-    box(root, 0.7, 0.06, 0.07, 0.55, 1.2, 0.7, "#394b40");
+    root.userData.wheels=wheels;
+    for(const [a,b] of [[[0,.95,0],[0,.5,-.85]],[[0,.5,-.85],[0,.5,.85]],[[0,.5,.85],[0,.95,0]],[[0,1.2,.65],[0,.5,.85]]])pole(root,new T.Vector3(...a as [number,number,number]),new T.Vector3(...b as [number,number,number]),.045,'#c28548');
+    box(root,.35,.08,.3,0,1.15,0,'#384738');box(root,.7,.06,.08,0,1.35,.65,'#394b40');
   } else if (item === "pet") {
     sphere(root, 0.32, -1, 0.42, -0.5, "#b68e60");
     sphere(root, 0.25, -1, 0.7, -0.22, "#b68e60");
@@ -423,10 +389,7 @@ export function equipment(item: string) {
   } else if (item === "lanterna") {
     const m = cylinder(root, 0.09, 0.35, 0.45, 1, 0.25, "#d7b15e");
     m.rotation.x = Math.PI / 2;
-    const light = new T.SpotLight("#fff1bd", 5, 12, 0.45);
-    light.position.set(0.45, 1, 0.45);
-    light.target.position.set(0.45, 0, 8);
-    root.add(light, light.target);
+
   } else if (item === "cantil") {
     cylinder(root, 0.15, 0.4, 0.35, 1, 0.2, "#75978d");
     cylinder(root, 0.07, 0.1, 0.35, 1.25, 0.2, "#d3c9a4");
@@ -438,5 +401,9 @@ export function equipment(item: string) {
     rope.position.set(0.35, 1, 0.2);
     root.add(rope);
   }
+  if(item==='bussola'){cylinder(root,.2,.06,.45,1.05,.3,'#d9b766',16);box(root,.05,.04,.25,.45,1.1,.3,'#ad4f42')}
+  if(item==='binoculos')for(const x of [.3,.55]){const m=cylinder(root,.11,.4,x,1.5,.35,'#344e43',12);m.rotation.x=Math.PI/2;}
+  if(item==='botas')for(const x of [-.145,.145])box(root,.27,.25,.38,x,.15,.06,'#a47a48');
+  if(item==='capacete'){const helmet=new T.Mesh(new T.SphereGeometry(.27,12,8,0,Math.PI*2,0,Math.PI/2),mat('#d8b151'));helmet.position.y=1.85;root.add(helmet);box(root,.2,.12,.16,0,1.93,.24,'#fcf2c8')}
   return root;
 }

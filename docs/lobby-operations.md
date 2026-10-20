@@ -20,3 +20,9 @@ Diagnóstico: `npm run build` verifica TypeScript e gera o site. `node scripts/c
 
 Configuração verificada em 20/10/2026: o Site URL do Supabase está em https://trilha-campori.vercel.app. O serviço padrão usa link de acesso. A tela orienta abrir o link e escolher o servidor após voltar; o campo de código é uma alternativa caso o e-mail contenha OTP. Não foi contratado SMTP nem realizado login na caixa de e-mail do proprietário.
 
+
+## Exploração ampliada
+
+`src/lobby/exploration.ts` concentra limites, relevo, trilhas, destinos, cavernas e descobertas. A área é 10× a versão anterior de 15×, totalizando 150× a área inicial; o limite caminhável é ±465,4 m. `FieldMap.tsx` usa os mesmos dados e as posições determinísticas das árvores de `landscape.ts`. O acampamento central mantém seu tamanho. O antigo cenário da Lapa continua separado.
+
+Os equipamentos são experiências gratuitas do cliente. F ou o botão do painel ativa a ação; cavernas exigem lanterna/capacete para recolher suas descobertas e são percorridas a pé. A corda funciona nas duas ancoragens da ravina. O cantil tem três doses e recarrega perto do lago, riacho ou cascata. Energia e água são da sessão 3D; a coleção continua local por identidade autenticada. Os novos equipamentos usam o Broadcast existente, sem migrações do banco. Não foi feito teste de carga nem avaliação em aparelhos móveis físicos nesta expansão.

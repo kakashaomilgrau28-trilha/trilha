@@ -58,7 +58,7 @@ const items = [
     icon: Bike,
     type: "Mobilidade",
     description:
-      "Explore o acampamento com mais velocidade e uma bicicleta visível no personagem.",
+      "Pedale a até 14 m/s: rodas e postura de ciclismo animadas. Nas cavernas, siga a pé.",
   },
   {
     id: "pet",
@@ -82,7 +82,7 @@ const items = [
     icon: Droplets,
     type: "Equipamento",
     description:
-      "Leve na mão um cantil de metal inspirado no kit de campo dos Desbravadores.",
+      "Beba para recuperar energia. Reabasteça o cantil perto do lago e dos pontos de água.",
   },
   {
     id: "corda",
@@ -90,8 +90,12 @@ const items = [
     icon: Link,
     type: "Equipamento",
     description:
-      "Seu rolo de corda aparece no personagem. Desafios de nós serão adicionados depois.",
-  },
+      "Fixe a corda nos pontos de ancoragem para atravessar a ravina com segurança.",
+  },  {id:'bussola',name:'Bússola de exploração',icon:Compass,type:'Orientação',description:'Mostra o rumo, a distância e a direção da descoberta mais próxima.'},
+  {id:'binoculos',name:'Binóculos',icon:Map,type:'Observação',description:'Use Observar para ampliar a visão distante em primeira pessoa.'},
+  {id:'botas',name:'Botas de trilha',icon:Mountain,type:'Mobilidade',description:'Caminhe mais rápido e perca menos velocidade nas subidas.'},
+  {id:'capacete',name:'Capacete com luz',icon:Flashlight,type:'Exploração',description:'Ilumine as galerias com uma luz frontal mais ampla. Ligue e desligue pelo botão ou F.'},
+
 ];
 function savedProfile(): Profile {
   try {
@@ -672,6 +676,7 @@ export default function LobbyApp() {
                           profile={profile}
                           players={visible}
                           item={item}
+                          onEquip={setItem}
                           gesture={gesture}
                           paused={!!selected}
                           vip={lobby.room.id.startsWith("vip-")}
@@ -712,7 +717,7 @@ export default function LobbyApp() {
                     <div className="camp-field-note">
                       <TreePine size={17} />
                       <span>
-                        15× mais área para explorar. Trilhas, montanhas e 12 descobertas.
+                        10× a área da versão anterior. Trilhas fechadas, cavernas e novas descobertas.
                       </span>
                     </div>
                   </div>
@@ -901,6 +906,7 @@ export default function LobbyApp() {
                               }
                               onClick={() => {
                                 setItem(item === id ? "" : id);
+                                setPage("world");
                                 setNotice(
                                   item === id
                                     ? "Item guardado."

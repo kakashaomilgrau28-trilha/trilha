@@ -181,6 +181,7 @@ export function useLobby(profile: Profile) {
             "lanterna",
             "cantil",
             "corda",
+            "bussola", "binoculos", "botas", "capacete",
           ].includes(String(value.item))
             ? String(value.item)
             : "",
