@@ -4,6 +4,8 @@ import {
   Maximize,
   Minimize,
   RotateCcw,
+  RotateCw,
+  Binoculars,
   Map as MapIcon,
   Hand,
   Dog,
@@ -12,12 +14,13 @@ import {
 import { person, label, disposeScene } from "../world/character";
 import {createMotion,advanceMotion,obstacleIndex,dampAngle} from './motion';
 import {configureRenderer,type GraphicQuality} from './rendering';
-import { avatars } from "../gameData";
+import { avatars } from "./profiles";
 import { buildLobby, equipment, places, SIZE } from "./scene";
 import type { Profile, Visitor } from "./useLobby";
 import {BOUNDARY, terrainHeight, caveAt, ropeCrossing, discoveries, type Discovery} from './exploration';
 import {movementSpeed,energyStep,gearIds} from './gear';
 import FieldMap from './FieldMap';
+import Quickbelt from './Quickbelt';
 import {frameProfiler} from './diagnostics';
 type Props = {
   profile: Profile;
@@ -40,10 +43,13 @@ export default function LobbyWorld(props: Props) {
     surface = useRef<HTMLDivElement>(null);
   const latest = useRef(props);
   latest.current = props;
-  const view = useRef({ yaw: 0, pitch: 0.65, distance: 22 }),
+  const view = useRef({ yaw: Math.PI/4, pitch: Math.atan(1/Math.sqrt(2)), distance: 30 }),
     input = useRef({ x: 0, z: 0, run: false, jump:false });
   const [quality,setQuality]=useState<GraphicQuality>(()=>{try{const saved=localStorage.getItem("trilha.graphics");return saved==="high"||saved==="economy"?saved:"auto"}catch{return "auto"}});
   const qualityRef=useRef(quality);qualityRef.current=quality;
+  const [overview,setOverview]=useState(false);
+  const overviewRef=useRef(false);overviewRef.current=overview;
+  const waypoint=useRef<{x:number;z:number;name:string}|null>(null);
   const [showPerformance,setShowPerformance]=useState(false),[performanceText,setPerformanceText]=useState("Amostrando…");
   const showPerformanceRef=useRef(false);showPerformanceRef.current=showPerformance;
   const [joystick,setJoystick]=useState<{x:number;y:number}|null>(null),stick=useRef<HTMLDivElement>(null);
@@ -98,6 +104,8 @@ export default function LobbyWorld(props: Props) {
     sun.position.set(-25, 45, 20);
     scene.add(sun);
     const world = buildLobby(scene, props.vip);
+    const wallMaterials=new Set<T.Material>();scene.traverse(n=>{if(n instanceof T.Mesh)for(const m of Array.isArray(n.material)?n.material:[n.material])if(m.userData.caveWall)wallMaterials.add(m)});
+    const wallPlane=new T.Plane(new T.Vector3(0,-1,0),0);let cutawayId='';
     const treasureMeshes = discoveries.map(reward => {
       const root=new T.Group();root.position.set(reward.x,terrainHeight(reward.x,reward.z)+1.1,reward.z);
       const gem=new T.Mesh(new T.OctahedronGeometry(.45),new T.MeshStandardMaterial({color:reward.rarity==='Raro'?'#87b9b1':'#e9bd61',emissive:'#8a5d23',emissiveIntensity:.2,metalness:.3,roughness:.4}));root.add(gem);
@@ -130,7 +138,7 @@ export default function LobbyWorld(props: Props) {
       itemId = latest.current.item;
     actor.root.add(equipped);
     const beam=new T.SpotLight('#fff0bf',80,38,.6,.5,1.3);beam.position.set(.25,1.6,.2);beam.target.position.set(0,1.2,12);actor.root.add(beam,beam.target);
-    const lampFill=new T.PointLight('#e6d4ad',1.6,4,2);lampFill.position.set(0,2.1,.15);actor.root.add(lampFill);
+    const lampFill=new T.PointLight('#e6d4ad',8,6,2);lampFill.position.set(0,2.1,.15);actor.root.add(lampFill);
 
     let p = {
         x: props.initialPosition?.x ?? Math.random() * 4 - 2,
@@ -143,10 +151,7 @@ export default function LobbyWorld(props: Props) {
     const motion=createMotion(p.x,p.y,groundHeight),queryObstacles=obstacleIndex(world.obstacles);
     const lookTarget=new T.Vector3(p.x,groundHeight(p.x,p.y)+1,p.y),desiredLook=new T.Vector3(),peerTarget=new T.Vector3();
     const daylight=new T.Color('#d4dbcc'),night=new T.Color('#1e2824');
-    let caveBlend=0,cameraDistance=view.current.distance,cameraPitch=view.current.pitch,cameraYaw=view.current.yaw,autoScale=1,lastTuning=0,appliedQuality=qualityRef.current,cameraClearance=view.current.distance;
-    const raycaster=new T.Raycaster(),cameraRay=new T.Vector3();
-    const cameraObstacles:T.Object3D[]=[];scene.traverse(node=>{if(node instanceof T.Mesh&&!(node instanceof T.InstancedMesh)&&node.castShadow){for(let parent:T.Object3D|null=node;parent;parent=parent.parent)if(parent===actor.root)return;cameraObstacles.push(node)}});
-
+    let caveBlend=0,cameraDistance=view.current.distance,cameraYaw=view.current.yaw,autoScale=1,lastTuning=0,appliedQuality=qualityRef.current;
     useItem.current=()=>{
       const r=resources.current,item=latest.current.item;
       const tell=(text:string)=>{r.message=text;r.messageUntil=performance.now()+4000};
@@ -165,16 +170,17 @@ export default function LobbyWorld(props: Props) {
         else tell('Leve a corda a um ponto de ancoragem da ravina');
       }
     };
-    const camera = new T.PerspectiveCamera(48, 1, 0.1, 2400),
-      keys = new Set<string>(),
-      target = new T.Vector3();
+    const isoCamera=new T.OrthographicCamera(-30,30,30,-30,.1,2400),eyeCamera=new T.PerspectiveCamera(22,1,.1,180);
+    let camera:T.OrthographicCamera|T.PerspectiveCamera=isoCamera;
+    const
+      keys = new Set<string>();
     let renderer: T.WebGLRenderer;
     try {
       renderer = new T.WebGLRenderer({
         antialias: true,
         powerPreference: "high-performance",
       });
-      configureRenderer(renderer,qualityRef.current);
+      configureRenderer(renderer,qualityRef.current);renderer.localClippingEnabled=true;
       renderer.domElement.setAttribute(
         "aria-label",
         "Lobby 3D com fogueira, barracas, lago, oficina e jogadores conectados",
@@ -192,8 +198,8 @@ export default function LobbyWorld(props: Props) {
       const w = container.clientWidth,
         h = container.clientHeight;
       renderer.setSize(w, h);
-      camera.aspect = w / Math.max(1, h);
-      camera.updateProjectionMatrix();
+      if(!w||!h)return;
+      eyeCamera.aspect=w/h;eyeCamera.updateProjectionMatrix();
     };
     resize();
     const observer = new ResizeObserver(resize);
@@ -228,6 +234,9 @@ export default function LobbyWorld(props: Props) {
         e.preventDefault();
         keys.add(e.code);
       }
+      if(/^Digit[0-9]$/.test(e.code)&&!e.repeat){const n=Number(e.code.slice(-1));latest.current.onEquip(gearIds[(n+9)%10]);e.preventDefault()}
+      if(e.code==='KeyQ'&&!e.repeat)view.current.yaw-=Math.PI/2;
+      if(e.code==='KeyR'&&!e.repeat)view.current.yaw+=Math.PI/2;
       if(e.code==='Space'&&!e.repeat){e.preventDefault();input.current.jump=true}
       if(e.code==='KeyF'&&!e.repeat){e.preventDefault();useItem.current()}
       if(e.code==='KeyE'&&!e.repeat){if(caveAt(p.x,p.y)&&!(['lanterna','capacete'].includes(latest.current.item)&&resources.current.light))return;const reward=discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5);if(reward)latest.current.onDiscover(reward)}
@@ -274,10 +283,12 @@ export default function LobbyWorld(props: Props) {
       actor.animate(now/1000,moving,latest.current.gesture,bike,{speed:actualSpeed,air,landing:motion.landing});
       if(enabled)r.energy=energyStep(r.energy,moving,sprint,bike,dt);
       const inside=caveAt(p.x,p.y),hasLight=['lanterna','capacete'].includes(latest.current.item)&&r.light;
+      wallPlane.constant=motion.y+1.3;
+      if((inside?.id??'')!==cutawayId){cutawayId=inside?.id??'';for(const m of wallMaterials){m.clippingPlanes=m.userData.caveWall===cutawayId?[wallPlane]:null;m.clipShadows=true;m.needsUpdate=true}}
       beam.visible=hasLight;lampFill.visible=hasLight&&!!inside;beam.intensity=latest.current.item==='capacete'?120:80;
       caveBlend+=(Number(!!inside)-caveBlend)*(1-Math.exp(-4*dt));
-      ambient.intensity=T.MathUtils.lerp(1.65,.22,caveBlend);sun.intensity=T.MathUtils.lerp(2.6,.05,caveBlend);
-      const fog=scene.fog as T.Fog;fog.color.copy(daylight).lerp(night,caveBlend);fog.near=T.MathUtils.lerp(120,8,caveBlend);fog.far=T.MathUtils.lerp(550,60,caveBlend);
+      ambient.intensity=T.MathUtils.lerp(1.65,.48,caveBlend);sun.intensity=T.MathUtils.lerp(2.6,.05,caveBlend);
+      const fog=scene.fog as T.Fog;fog.color.copy(daylight).lerp(night,caveBlend);fog.near=resources.current.observing?8:380;fog.far=resources.current.observing?60:T.MathUtils.lerp(1100,650,caveBlend);
       (scene.background as T.Color).copy(fog.color);
       const shadowX=Math.round(p.x*16)/16,shadowZ=Math.round(p.y*16)/16;sun.position.set(shadowX-28,altitude+48,shadowZ+22);sun.target.position.set(shadowX,altitude,shadowZ);
       if (itemId !== latest.current.item) {
@@ -358,10 +369,12 @@ export default function LobbyWorld(props: Props) {
       }
       if (now - published > 150) {
         published = now;
+        const forestCells=scene.userData.forestLods as T.LOD[]|undefined;
+        if(forestCells)for(const lod of forestCells){const distance=Math.hypot(lod.position.x-p.x,lod.position.z-p.y);lod.levels.forEach((level,i)=>level.object.visible=i===(distance<125?0:distance<460?1:2))}
         latest.current.onMove((p.x / SIZE) * 100 + 50, (p.y / SIZE) * 100 + 50);
         setCoords(prev=>prev.x===Math.round(p.x)&&prev.z===Math.round(p.y)?prev:{x:Math.round(p.x),z:Math.round(p.y)});
         if(showPerformanceRef.current&&container.dataset.performance){const stats=JSON.parse(container.dataset.performance);setPerformanceText(`${stats.fps} FPS · quadro p95 ${stats.p95} ms · ${stats.calls} desenhos · ${stats.triangles.toLocaleString('pt-BR')} triângulos`)}
-        const goal=discoveries.filter(g=>!latest.current.foundIds.includes(g.id)).sort((a,b)=>Math.hypot(a.x-p.x,a.z-p.y)-Math.hypot(b.x-p.x,b.z-p.y))[0];
+        const goal=waypoint.current??discoveries.reduce<(typeof discoveries)[number]|undefined>((best,g)=>latest.current.foundIds.includes(g.id)?best:!best||Math.hypot(g.x-p.x,g.z-p.y)<Math.hypot(best.x-p.x,best.z-p.y)?g:best,undefined);
         const bearing=goal?Math.atan2(goal.x-p.x,-(goal.z-p.y))*180/Math.PI:0;
         setHud({energy:Math.round(r.energy),water:r.water,cave:inside?.name??'',heading:actor.root.rotation.y,light:r.light,observing:r.observing,mounted:r.mounted,message:r.messageUntil>now?r.message:'',bearing:goal?`${goal.name} · ${Math.round((bearing+360)%360)}°`:'Coleção completa',distance:goal?Math.round(Math.hypot(goal.x-p.x,goal.z-p.y)):0});
         setNearReward((!inside||hasLight)?discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5)??null:null);
@@ -376,42 +389,38 @@ export default function LobbyWorld(props: Props) {
       world.animate(now/1000,camera,caveBlend);
       for(const {reward,root,gem,tag} of treasureMeshes){root.visible=!latest.current.foundIds.includes(reward.id);root.position.y=terrainHeight(reward.x,reward.z)+1.1+Math.sin(now*.002+reward.x)*.13;gem.rotation.y=now*.001;tag.visible=Math.hypot(reward.x-p.x,reward.z-p.y)<22}
       const firstPerson=r.observing&&latest.current.item==='binoculos';
-      name.visible=!inside&&Math.min(distance,cameraClearance)>13;
-      cameraDistance+=( (firstPerson?.05:inside?2.8:distance)-cameraDistance)*(1-Math.exp(-10*dt));
-      cameraPitch+=((inside?.2:pitch)-cameraPitch)*(1-Math.exp(-14*dt));cameraYaw=dampAngle(cameraYaw,yaw,18,dt);
-      desiredLook.set(p.x,motion.y+1.2-motion.landing*.035,p.y);
-      lookTarget.lerp(desiredLook,1-Math.exp(-20*dt));
-      target.set(lookTarget.x+Math.sin(cameraYaw)*Math.cos(cameraPitch)*cameraDistance,lookTarget.y+Math.sin(cameraPitch)*cameraDistance,lookTarget.z+Math.cos(cameraYaw)*Math.cos(cameraPitch)*cameraDistance);
-      if(!inside){
-        cameraRay.copy(target).sub(lookTarget);const length=cameraRay.length();cameraRay.normalize();let clear=length;
-        for(let d=.8;d<length;d+=.6){
-          const x=lookTarget.x+cameraRay.x*d,z=lookTarget.z+cameraRay.z*d,y=lookTarget.y+cameraRay.y*d;
-          const trees=queryObstacles(x,z,4);
-          if(y<groundHeight(x,z)+.35||trees.some(o=>o.canopy&&Math.hypot(o.x-x,o.z-z)<o.canopy&&y>terrainHeight(o.x,o.z)+2.8&&y<terrainHeight(o.x,o.z)+(o.height??0))){clear=Math.max(.8,d-.45);break}
-        }
-        cameraClearance=clear<cameraClearance?clear:cameraClearance+(clear-cameraClearance)*(1-Math.exp(-5*dt));
-        target.copy(lookTarget).addScaledVector(cameraRay,Math.min(length,cameraClearance));
+      name.visible=!inside&&!overviewRef.current;
+      cameraDistance+=((firstPerson?8:overviewRef.current?950:inside?22:distance)-cameraDistance)*(1-Math.exp(-10*dt));
+      cameraYaw=dampAngle(cameraYaw,yaw,16,dt);
+      desiredLook.set(p.x,motion.y+1.2-motion.landing*.035,p.y);lookTarget.lerp(desiredLook,1-Math.exp(-20*dt));
+      camera=firstPerson?eyeCamera:isoCamera;
+      if(firstPerson){eyeCamera.position.set(p.x,motion.y+1.75,p.y);eyeCamera.lookAt(p.x-Math.sin(cameraYaw)*50,motion.y+1.75+(pitch-.615)*30,p.y-Math.cos(cameraYaw)*50)}
+      else{
+       const aspect=container.clientWidth/Math.max(1,container.clientHeight),half=cameraDistance/2;
+       if(Math.abs(isoCamera.top-half)>.001||Math.abs(isoCamera.right-half*aspect)>.001){isoCamera.left=-half*aspect;isoCamera.right=half*aspect;isoCamera.top=half;isoCamera.bottom=-half;isoCamera.updateProjectionMatrix()}
+       const anchor=overviewRef.current?new T.Vector3(0,20,0):lookTarget;
+       isoCamera.position.set(anchor.x+Math.sin(cameraYaw)*300,anchor.y+Math.tan(Math.atan(1/Math.sqrt(2)))*300,anchor.z+Math.cos(cameraYaw)*300);isoCamera.lookAt(anchor);
       }
-      if(inside||cameraDistance<16){
-        cameraRay.copy(target).sub(lookTarget);const length=cameraRay.length();raycaster.set(lookTarget,cameraRay.normalize());raycaster.far=length;
-        const hit=raycaster.intersectObjects(cameraObstacles,false)[0];if(hit&&hit.distance<length)target.copy(lookTarget).addScaledVector(cameraRay,Math.max(.25,hit.distance-.3));
-      }
-      camera.position.copy(target);camera.position.y=Math.max(camera.position.y,groundHeight(camera.position.x,camera.position.z)+.5);
-      const fov=firstPerson?22:48+(sprint&&moving&&!bike?2:0);camera.fov+=(fov-camera.fov)*(1-Math.exp(-10*dt));camera.updateProjectionMatrix();actor.root.visible=!firstPerson;
-      if(firstPerson){camera.position.set(p.x,motion.y+1.75,p.y);camera.lookAt(p.x-Math.sin(cameraYaw)*50,motion.y+1.75+(pitch-.65)*30,p.y-Math.cos(cameraYaw)*50)}
-      else if(inside)camera.lookAt(lookTarget.x-Math.sin(cameraYaw)*2,lookTarget.y,lookTarget.z-Math.cos(cameraYaw)*2);
-      else camera.lookAt(lookTarget);
+      actor.root.visible=!firstPerson;
+      const focus=scene.userData.forestFocus as {value:T.Vector3}|undefined;focus?.value.set(p.x,motion.y,p.y);
+      const forestDirection=scene.userData.forestDirection as {value:T.Vector2}|undefined;forestDirection?.value.set(Math.sin(cameraYaw),Math.cos(cameraYaw));
+      const roofs=scene.userData.caveRoofs as Map<string,T.Group>|undefined;if(roofs)for(const [id,roof]of roofs)roof.visible=inside?.id!==id;
       if(appliedQuality!==qualityRef.current){appliedQuality=qualityRef.current;autoScale=1;configureRenderer(renderer,appliedQuality,autoScale)}
       if(now-lastTuning>6000&&appliedQuality==='auto'&&container.dataset.performance){lastTuning=now;const stats=JSON.parse(container.dataset.performance);autoScale=T.MathUtils.clamp(autoScale+(stats.fps<42?-.1:stats.fps>58?.05:0),.75,1);configureRenderer(renderer,appliedQuality,autoScale)}
       if (!document.hidden) renderer.render(scene, camera);
       profileFrame(now);
       frame = requestAnimationFrame(tick);
     };
-    camera.position.set(0, 18, 24);
+    isoCamera.position.set(30,30,30);
+    let visible=true;
+    const resume=()=>{if(visible&&!document.hidden&&!frame){last=performance.now();profileFrame.reset();frame=requestAnimationFrame(tick)}};
+    const visibility=()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;reset()}else resume()};
+    const intersection=new IntersectionObserver(entries=>{visible=entries[0]?.isIntersecting??true;if(!visible){cancelAnimationFrame(frame);frame=0;reset()}else resume()});intersection.observe(container);
+    document.addEventListener('visibilitychange',visibility);
     frame = requestAnimationFrame(tick);
     return () => {
       cancelAnimationFrame(frame);
-      observer.disconnect();
+      observer.disconnect();intersection.disconnect();document.removeEventListener('visibilitychange',visibility);
       window.removeEventListener("keydown", down);
       window.removeEventListener("keyup", up);
       window.removeEventListener("blur", reset);
@@ -467,7 +476,7 @@ export default function LobbyWorld(props: Props) {
   return (
     <section
       ref={section}
-      className={`lobby-world ${expanded ? "expanded" : ""}`}
+      className={`lobby-world isometric-world ${expanded ? "expanded" : ""}`}
     >
       <div className="lobby-mapbar">
         <div>
@@ -477,12 +486,15 @@ export default function LobbyWorld(props: Props) {
         <div>
           <button
             onClick={() => {
-              view.current = { yaw: 0, pitch: 0.65, distance: 22 };
+              view.current = { yaw: Math.PI/4, pitch: Math.atan(1/Math.sqrt(2)), distance: 30 };setOverview(false);
             }}
-            aria-label="Centralizar câmera"
+            aria-label="Centralizar câmera isométrica"
           >
-            <RotateCcw size={17} />
+            <LocateFixed size={17} />
           </button>
+          <button onClick={()=>{view.current.yaw-=Math.PI/2;surface.current?.focus()}} aria-label="Girar câmera à esquerda · Q"><RotateCcw size={16}/></button>
+          <button onClick={()=>{view.current.yaw+=Math.PI/2;surface.current?.focus()}} aria-label="Girar câmera à direita · R"><RotateCw size={16}/></button>
+          <button className="view-switch" aria-pressed={overview} aria-label={overview?'Voltar ao personagem':'Ver toda a região'} onClick={()=>setOverview(v=>!v)}><Binoculars size={16}/><span>{overview?'Personagem':'Região'}</span></button>
           <select className="graphics-select" aria-label="Qualidade gráfica" value={quality} onChange={e=>{const q=e.target.value as GraphicQuality;setQuality(q);try{localStorage.setItem('trilha.graphics',q)}catch{}surface.current?.focus()}}><option value="auto">Gráficos: auto</option><option value="high">Gráficos: alta</option><option value="economy">Gráficos: leve</option></select>
           <button onClick={() => setMapExpanded(v=>!v)} aria-label="Abrir mapa de localização detalhado"><MapIcon size={17}/></button>
           <button
@@ -509,6 +521,7 @@ export default function LobbyWorld(props: Props) {
         </div>
       </div>
       <div
+        data-position={`${coords.x},${coords.z}`}
         ref={surface}
         className="lobby-surface"
         style={{touchAction:mapExpanded?"pan-y":"none"}}
@@ -520,9 +533,10 @@ export default function LobbyWorld(props: Props) {
         onPointerCancel={stop}
         onLostPointerCapture={stop}
         onWheel={(e) => {
+          if((e.target as HTMLElement).closest(".field-map,.quickbelt"))return;
           view.current.distance = Math.max(
             7,
-            Math.min(1100, view.current.distance + Math.sign(e.deltaY) * 2),
+            Math.min(100, view.current.distance + Math.sign(e.deltaY) * 2),
           );
         }}
       >
@@ -533,7 +547,9 @@ export default function LobbyWorld(props: Props) {
           <strong>{near.name}</strong>
           <span>{near.description}</span>
         </div>
-        <FieldMap x={coords.x} z={coords.z} heading={hud.heading} expanded={mapExpanded} onToggle={()=>setMapExpanded(v=>!v)}/>
+        <FieldMap onNavigate={p=>{waypoint.current=p;setMapExpanded(false);surface.current?.focus()}} x={coords.x} z={coords.z} heading={hud.heading} expanded={mapExpanded} onToggle={()=>setMapExpanded(v=>!v)}/>
+        {!mapExpanded&&!showPerformance&&<div className="expedition-goal"><b>{waypoint.current?'Destino marcado':'Próxima descoberta'}</b><p>{hud.bearing.split(' · ')[0]} · {hud.distance} m</p>{waypoint.current&&<button onClick={()=>{waypoint.current=null}}>Limpar destino</button>}</div>}
+        {!mapExpanded&&<Quickbelt item={props.item} onEquip={id=>{props.onEquip(id);surface.current?.focus()}}/>}
         {!mapExpanded&&<div className="gear-hud">
           <label>Equipamento <select value={props.item} onChange={e=>{props.onEquip(e.target.value);surface.current?.focus()}}><option value="">Mãos livres</option>{gearIds.map(id=><option key={id} value={id}>{({mapa:'Mapa',bicicleta:'Bicicleta',pet:'Companheiro',lanterna:'Lanterna',cantil:'Cantil',corda:'Corda',bussola:'Bússola',binoculos:'Binóculos',botas:'Botas',capacete:'Capacete com luz'} as Record<string,string>)[id]}</option>)}</select></label>
           <span>Energia {hud.energy}% <progress value={hud.energy} max={100}/></span>
@@ -546,7 +562,7 @@ export default function LobbyWorld(props: Props) {
         <div className="lobby-zoom">
           <button
             onClick={() =>
-              (view.current.distance = Math.max(7, view.current.distance - 3))
+              (view.current.distance = Math.max(14, view.current.distance - 3))
             }
             aria-label="Aproximar câmera"
           >
@@ -554,7 +570,7 @@ export default function LobbyWorld(props: Props) {
           </button>
           <button
             onClick={() =>
-              (view.current.distance = Math.min(1100, view.current.distance + 3))
+              (view.current.distance = Math.min(100, view.current.distance + 3))
             }
             aria-label="Afastar câmera"
           >
@@ -625,9 +641,9 @@ export default function LobbyWorld(props: Props) {
           <div className="map-help">
             <h3>Encontre sua turma.</h3>
             <p>
-              Clique no mapa e use WASD ou as setas. Arraste para girar a câmera
-              e use + e − para aproximar. Pressione E perto de uma descoberta para recolher. O ícone de mapa na barra abre a vista da região. No celular, arraste o lado esquerdo
-              para andar e o direito para olhar.
+              Clique no cenário e use WASD ou as setas. Q e R giram a visão isométrica
+              e use + e − para aproximar. Pressione E perto de uma descoberta para recolher. As teclas 1 a 0 equipam os itens da mochila. M abre o mapa; selecione um lugar e marque um destino. No celular, arraste o lado esquerdo
+              para andar e o direito para girar a câmera.
             </p>
             <p>
               Escolha um jogador na lista para acenar, conversar ou silenciar. O

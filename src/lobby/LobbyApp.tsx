@@ -35,11 +35,12 @@ import {
   Flame,
   ChevronRight,
 } from "lucide-react";
-import { avatars } from "../gameData";
-import { realClubs, paranaCities } from "../realClubs";
+import { avatars } from "./profiles";
+
 import { HumanPortrait } from "../world/HumanPortrait";
 import { db, useLobby, type Profile, type Visitor } from "./useLobby";
 import "./lobby.css";
+import "./expedition.css";
 import {SIZE, discoveries, type Discovery} from "./exploration";
 const LobbyWorld = lazy(() => import("./LobbyWorld"));
 const LapaWorld = lazy(() => import("../world/OpenWorld"));
@@ -116,6 +117,9 @@ function savedProfile(): Profile {
   return { nickname: "", avatar: "trilheiro", club: "" };
 }
 export default function LobbyApp() {
+  const [clubOpen,setClubOpen]=useState(false);
+  const [clubDirectory,setClubDirectory]=useState<{clubs:typeof import('../realClubs').realClubs;cities:string[]}>({clubs:[],cities:['LAPA']});
+  useEffect(()=>{if(clubOpen&&!clubDirectory.clubs.length)import('../realClubs').then(d=>setClubDirectory({clubs:d.realClubs,cities:d.paranaCities})).catch(()=>{})},[clubOpen,clubDirectory.clubs.length]);
   const [profile, setProfile] = useState<Profile>(savedProfile),
     [draft, setDraft] = useState<Profile>(savedProfile);
   const lobby = useLobby(profile);
@@ -265,17 +269,18 @@ export default function LobbyApp() {
     }
   }
   const nav = [
-    { id: "world" as const, label: "Lobby", icon: Compass },
+    { id: "world" as const, label: "Explorar", icon: Compass },
     { id: "chat" as const, label: "Conversa", icon: MessageCircle },
     { id: "collection" as const, label: "Descobertas", icon: Award },
     { id: "kit" as const, label: "Equipamentos", icon: Backpack },
     { id: "vip" as const, label: "Refúgio VIP", icon: Crown },
   ];
   return (
-    <div className="camp-app">
+    <div className={`camp-app expedition-app ${ready&&lobby.room?"in-server":""} ${page==="world"?"on-world":""}`}>
       <aside className="camp-sidebar">
         <a
           href="#lobby"
+          aria-label="Trilha · voltar à exploração"
           className="camp-brand"
           onClick={(e) => {
             e.preventDefault();
@@ -442,7 +447,7 @@ export default function LobbyApp() {
                     ))}
                   </div>
                 </fieldset>
-                <details className="club-details">
+                <details className="club-details" onToggle={e=>setClubOpen(e.currentTarget.open)}>
                   <summary>
                     {draft.club || "Identificar meu clube (opcional)"}
                   </summary>
@@ -452,7 +457,7 @@ export default function LobbyApp() {
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
                   >
-                    {paranaCities.map((c) => (
+                    {clubDirectory.cities.map((c) => (
                       <option key={c}>{c}</option>
                     ))}
                   </select>
@@ -465,7 +470,7 @@ export default function LobbyApp() {
                     }
                   >
                     <option value="">Sem clube informado</option>
-                    {realClubs
+                    {clubDirectory.clubs
                       .filter((c) => c.city === city)
                       .map((c) => (
                         <option key={c.id} value={c.name}>
@@ -637,7 +642,7 @@ export default function LobbyApp() {
                   {lobby.status}
                 </div>
               )}
-              {page === "world" && (
+              {(<div className="world-panel" hidden={page!=="world"}>
                 <div className="lobby-layout">
                   <div className="world-column">
                     <Suspense
@@ -678,7 +683,7 @@ export default function LobbyApp() {
                           item={item}
                           onEquip={setItem}
                           gesture={gesture}
-                          paused={!!selected}
+                          paused={!!selected||page!=="world"}
                           vip={lobby.room.id.startsWith("vip-")}
                           onMove={(x, y) => {lastPosition.current={room:lobby.room!.id,x:(x-50)*SIZE/100,z:(y-50)*SIZE/100};lobby.move(x,y,item)}}
                           onPlayer={setSelected}
@@ -717,7 +722,7 @@ export default function LobbyApp() {
                     <div className="camp-field-note">
                       <TreePine size={17} />
                       <span>
-                        10× a área da versão anterior. Trilhas fechadas, cavernas e novas descobertas.
+                        Trilhas conectadas, cavernas nas encostas e descobertas para sua coleção.
                       </span>
                     </div>
                   </div>
@@ -799,7 +804,7 @@ export default function LobbyApp() {
                     </div>
                   </aside>
                 </div>
-              )}
+              </div>)}
               {page === "collection" && <section className="collection-panel"><div className="collection-summary"><Award size={32}/><div><h2>{foundIds.length} de {discoveries.length} descobertas</h2><p>Procure os cristais pelo mapa. Aproxime-se e pressione E ou toque em Recolher.</p></div><button className="camp-primary" onClick={()=>setPage('world')}>Continuar explorando <ArrowRight size={16}/></button></div><progress value={foundIds.length} max={discoveries.length} aria-label="Progresso das descobertas"/><p className="collection-storage">Coleção de lembranças salva neste navegador para sua identidade atual. Não gera moedas ou acesso VIP.</p><div className="discovery-grid">{discoveries.map((r,index)=>{const found=foundIds.includes(r.id);return <article key={r.id} className={found?'discovery found':'discovery'}><span className="discovery-number">{String(index+1).padStart(2,'0')} · {r.rarity}</span><Award size={32}/><h3>{found?r.name:'Ainda por descobrir'}</h3><p>{found?r.story:r.hint}</p><b>{found?'Na sua coleção':'Siga a pista'}</b></article>})}</div></section>}
               {page === "chat" && (
                 <section className="camp-chat">

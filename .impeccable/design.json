@@ -1,80 +1,110 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-20T07:04:41.6643148-03:00",
-  "title": "Design System: Trilha",
+  "generatedAt": "2026-10-27T18:48:20.6890286-03:00",
+  "title": "Design System: Trilha Expedition",
   "extensions": {
     "colorMeta": {
-      "camp-green": {
-        "role": "primary",
-        "displayName": "Camp green"
-      },
       "camp-ink": {
-        "role": "primary",
-        "displayName": "Camp ink"
+        "displayName": "Pale interface ink",
+        "role": "neutral",
+        "canonical": "#e6e6d7"
       },
       "camp-mute": {
+        "displayName": "Muted leaf text",
         "role": "neutral",
-        "displayName": "Muted woodland"
+        "canonical": "#a8b5a6"
+      },
+      "camp-green": {
+        "displayName": "Supporting camp green",
+        "role": "primary",
+        "canonical": "#58794c"
       },
       "camp-gold": {
+        "displayName": "Camp gold",
         "role": "secondary",
-        "displayName": "Camp gold"
+        "canonical": "#d2b274"
       },
       "camp-paper": {
+        "displayName": "Charcoal ground",
         "role": "neutral",
-        "displayName": "Warm camp paper"
+        "canonical": "#202820"
       },
       "camp-line": {
+        "displayName": "Olive divider",
         "role": "neutral",
-        "displayName": "Leaf divider"
+        "canonical": "#3a4739"
       },
-      "warm-surface": {
+      "action-fill": {
+        "displayName": "Olive primary action",
+        "role": "primary",
+        "canonical": "#728c53"
+      },
+      "action-ink": {
+        "displayName": "Dark action ink",
         "role": "neutral",
-        "displayName": "Warm surface"
+        "canonical": "#10190e"
+      },
+      "atlas-paper": {
+        "displayName": "Topographic paper",
+        "role": "neutral",
+        "canonical": "#e4e2c4"
+      },
+      "equipment-surface": {
+        "displayName": "Equipment olive",
+        "role": "neutral",
+        "canonical": "#2c3927"
       }
     },
     "typographyMeta": {
       "display": {
-        "displayName": "Arrival headline",
-        "purpose": "Main arrival copy."
+        "displayName": "Arrival display",
+        "purpose": "Inherited arrival heading scale in Manrope."
       },
       "headline": {
-        "displayName": "Page headline",
-        "purpose": "Top-level section titles."
+        "displayName": "Menu headline",
+        "purpose": "28px Manrope menu headings; 25px mobile. Hidden in the active world."
       },
       "title": {
         "displayName": "Panel title",
-        "purpose": "Arrival form and profile dialogs."
+        "purpose": "Profile and form titles."
       },
       "body": {
         "displayName": "Interface body",
-        "purpose": "Default application text."
+        "purpose": "DM Sans supporting interface text."
       },
       "label": {
         "displayName": "Action label",
-        "purpose": "Primary and secondary actions."
+        "purpose": "12px primary and secondary buttons."
+      },
+      "quickslot-label": {
+        "displayName": "Quickslot label",
+        "purpose": "8px equipment labels."
+      },
+      "quickslot-key": {
+        "displayName": "Quickslot key",
+        "purpose": "9px inherited-family numeric shortcuts."
       }
     },
     "shadows": [
       {
-        "name": "map-help",
-        "value": "0 12px 40px #213b3440",
-        "purpose": "Instruction panel above the map."
-      },
-      {
-        "name": "toast",
-        "value": "0 8px 30px #23452a33",
-        "purpose": "Status feedback above the page."
-      },
-      {
-        "name": "expanded-field-map",
-        "value": "0 8px 30px #28412b30",
-        "purpose": "Readable field-map legend above the scene."
+        "name": "expanded-atlas",
+        "purpose": "Inherited expanded atlas lift.",
+        "value": "0 8px 30px #28412b30"
       },
       {
         "name": "nearby-discovery",
-        "value": "0 6px 24px #20352133",
-        "purpose": "Contextual discovery collection action above the landscape."
+        "purpose": "Contextual collectible prompt above the scene.",
+        "value": "0 6px 24px #20352133"
+      },
+      {
+        "name": "map-help",
+        "purpose": "Instruction panel separation.",
+        "value": "0 12px 40px #213b3440"
+      },
+      {
+        "name": "toast",
+        "purpose": "Status feedback.",
+        "value": "0 8px 30px #23452a33"
       }
     ],
     "motion": [
@@ -86,28 +116,32 @@
     ],
     "breakpoints": [
       {
-        "name": "wide-min",
-        "value": "1650px"
+        "value": "1650px",
+        "name": "wide-min"
       },
       {
-        "name": "compact-desktop-max",
-        "value": "1200px"
+        "value": "1100px",
+        "name": "compact-shell-max"
       },
       {
-        "name": "mobile-max",
-        "value": "800px"
+        "value": "1000px",
+        "name": "collection-two-column-max"
       },
       {
-        "name": "narrow-mobile-max",
-        "value": "450px"
+        "value": "800px",
+        "name": "mobile-shell-max"
       },
       {
-        "name": "collection-two-columns-max",
-        "value": "1000px"
+        "value": "650px",
+        "name": "compact-atlas-max"
       },
       {
-        "name": "collection-single-column-max",
-        "value": "600px"
+        "value": "600px",
+        "name": "collection-single-column-max"
+      },
+      {
+        "value": "450px",
+        "name": "narrow-inherited-max"
       }
     ]
   },
@@ -116,9 +150,9 @@
       "name": "Primary action",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Forest green action with a clear text label.",
+      "description": "Olive filled action with dark lettering on the charcoal expedition shell.",
       "html": "<button class=\"camp-primary\">Abrir conversa</button>",
-      "css": ".camp-primary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;padding:11px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;line-height:1.4;background:var(--camp-green,#2b5542);color:#fff;border:0;transition:background .15s,color .15s}.camp-primary:hover:not(:disabled){filter:brightness(.96)}.camp-primary:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.camp-primary:disabled{opacity:.58}@media(prefers-reduced-motion:reduce){.camp-primary{transition:none}}"
+      "css": ".camp-primary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;padding:11px 16px;border-radius:8px;font-family:\"DM Sans\",sans-serif;font-size:12px;font-weight:600;line-height:1.4;background:#728c53;color:#10190e;border:0;transition:background .15s,color .15s}.camp-primary:hover:not(:disabled){filter:brightness(.96)}.camp-primary:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.camp-primary:disabled{opacity:.58}@media(prefers-reduced-motion:reduce){.camp-primary{transition:none}}"
     },
     {
       "name": "Secondary action",
@@ -126,58 +160,69 @@
       "refersTo": "button-secondary",
       "description": "Outlined action for supporting tasks.",
       "html": "<button class=\"camp-secondary\">Copiar convite</button>",
-      "css": ".camp-secondary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;padding:11px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;line-height:1.4;background:transparent;border:1px solid #bdc8b5;color:#36523c;transition:background .15s,color .15s}.camp-secondary:hover:not(:disabled){filter:brightness(.96)}.camp-secondary:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.camp-secondary:disabled{opacity:.58}@media(prefers-reduced-motion:reduce){.camp-secondary{transition:none}}"
+      "css": ".camp-secondary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;padding:11px 16px;border-radius:8px;font-family:\"DM Sans\",sans-serif;font-size:12px;font-weight:600;line-height:1.4;background:transparent;border:1px solid #71835d;color:#d7e3c8;transition:background .15s,color .15s}.camp-secondary:hover:not(:disabled){filter:brightness(.96)}.camp-secondary:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.camp-secondary:disabled{opacity:.58}@media(prefers-reduced-motion:reduce){.camp-secondary{transition:none}}"
     },
     {
       "name": "Profile field",
       "kind": "input",
-      "description": "Cream field for arrival and administration forms.",
+      "description": "Dark recessed field for arrival and administration forms.",
       "html": "<label class=\"field-label\" for=\"demo-nickname\">Seu apelido</label><input class=\"camp-field\" id=\"demo-nickname\" placeholder=\"Como a turma chama você?\" />",
-      "css": ".field-label{display:block;font:600 11px 'DM Sans',sans-serif;color:var(--camp-ink,#243e32);margin:16px 0 8px}.camp-field{width:100%;height:44px;border:1px solid #cbd4c0;border-radius:7px;padding:0 12px;background:#fbfcf7;color:var(--camp-ink,#243e32);font:13px 'DM Sans',sans-serif;caret-color:#315d46}.camp-field::placeholder{color:#677b65;opacity:1}.camp-field:focus-visible{outline:3px solid #ac823e;outline-offset:4px}"
+      "css": ".field-label{display:block;font:600 11px \"DM Sans\",sans-serif;color:#bac9ad;margin:16px 0 8px}.camp-field{width:100%;height:44px;border:1px solid #5d7050;border-radius:7px;padding:0 12px;background:#1f2a20;color:#eef0dd;font:13px \"DM Sans\",sans-serif}.camp-field::placeholder{color:#acbda0;opacity:1}.camp-field:focus-visible{outline:3px solid #ac823e;outline-offset:4px}"
     },
     {
       "name": "Expanded field map",
       "kind": "custom",
-      "description": "Expanded field atlas with region/camp views, dashed routes and full location legend. The application toggles aria-expanded and aria-pressed and pauses movement while open; this snippet previews the region state.",
-      "html": "<div class=\"field-map is-open\"><button class=\"field-map-toggle\" aria-expanded=\"true\" aria-label=\"Recolher mapa de campo\"><b>Mapa de campo</b><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M8 3v5H3m18 8h-5v5M3 8l6-6m6 20 6-6\"/></svg></button><div class=\"map-view-tabs\"><button aria-pressed=\"true\">Região</button><button aria-pressed=\"false\">Acampamento</button></div><div class=\"map-paper\"><svg viewBox=\"0 0 100 100\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><polyline points=\"50,50 40,35 30,20\" fill=\"none\" stroke=\"#9b8053\" stroke-width=\"1\" stroke-dasharray=\"2 1\"/></svg><span style=\"left:50%;top:50%\">V</span><i style=\"left:35%;top:65%\"></i></div><div class=\"field-map-legend\"><div><b>V</b><span>Refúgio VIP</span></div><p>Ponto dourado: você · tracejado: trilhas.</p></div></div>",
-      "css": ".field-map{width:min(330px,calc(100% - 30px));padding:16px;background:#fff9e8;border-radius:8px;color:#4c6044;box-shadow:0 8px 30px #28412b30;font-family:\"DM Sans\",sans-serif}.field-map-toggle{display:flex;align-items:center;justify-content:space-between;gap:5px;width:100%;min-height:34px;background:transparent;border:0;padding:0;color:var(--camp-ink,#243e32);text-align:left;font-size:13px;transition:background .15s,color .15s}.field-map-toggle b{font-size:13px}.field-map-toggle:hover:not(:disabled){filter:brightness(.96)}.field-map-toggle:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.map-paper{height:170px;position:relative;margin-top:12px;background:#e2dfbf;border-radius:5px}.map-paper>span{position:absolute;font-size:12px;background:#d5dfbc;color:var(--camp-ink,#243e32);border-radius:50%;width:24px;height:24px;text-align:center;line-height:24px;transform:translate(-50%,-50%);font-weight:700}.map-paper i{position:absolute;width:8px;height:8px;border-radius:50%;background:#b4763e;outline:2px solid #fff6d6;transform:translate(-50%,-50%)}.field-map-legend{display:grid;gap:8px;margin-top:15px;font-size:12px;color:var(--camp-ink,#243e32)}.field-map-legend>div{display:flex;align-items:center;gap:9px}.field-map-legend>div>b{display:grid;place-items:center;width:22px;height:22px;font-size:12px;background:#d5dfbc;border-radius:50%}.field-map-legend p{font-size:11px;line-height:1.5;margin:5px 0 0}@media(prefers-reduced-motion:reduce){.field-map-toggle{transition:none}}.field-map.is-open{max-height:calc(100% - 30px);overflow:auto;touch-action:pan-y}.map-paper{overflow:hidden}.map-paper>svg{position:absolute;inset:0;width:100%;height:100%}.map-view-tabs{display:flex;gap:6px;margin:8px 0}.map-view-tabs button{flex:1;border:1px solid #a8b58d;background:transparent;border-radius:6px;padding:7px;color:#243e32;font-size:12px}.map-view-tabs button[aria-pressed=true]{background:#243e32;color:#fff9e8}.map-view-tabs button:hover{filter:brightness(.96)}.map-view-tabs button:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.field-map-legend{gap:6px}@media(max-width:600px){.field-map.is-open .map-paper{height:150px}}"
+      "description": "Static instrument preview of the expanded topographic atlas. Application source provides shared terrain/forest/routes/water/caves, pan/zoom, player heading, scale, destination distance and waypoint marking; this snippet does not simulate navigation.",
+      "html": "<section class=\"field-map\"><button class=\"field-map-toggle\" aria-expanded=\"true\">Fechar mapa de localização ↗</button><div class=\"atlas-tools\"><button aria-label=\"Ampliar mapa\">+</button><button aria-label=\"Reduzir mapa\">−</button><button>Minha posição</button><button>Toda a região</button></div><svg class=\"atlas-canvas\" viewBox=\"0 0 240 160\" role=\"img\" aria-label=\"Amostra esquemática do atlas; não representa o terreno completo\"><rect width=\"240\" height=\"160\" fill=\"#8ca476\"/><path d=\"M0 110Q70 90 95 40T240 50\" stroke=\"#5d999c\" stroke-width=\"8\" fill=\"none\"/><path d=\"M30 140Q90 100 120 80T210 30\" stroke=\"#eee0bb\" stroke-width=\"5\" fill=\"none\"/><path d=\"M30 140Q90 100 120 80T210 30\" stroke=\"#957447\" stroke-width=\"1\" fill=\"none\"/><circle cx=\"120\" cy=\"80\" r=\"4\" fill=\"#f5c867\" stroke=\"#fff\"/><text x=\"215\" y=\"20\" fill=\"#203f30\" font-size=\"10\">N ↑</text><path d=\"M12 145h40\" stroke=\"#244431\"/><text x=\"12\" y=\"138\" font-size=\"8\" fill=\"#203f30\">50 m</text></svg><div class=\"atlas-detail\"><b>Mapa do terreno explorável</b><p>Arraste para navegar, use + e − para ampliar e toque nos pontos.</p><button class=\"atlas-navigate\">Marcar destino · Cume das Araucárias</button><small>Curvas: 10 m · marrom: trilha · azul: água · escuro: galeria · dourado: você</small></div></section>",
+      "css": ".field-map{width:min(720px,calc(100% - 28px));max-height:calc(100% - 30px);overflow:auto;padding:14px;background:#e4e2c4;color:#263c2a;border-radius:8px;font-family:\"DM Sans\",sans-serif;box-shadow:0 8px 30px #28412b30}.field-map-toggle{display:flex;justify-content:space-between;align-items:center;min-height:34px;width:100%;border:0;background:transparent;color:#243e32;font-size:13px;text-align:left}.atlas-tools{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.atlas-tools button{border:1px solid #bac6a8;background:#f2ecd4;color:#2d432b;border-radius:5px;padding:7px 10px;font-size:11px}.atlas-canvas{display:block;width:100%;max-height:55vh;aspect-ratio:1;border:1px solid #677d50;border-radius:6px;touch-action:none}.atlas-detail{padding-top:10px;color:#284332;font-size:12px}.atlas-detail p{margin:5px 0;line-height:1.5}.atlas-navigate{display:block;margin:10px 0;background:#364d2d;color:#f5efd3;border:0;padding:10px;border-radius:5px;width:100%;font-size:12px}.field-map button:hover{filter:brightness(.96)}.field-map button:focus-visible{outline:3px solid #ac823e;outline-offset:4px}@media(max-width:650px){.atlas-canvas{max-height:42vh}.atlas-tools button{font-size:10px;padding:7px}}"
     },
     {
       "name": "Discovery collection card",
       "kind": "card",
-      "description": "Pending local discovery: ordinal and rarity remain visible while the title and text supply a hint. Found cards show the name and story with a solid gold border.",
+      "description": "One of sixteen preserved local discoveries. Pending cards show rarity and hint; found cards reveal name/story, solid gold border and explicit collection status.",
       "html": "<article class=\"discovery\"><span class=\"discovery-number\">01 · Comum</span><svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"8\" r=\"6\"/><path d=\"m8.2 13-1.1 9L12 19l4.9 3-1.1-9\"/></svg><h3>Ainda por descobrir</h3><p>Um brilho dourado perto da roda da fogueira.</p><b>Siga a pista</b></article>",
-      "css": ".discovery{padding:24px;border:1px dashed #b7bfaa;border-radius:14px;display:flex;flex-direction:column;align-items:start;gap:12px;background:#eeeee4;color:var(--camp-ink,#243e32);font-family:\"DM Sans\",sans-serif}.discovery.found{border-style:solid;background:#fff9e9;border-color:#b8a464}.discovery-number{font-size:11px;color:#5a6a53}.discovery h3{font-size:17px;margin:0}.discovery p{font-size:13px;line-height:1.65;margin:0;flex:1}.discovery>b{font-size:11px;color:#4d6d42}.discovery>svg{color:#7b8c68}.discovery.found>svg{color:#9a6a28}"
+      "css": ".discovery{padding:24px;border:1px dashed #536547;border-radius:14px;display:flex;flex-direction:column;align-items:start;gap:12px;background:#2c3927;color:#e0e8cf;font-family:\"DM Sans\",sans-serif}.discovery.found{border-style:solid;background:#3b4329;border-color:#a89c60}.discovery-number{font-size:11px;color:#bdccb0}.discovery h3{font-size:17px;margin:0}.discovery p{font-size:13px;line-height:1.65;margin:0;flex:1;color:#bdccb0}.discovery>b{font-size:11px;color:#cadba8}.discovery>svg{color:#7b8c68}.discovery.found>svg{color:#9a6a28}"
+    },
+    {
+      "name": "Quick equipment slot",
+      "kind": "button",
+      "refersTo": "quickslot-selected",
+      "description": "Selected example from the ten-slot horizontal belt. Full labels and pressed states are available to assistive technology; app actions change equipment.",
+      "html": "<nav class=\"quickbelt\" aria-label=\"Mochila de acesso rápido\"><button aria-label=\"Equipar Mapa de campo · tecla 1\" aria-pressed=\"true\" title=\"Mapa de campo\"><kbd>1</kbd><svg width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Mapa de campo</span></button></nav>",
+      "css": ".quickbelt{display:flex;padding:6px;gap:4px;background:#1b281eea;border:1px solid #5a674b;border-radius:8px;max-width:calc(100% - 26px);overflow:auto;font-family:\"DM Sans\",sans-serif}.quickbelt button{position:relative;flex:0 0 52px;min-height:62px;border:1px solid #4c5f41;border-radius:4px;color:#d1ddbe;background:#2a3b27;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;padding:12px 3px 5px}.quickbelt button[aria-pressed=true]{background:#677646;color:#fff4ca;border-color:#d5c383}.quickbelt kbd{position:absolute;left:4px;top:2px;font-size:9px;font-family:inherit;color:inherit}.quickbelt span{font-size:8px;white-space:nowrap}.quickbelt button:hover{filter:brightness(.96)}.quickbelt button:focus-visible{outline:3px solid #ac823e;outline-offset:4px}@media(max-width:800px){.quickbelt button{flex-basis:45px;min-height:56px}}"
     }
   ],
   "narrative": {
-    "overview": "Trilha extends its established forest-and-cream identity into a shared virtual camp. Dark green typography, warm paper surfaces, leaf-toned selections and occasional gold details support approachable Portuguese interactions. The map is immersive while the surrounding interface uses restrained tonal separation. This records source inspection, without a new creative metaphor or browser verification. The exploration extension preserves the forest world and cream interface across five trails, six outer destinations and twelve local discoveries. A region/camp atlas orients the player; collection cards reveal stories as discoveries are found. Source restores the latest same-room position on return to the scene; this is not persistent multi-room pose history.",
+    "northStar": "Project Zomboid reference adapted to the Trilha expedition",
+    "overview": "The approved expedition direction uses isometric spatial readability, compact equipment controls and persistent room interaction. Charcoal and dark olive surfaces frame the landscape; pale paper is reserved for the expanded atlas, help and contextual prompts. Trilha retains Portuguese, Desbravadores identity, human characters and club identification. The current source defines ten trails, ten outer destinations and sixteen preserved cosmetic discovery IDs. Menu navigation keeps the room world mounted and paused, preserving scene resources until room changes or reload. This documentation records source inspection only.",
     "keyCharacteristics": [
-      "Forest greens over warm cream",
-      "Manrope headings and DM Sans supporting text",
-      "Soft rectangular controls and circular portraits",
-      "Sparse overlay shadows",
-      "Responsive map and persistent mobile navigation",
-      "Five forest trails and six outer destinations extend the familiar camp",
-      "Twelve identity-scoped local discoveries with rarity text, hints and progress"
+      "Rotatable orthographic isometric camp",
+      "Charcoal frame and olive equipment surfaces",
+      "Ten numbered quick slots 1-0",
+      "Shared-data topographic waypoint atlas",
+      "Continuous cave galleries with hillside roof and wall cutaway",
+      "Sixteen local cosmetic discoveries"
     ],
     "rules": [
       {
-        "name": "The Forest and Paper Rule",
-        "body": "Extend the incumbent greens and cream surfaces when adding interface regions; preserve the Trilha identity established in PRODUCT.md.",
+        "name": "The Equipment Frame Rule",
+        "body": "Keep persistent application chrome dark. Use pale atlas and contextual paper where the implementation gives them an orientation or interaction purpose.",
         "section": "colors"
       }
     ],
     "dos": [
-      "Do preserve the Trilha forest and cream identity and Portuguese labels.",
-      "Do reuse the action hierarchy and visible keyboard focus.",
-      "Do preserve circular portraits and player identification.",
-      "Do retain responsive navigation, map fullscreen and reduced-motion support."
+      "Do retain the approved isometric spatial readability and compact equipment hierarchy.",
+      "Do preserve sixteen discovery IDs and the current room/admin/VIP rules.",
+      "Do keep cave entrances, interior cutaway and atlas geometry coherent.",
+      "Do retain the mounted room scene while menus pause interaction.",
+      "Do preserve selected-state semantics, focus and mobile belt scrolling."
     ],
     "donts": [
-      "Don't introduce an unrelated visual identity while extending this lobby.",
-      "Don't present disabled payment preparation as an active purchase.",
-      "Don't imply source extraction verifies browser rendering or runtime capacity."
+      "Do not restore the stale cream shell or twelve-discovery count.",
+      "Do not copy proprietary assets or add zombies/combat from the reference.",
+      "Do not make caves disconnected square blocks.",
+      "Do not equate local trial equipment with paid entitlement.",
+      "Do not treat source inspection as browser or concurrency validation."
     ]
   }
 }

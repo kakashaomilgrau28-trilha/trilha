@@ -4,6 +4,7 @@ import {terrainHeight} from './exploration';
 
 type Tree={x:number;z:number;s:number;hue:number;lightness:number};
 export function buildForest(scene:T.Scene,trees:Tree[]){
+ const forestLods:T.LOD[]=[];scene.userData.forestLods=forestLods;
  const cells=new Map<string,Tree[]>();
  for(const tree of trees){const key=`${Math.floor(tree.x/64)},${Math.floor(tree.z/64)}`,group=cells.get(key)??[];group.push(tree);cells.set(key,group)}
  const crownParts=[0,1,2].map(i=>new T.ConeGeometry(2.8-i*.65,3.9-i*.45,10,1).translate(0,4.7+i*1.65,0));
@@ -15,20 +16,24 @@ export function buildForest(scene:T.Scene,trees:Tree[]){
  const leaves=new T.MeshStandardMaterial({color:'#789368',roughness:.9});
  const distantLeaves=new T.MeshStandardMaterial({color:'#789368',roughness:.95});
  const shrubMat=new T.MeshStandardMaterial({color:'#577548',roughness:.95});
+ const focus={value:new T.Vector3()};scene.userData.forestFocus=focus;const direction={value:new T.Vector2(1,1).normalize()};scene.userData.forestDirection=direction;
  const wind={value:0};scene.userData.wind=wind;
  leaves.onBeforeCompile=shader=>{
-  shader.uniforms.forestTime=wind;
-  shader.vertexShader='uniform float forestTime;\n'+shader.vertexShader;
+  shader.uniforms.forestTime=wind;shader.uniforms.forestFocus=focus;shader.uniforms.forestDirection=direction;
+  shader.vertexShader='uniform float forestTime; varying vec3 leafWorld;\n'+shader.vertexShader;
   shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`#include <begin_vertex>
     #ifdef USE_INSTANCING
       float bend = max(0.0, position.y - 3.0) * 0.018;
       transformed.x += sin(forestTime * 0.9 + instanceMatrix[3].x * 0.13 + instanceMatrix[3].z * 0.09) * bend;
-    #endif`);
+    #endif
+    leafWorld=(modelMatrix*instanceMatrix*vec4(transformed,1.0)).xyz;`);
+  shader.fragmentShader='uniform vec3 forestFocus; uniform vec2 forestDirection; varying vec3 leafWorld;\n'+shader.fragmentShader;
+  shader.fragmentShader=shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\n vec2 deltaLeaf=leafWorld.xz-forestFocus.xz; float ahead=dot(deltaLeaf,forestDirection); float across=abs(deltaLeaf.x*forestDirection.y-deltaLeaf.y*forestDirection.x); if((length(deltaLeaf)<3.2 && leafWorld.y>forestFocus.y+2.7)||(ahead>0.0 && ahead<22.0 && across<1.2 && abs(leafWorld.y-forestFocus.y-1.4-ahead*0.7071)<2.1)) discard;');
  };
  const dummy=new T.Object3D(),color=new T.Color();
  for(const [key,cell] of cells){
   const [gx,gz]=key.split(',').map(Number),cx=gx*64+32,cz=gz*64+32;
-  const lod=new T.LOD();lod.position.set(cx,0,cz);lod.userData.dynamic=true;
+  const lod=new T.LOD();lod.autoUpdate=false;forestLods.push(lod);lod.position.set(cx,0,cz);lod.userData.dynamic=true;
   const detailed=new T.Group(),distant=new T.Group();
   const trunks=new T.InstancedMesh(trunk,bark,cell.length),crowns=new T.InstancedMesh(nearCrown,leaves,cell.length),far=new T.InstancedMesh(farCrown,distantLeaves,cell.length),shrubs=new T.InstancedMesh(shrubGeo,shrubMat,cell.length);
   cell.forEach((tree,i)=>{

@@ -16,14 +16,19 @@ export const caves = [
   {id:'gruta-cristais',name:'Gruta dos Cristais',x:342,z:170,length:72},
   {id:'caverna-eco',name:'Caverna do Eco',x:-350,z:-210,length:60},
 ];
-export function caveAt(x:number,z:number){return caves.find(c=>{
-  const u=x-c.x,v=z-c.z;
-  return (Math.abs(u)<4.5&&v<0&&v>-c.length)||(Math.abs(u)<9&&v<-c.length+14&&v>-c.length-6)||(u>-2&&u<31&&v<-38&&v>-48);
-})}
-export const terrainHeight = (x:number,z:number) => {
-  let h=rawTerrain(x,z);
-  for(const c of caves){const dx=Math.max(0,Math.abs(x-c.x-10)-23),dz=Math.max(0,Math.abs(z-c.z+(c.length-4)/2)-(c.length+12)/2);const distance=Math.hypot(dx,dz);if(distance<12){const weight=1-distance/12;h=h*(1-weight)+rawTerrain(c.x,c.z)*weight}}
-  return h;
+export type Cave = typeof caves[number];
+export function caveRoute(c:Cave):[number,number][]{return [[c.x,c.z+1],[c.x-1.5,c.z-13],[c.x+2,c.z-28],[c.x-2.5,c.z-43],[c.x,c.z-c.length+4]]}
+export function segmentDistance(x:number,z:number,a:number[],b:number[]){const dx=b[0]-a[0],dz=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz||1)));return Math.hypot(x-a[0]-t*dx,z-a[1]-t*dz)}
+export function caveDistance(c:Cave,x:number,z:number){const route=caveRoute(c);return Math.min(...route.slice(1).map((b,i)=>segmentDistance(x,z,route[i],b)))}
+export function caveRoofAt(x:number,z:number){return caves.find(c=>z<c.z+4&&(caveDistance(c,x,z)<20||Math.hypot(x-c.x,z-(c.z-c.length+4))<23))}
+export function caveAt(x:number,z:number){return caves.find(c=>z<c.z+1 && (caveDistance(c,x,z)<4.2||Math.hypot(x-c.x,z-(c.z-c.length+4))<9))}
+/** Continuous hill mass over the galleries, fading to a walkable southern entrance. */
+export function surfaceHeight(x:number,z:number){let h=rawTerrain(x,z);for(const c of caves){const u=(x-c.x)/29,v=(z-c.z+c.length*.43)/(c.length*.65),entrance=Math.min(1,Math.max(0,(c.z-z)/12));h+=23*Math.exp(-u*u-v*v)*entrance}return h}
+export function caveFloor(c:Cave,z:number){return rawTerrain(c.x,c.z)-Math.min(2,Math.max(0,(c.z-z)*.035))}
+export const terrainHeight=(x:number,z:number)=>{
+ const c=caveAt(x,z);if(c)return caveFloor(c,z);
+ // Blend the approach into the portal, avoiding an artificial rectangular terrace.
+ let h=surfaceHeight(x,z);for(const c of caves){const d=Math.hypot((x-c.x)*1.5,Math.max(0,z-c.z));if(z>=c.z&&d<14){const t=1-d/14;h=h*(1-t)+caveFloor(c,z)*t}}return h;
 };
 export const ropeCrossing={x:180,z:-240,from:{x:166,z:-240},to:{x:194,z:-240}};
 export function trailDistance(x:number,z:number){return Math.min(...trails.flatMap(t=>t.points.slice(1).map((p,i)=>{const a=t.points[i],dx=p[0]-a[0],dz=p[1]-a[1],f=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(x-a[0]-f*dx,z-a[1]-f*dz)})))}
@@ -65,9 +70,10 @@ export const destinations = [
 ];
 export const trails = [
  ...originalTrails.map(t=>({...t,width:3.5,points:t.points.map(([x,z])=>scale(x,z))})),
- {name:'Trilha da Mata Fechada',width:1.8,points:[[23,-18],[80,-55],[135,-100],[110,-140],[180,-165],[205,-120],[240,-180],[290,-145],[342,170]]},
- {name:'Caminho dos Cristais',width:2.2,points:[[25,18],[79,57],[160,110],[210,80],[270,135],[310,115],[342,170]]},
- {name:'Trilha do Eco',width:1.8,points:[[-23,-18],[-75,-55],[-140,-110],[-200,-80],[-270,-160],[-320,-145],[-350,-210]]},
+ {name:'Trilha da Mata Fechada',width:1.8,points:[[23,-18],[80,-55],[135,-100],[110,-140],[180,-165],[205,-120],[240,-180],[290,-145],[310,-65],[320,40],[310,115],[325,184],[342,190],[342,170]]},
+ {name:'Caminho dos Cristais',width:2.2,points:[[25,18],[79,57],[160,110],[210,80],[270,135],[310,115],[325,184],[342,190],[342,170]]},
+ {name:'Trilha do Eco',width:1.8,points:[[-23,-18],[-75,-55],[-140,-110],[-200,-80],[-270,-160],[-320,-145],[-350,-190],[-350,-210]]},
+ {name:'Ligação da Serra',width:2.4,points:[[-350,-210],[-335,-240],[-313,-272],[-365,-235],[-395,-183]]},
  {name:'Passagem da Ravina',width:2,points:[[135,-100],[145,-190],[166,-240],[194,-240],[240,-260],[297,-288]]},
 ];
 export const discoveries = [
@@ -77,3 +83,6 @@ export const discoveries = [
  {id:'ancoragem',name:'Nó de Confiança',x:202,z:-240,rarity:'Incomum',hint:'Atravesse a ravina com uma corda.',story:'Preparo e boas amarras abriram a passagem.'},
 ];
 export type Discovery = typeof discoveries[number];
+
+/** One watercourse links the cascade, creek bridge and lower valley. */
+export const riverPoints:[number,number][]=[[-395,-183],[-408,-120],[-394,-40],[-352,55],[-306,136],[-83*EXPANSION,65*EXPANSION],[-55*EXPANSION,83*EXPANSION],[-5*EXPANSION,77*EXPANSION],[35*EXPANSION,96*EXPANSION],[66*EXPANSION,122*EXPANSION]];

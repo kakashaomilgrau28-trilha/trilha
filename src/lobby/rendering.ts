@@ -30,7 +30,7 @@ export function batchStaticWorld(scene:T.Scene){
   for(let p:T.Object3D|null=node;p;p=p.parent)if(p.userData.dynamic||p instanceof T.LOD)return;
   if(node.geometry.getAttribute('position').count>6000)return;
   const pos=new T.Vector3().setFromMatrixPosition(node.matrixWorld);
-  const key=[Math.floor(pos.x/48),Math.floor(pos.z/48),mat.roughness,mat.metalness,mat.side,mat.map?.uuid,mat.bumpMap?.uuid].join(':');
+  const key=[Math.floor(pos.x/48),Math.floor(pos.z/48),mat.roughness,mat.metalness,mat.side,mat.userData.caveWall??"",mat.map?.uuid,mat.bumpMap?.uuid].join(':');
   const geo=node.geometry.index?node.geometry.toNonIndexed():node.geometry.clone();
   geo.applyMatrix4(node.matrixWorld);
   const n=geo.getAttribute('position').count,colors=new Float32Array(n*3),previous=geo.getAttribute('color');

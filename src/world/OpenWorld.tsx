@@ -1,3 +1,4 @@
+import "../styles.css";
 import { useEffect, useRef, useState, type PointerEvent, type WheelEvent } from 'react'
 import * as THREE from 'three'
 import { avatars } from '../gameData'

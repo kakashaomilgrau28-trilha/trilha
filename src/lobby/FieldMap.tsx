@@ -1,28 +1,30 @@
-import {useMemo,useState} from 'react';
+import {memo,useMemo,useState} from 'react';
 import * as T from 'three';
-import {SIZE,BOUNDARY,terrainHeight,trails,caves,ropeCrossing,EXPANSION} from './exploration';
+import {SIZE,BOUNDARY,surfaceHeight as terrainHeight,caveRoute,riverPoints,trails,caves,ropeCrossing} from './exploration';
 import {places} from './scene';
 import {getForestLayout} from './landscape';
 
-type Props={x:number;z:number;heading:number;expanded:boolean;onToggle:()=>void};
-export default function FieldMap({x,z,heading,expanded,onToggle}:Props){
+type Props={x:number;z:number;heading:number;expanded:boolean;onNavigate:(p:{x:number;z:number;name:string})=>void;onToggle:()=>void};
+let cachedTerrain:string;
+function FieldMap({x,z,heading,expanded,onToggle,onNavigate}:Props){
  const [zoom,setZoom]=useState(1),[pan,setPan]=useState({x:0,z:0}),[selected,setSelected]=useState('');
  const [drag,setDrag]=useState<{id:number;x:number;y:number;px:number;pz:number}|null>(null);
  const terrain=useMemo(()=>{
-  const canvas=document.createElement('canvas');canvas.width=canvas.height=420;
-  const ctx=canvas.getContext('2d')!,image=ctx.createImageData(420,420),levels=new Float32Array(420*420);
-  for(let j=0;j<420;j++)for(let i=0;i<420;i++)levels[j*420+i]=terrainHeight((i/419-.5)*SIZE,(j/419-.5)*SIZE);
-  for(let j=0;j<420;j++)for(let i=0;i<420;i++){
-   const n=j*420+i,h=levels[n],contour=i>0&&Math.floor(h/10)!==Math.floor(levels[n-1]/10)||j>0&&Math.floor(h/10)!==Math.floor(levels[n-420]/10);
+  if(cachedTerrain)return cachedTerrain;
+  const canvas=document.createElement('canvas');canvas.width=canvas.height=256;
+  const ctx=canvas.getContext('2d')!,image=ctx.createImageData(256,256),levels=new Float32Array(256*256);
+  for(let j=0;j<256;j++)for(let i=0;i<256;i++)levels[j*256+i]=terrainHeight((i/255-.5)*SIZE,(j/255-.5)*SIZE);
+  for(let j=0;j<256;j++)for(let i=0;i<256;i++){
+   const n=j*256+i,h=levels[n],contour=i>0&&Math.floor(h/10)!==Math.floor(levels[n-1]/10)||j>0&&Math.floor(h/10)!==Math.floor(levels[n-256]/10);
    const color=new T.Color(h>36?'#bcbfb1':h>23?'#85907b':h>12?'#7c9369':'#8ca476');
    color.multiplyScalar(contour ? .76 : 1).convertLinearToSRGB();image.data[n*4]=color.r*255;image.data[n*4+1]=color.g*255;image.data[n*4+2]=color.b*255;image.data[n*4+3]=255;
   }
   ctx.putImageData(image,0,0);
-  ctx.fillStyle='#34583b88';for(const tree of getForestLayout()){ctx.beginPath();ctx.arc((tree.x/SIZE+.5)*420,(tree.z/SIZE+.5)*420,2.7*tree.s/SIZE*420,0,Math.PI*2);ctx.fill()}
-  return canvas.toDataURL();
+  ctx.fillStyle='#34583b88';for(const tree of getForestLayout()){ctx.beginPath();ctx.arc((tree.x/SIZE+.5)*256,(tree.z/SIZE+.5)*256,2.7*tree.s/SIZE*256,0,Math.PI*2);ctx.fill()}
+  return cachedTerrain=canvas.toDataURL();
  },[]);
  const routes=useMemo(()=>trails.map(t=>({...t,path:new T.CatmullRomCurve3(t.points.map(([a,b])=>new T.Vector3(a,0,b))).getPoints(240).map(p=>`${p.x},${p.z}`).join(' ')})),[]);
- const river=useMemo(()=>new T.CatmullRomCurve3([[-138,69],[-110,55],[-83,65],[-55,83],[-5,77],[35,96],[66,122]].map(([a,b])=>new T.Vector3(a*EXPANSION,0,b*EXPANSION))).getPoints(180).map(p=>`${p.x},${p.z}`).join(' '),[]);
+ const river=useMemo(()=>new T.CatmullRomCurve3(riverPoints.map(([a,b])=>new T.Vector3(a,0,b))).getPoints(180).map(p=>`${p.x},${p.z}`).join(' '),[]);
  const span=expanded?SIZE/zoom:115,cx=expanded?pan.x:x,cz=expanded?pan.z:z;
  const destination=places.find(p=>p.id===selected),unit=span>600?200:span>200?50:10;
  return <div className={`field-map detailed-map ${expanded?'is-open':''}`}>
@@ -40,13 +42,15 @@ export default function FieldMap({x,z,heading,expanded,onToggle}:Props){
    <rect x={-7} y={-38} width={14} height={12} fill="#56715a"/>
    <rect x={20.5} y={-24.5} width={7} height={3} fill="#b18c60"/><circle cx={25} cy={18} r={6} fill="#c2a37a"/><circle r={2.2} fill="#bb7142"/>
    {routes.map(t=><g key={t.name}><polyline points={t.path} fill="none" stroke="#eee0bb" strokeWidth={t.width+span*.001}/><polyline points={t.path} fill="none" stroke="#957447" strokeWidth={Math.max(.6,span*.001)} strokeDasharray={t.width<3?'3 2':undefined}/></g>)}
-   {caves.map(c=><g key={c.id} fill="#696275" stroke="#d8cce5" strokeWidth={1}><rect x={c.x-4.5} y={c.z-c.length} width={9} height={c.length}/><rect x={c.x-9} y={c.z-c.length-6} width={18} height={20}/><rect x={c.x+4.5} y={c.z-48} width={27} height={10}/></g>)}
+   {caves.map(c=><g key={c.id}><polyline points={caveRoute(c).map(p=>p.join(',')).join(' ')} fill="none" stroke="#555b51" strokeWidth={8} strokeLinecap="round" strokeLinejoin="round"/><circle cx={c.x} cy={c.z-c.length+4} r={9} fill="#555b51"/></g>)}
    <path d={`M ${ropeCrossing.from.x} ${ropeCrossing.z} H ${ropeCrossing.to.x}`} stroke="#674339" strokeWidth={5} strokeDasharray="2 2"/>
    {places.map((p,i)=><g key={p.id} transform={`translate(${p.x} ${p.z})`} onClick={e=>{e.stopPropagation();setSelected(p.id)}} style={{cursor:'pointer'}}><circle r={span*.009} fill="#fff4d9" stroke="#3a5545" strokeWidth={span*.0015}/>{expanded&&<text x={span*.012} y={span*.004} fontSize={span*.015} fill="#263e30" paintOrder="stroke" stroke="#f9f3df" strokeWidth={span*.003}>{zoom>2?p.name:String(i+1)}</text>}</g>)}
    <g transform={`translate(${x} ${z}) rotate(${180-heading*180/Math.PI})`}><circle r={span*.013} fill="#f5c867" stroke="#fff" strokeWidth={span*.002}/><path d={`M 0 ${-span*.022} L ${-span*.008} ${span*.005} L 0 0 L ${span*.008} ${span*.005} Z`} fill="#283f32"/></g>
    <text x={cx+span*.43} y={cz-span*.43} fontSize={span*.033} fill="#203f30">N ↑</text>
    <path d={`M ${cx-span*.45} ${cz+span*.44} h ${unit}`} stroke="#244431" strokeWidth={span*.003}/><text x={cx-span*.45} y={cz+span*.42} fontSize={span*.021} fill="#203f30">{unit} m</text>
   </svg>
-  {expanded&&<div className="atlas-detail"><b>{destination?.name??'Mapa do terreno explorável'}</b><p>{destination?`${Math.round(Math.hypot(destination.x-x,destination.z-z))} m de distância · cota ${Math.round(terrainHeight(destination.x,destination.z))} m`: 'Arraste para navegar, use + e − para ampliar e toque nos pontos.'}</p><small>Curvas: 10 m · marrom: trilha · azul: água · roxo: caverna · dourado: você · tracejado externo: limite explorável</small><div className="atlas-index">{places.map((p,i)=><button key={p.id} onClick={()=>{setSelected(p.id);setPan({x:p.x,z:p.z});setZoom(6)}}>{i+1}. {p.name}</button>)}</div></div>}
+  {expanded&&<div className="atlas-detail"><b>{destination?.name??'Mapa do terreno explorável'}</b><p>{destination?`${Math.round(Math.hypot(destination.x-x,destination.z-z))} m de distância · cota ${Math.round(terrainHeight(destination.x,destination.z))} m`: 'Arraste para navegar, use + e − para ampliar e toque nos pontos.'}</p>{destination&&<button className="atlas-navigate" onClick={()=>onNavigate(destination)}>Marcar destino · {destination.name}</button>}<small>Curvas: 10 m · marrom: trilha · azul: água · escuro: galeria · dourado: você · tracejado externo: limite explorável</small><div className="atlas-index">{places.map((p,i)=><button key={p.id} onClick={()=>{setSelected(p.id);setPan({x:p.x,z:p.z});setZoom(6)}}>{i+1}. {p.name}</button>)}</div></div>}
  </div>
 }
+
+export default memo(FieldMap);

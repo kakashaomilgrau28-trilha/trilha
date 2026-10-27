@@ -3,7 +3,7 @@ import type {WebGLRenderer} from 'three';
 /** Local, opt-in diagnostics. No telemetry is sent to a server. */
 export function frameProfiler(renderer:WebGLRenderer,host:HTMLElement){
  let previous=0,elapsed=0,frames:number[]=[];
- return (now:number)=>{
+ const sample = (now:number)=>{
   if(document.hidden){previous=0;frames=[];elapsed=0;return}
   if(previous){const dt=now-previous;if(dt>0&&dt<10000){frames.push(dt);elapsed+=dt}}
   previous=now;
@@ -20,4 +20,5 @@ export function frameProfiler(renderer:WebGLRenderer,host:HTMLElement){
   });
   frames=[];elapsed=0;
  };
+ return Object.assign(sample,{reset(){previous=0;frames=[];elapsed=0}});
 }

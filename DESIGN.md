@@ -1,17 +1,39 @@
 ---
-name: Trilha
-description: A welcoming virtual camp in forest greens and cream.
+name: Trilha Expedition
+description: An isometric shared camp with charcoal equipment surfaces and an olive field interface.
 colors:
-  camp-ink: "#243e32"
-  camp-mute: "#5e7164"
-  camp-green: "#2b5542"
-  camp-gold: "#bb8c4e"
-  camp-paper: "#f5f3eb"
-  camp-line: "#dbe0d3"
-  warm-surface: "#fbfaf5"
-  button-white: "#fff"
-  secondary-text: "#36523c"
-  secondary-line: "#bdc8b5"
+  camp-ink: "#e6e6d7"
+  camp-mute: "#a8b5a6"
+  camp-green: "#58794c"
+  camp-gold: "#d2b274"
+  camp-paper: "#202820"
+  camp-line: "#3a4739"
+  rail: "#171e19"
+  header: "#1b241e"
+  equipment-surface: "#2c3927"
+  dialog-surface: "#2c382a"
+  field-surface: "#1f2a20"
+  field-text: "#eef0dd"
+  field-line: "#5d7050"
+  action-fill: "#728c53"
+  action-ink: "#10190e"
+  secondary-text: "#d7e3c8"
+  secondary-line: "#71835d"
+  belt-surface: "#1b281eea"
+  slot-surface: "#2a3b27"
+  slot-text: "#d1ddbe"
+  slot-line: "#4c5f41"
+  slot-selected: "#677646"
+  slot-selected-text: "#fff4ca"
+  slot-selected-line: "#d5c383"
+  atlas-paper: "#e4e2c4"
+  atlas-ink: "#263c2a"
+  atlas-control: "#f2ecd4"
+  atlas-action: "#364d2d"
+  found-surface: "#3b4329"
+  found-line: "#a89c60"
+  card-line: "#536547"
+  supporting-copy: "#bdccb0"
 typography:
   display:
     fontFamily: "Manrope, sans-serif"
@@ -21,7 +43,7 @@ typography:
     letterSpacing: "-0.035em"
   headline:
     fontFamily: "Manrope, sans-serif"
-    fontSize: "clamp(24px, 2.2vw, 34px)"
+    fontSize: "28px"
     fontWeight: 600
     lineHeight: 1.25
     letterSpacing: "-0.03em"
@@ -37,160 +59,201 @@ typography:
     fontSize: "12px"
     fontWeight: 600
     lineHeight: 1.4
+  quickslot-label:
+    fontFamily: "DM Sans, sans-serif"
+    fontSize: "8px"
+  quickslot-key:
+    fontFamily: "DM Sans, sans-serif"
+    fontSize: "9px"
 rounded:
+  quickslot: "4px"
+  atlas-control: "5px"
+  scene-caption: "6px"
   field: "7px"
-  button: "8px"
-  navigation: "9px"
-  map: "13px"
+  panel: "8px"
+  resource-hud: "9px"
+  discovery: "14px"
   dialog: "15px"
   portrait: "50%"
 spacing:
-  character-gap: "8px"
-  button-gap: "9px"
-  lobby-gap: "20px"
-  desktop-content: "30px 32px 34px"
+  belt-gap: "4px"
+  belt-padding: "6px"
+  action-gap: "9px"
+  lobby-gap: "14px"
+  menu-content: "26px"
+  scene-content: "14px"
+  collection-gap: "18px"
 components:
   button-primary:
-    backgroundColor: "{colors.camp-green}"
-    textColor: "{colors.button-white}"
+    backgroundColor: "{colors.action-fill}"
+    textColor: "{colors.action-ink}"
     typography: "{typography.label}"
-    rounded: "{rounded.button}"
+    rounded: "{rounded.panel}"
     padding: "11px 16px"
   button-secondary:
     backgroundColor: "transparent"
     textColor: "{colors.secondary-text}"
     typography: "{typography.label}"
-    rounded: "{rounded.button}"
+    rounded: "{rounded.panel}"
     padding: "11px 16px"
+  quickslot:
+    backgroundColor: "{colors.slot-surface}"
+    textColor: "{colors.slot-text}"
+    rounded: "{rounded.quickslot}"
+    padding: "12px 3px 5px"
+  quickslot-selected:
+    backgroundColor: "{colors.slot-selected}"
+    textColor: "{colors.slot-selected-text}"
+    rounded: "{rounded.quickslot}"
+  discovery-card:
+    backgroundColor: "{colors.equipment-surface}"
+    textColor: "#e0e8cf"
+    rounded: "{rounded.discovery}"
+    padding: "24px"
+  discovery-card-found:
+    backgroundColor: "{colors.found-surface}"
+    textColor: "#e0e8cf"
+    rounded: "{rounded.discovery}"
+    padding: "24px"
 ---
 
-# Design System: Trilha
+# Design System: Trilha Expedition
 
 ## Overview
 
-Trilha extends its established forest-and-cream identity into a shared virtual camp. Its visual character is approachable, quiet and outdoors-oriented: dark green typography, warm paper surfaces, leaf-toned selections and occasional gold details. The Portuguese interface treats walking, conversation and equipment as friendly camp activities.
+The approved expedition direction uses Project Zomboid as its primary reference for isometric spatial readability, compact equipment controls and persistent world interaction. The implemented Trilha experience now frames the landscape with charcoal and dark olive surfaces. It keeps the Trilha name, Portuguese labels, Desbravadores context, human characters and optional club identification.
 
-This is a scan of the implemented lobby, not a new visual direction. The map is the immersive surface; surrounding navigation and people lists use restrained tonal separation and compact controls. No new creative metaphor or anti-reference has been introduced.
+The scene dominates the first viewport. A narrow navigation rail and shallow server header support the world; a numbered equipment belt, resource readout, objective and compact atlas support exploration. Menus carry the same olive/charcoal language. Pale paper remains a purposeful contrast for the expanded atlas, help and contextual discoveries rather than the default application background.
+
+This document records the current code after the authorized redesign. The Expedition redesign section of PRODUCT.md and the approved surface direction supersede the older cream-shell description retained elsewhere in PRODUCT.md. This extraction does not claim browser, performance or server-capacity verification.
 
 **Key Characteristics:**
-- Forest greens over warm cream.
-- Manrope headings with DM Sans supporting text.
-- Soft rectangular controls and circular human portraits.
-- Sparse shadows, with depth concentrated in transient overlays.
-- Responsive map controls and persistent mobile navigation.
+- Rotatable orthographic isometric camp and coherent terrain.
+- Charcoal frame, olive equipment surfaces and pale readable text.
+- Ten numbered quick slots with explicit selected states.
+- A topographic waypoint atlas derived from the scene's data.
+- Natural cave entrances, continuous galleries and interior cutaway.
+- Sixteen preserved cosmetic discoveries with local collection progress.
 
 ## Colors
 
-The palette pairs woodland greens with warm neutral paper; the frontmatter records the reusable source values.
-
 ### Primary
-- **Camp green:** filled primary actions.
-- **Camp ink:** principal text and brand lettering.
-- **Camp mute:** supporting copy and quieter metadata.
 
-### Secondary
-- **Camp gold:** existing accent variable; related ochre treatments distinguish VIP details, contextual interaction prompts and keyboard focus. These related treatments have their own literal CSS values rather than one unified gold ramp.
+- **Camp green:** the root green variable retained by supporting controls; primary action buttons use their distinct action-fill token.
+- **Action fill and action ink:** pale olive actions with dark lettering, the implemented primary hierarchy.
+- **Camp gold:** warm selection, navigation and objective emphasis.
 
 ### Neutral
-- **Camp paper:** application background.
-- **Warm surface:** sidebar, header and mobile navigation.
-- **Camp line:** dividers between persistent regions.
-- **Button white:** contrast text on green actions.
-- **Secondary text and line:** outlined secondary controls.
 
-**The Forest and Paper Rule.** Extend the incumbent greens and cream surfaces when adding interface regions; preserve the Trilha identity established in PRODUCT.md.
+- **Camp paper:** the charcoal application ground despite the inherited variable name.
+- **Rail and header:** deeper enclosing surfaces with thin green-grey separators.
+- **Camp ink and camp mute:** pale primary text and muted supporting text; the inherited ink token is now light.
+- **Equipment and dialog surfaces:** dark olive menu cards, forms and profile dialogs.
+- **Field surface, text and line:** recessed fields with light lettering and a visible green stroke.
+- **Atlas paper and atlas ink:** warm topographic instrument with dark lettering.
+- **Found surface and line:** muted olive-gold collection completion state.
+
+**The Equipment Frame Rule.** Keep persistent application chrome dark. Use the pale atlas and contextual paper treatments where the current implementation gives them an orientation or interaction purpose.
 
 ## Typography
 
 **Display Font:** Manrope, sans-serif fallback.
 **Body Font:** DM Sans, sans-serif fallback.
 
-Headings are compact, softly geometric and moderately weighted. Supporting information is smaller and deliberately quiet. No serif or monospaced role is established in the lobby.
+The redesign retains the established type families and compresses the game chrome. Menu headings remain generously sized while equipment, navigation and map controls are compact. Icon labels, key numbers and explicit action wording carry meaning together.
 
 ### Hierarchy
-- **Display:** arrival headline, with the responsive size and tracking in frontmatter. Arrival copy is (15px), line-height (1.9), with a (44ch) maximum width on desktop.
-- **Headline:** page title, with its fluid desktop size in frontmatter; becomes (26px) at the mobile breakpoint and (24px) at the narrowest breakpoint.
-- **Title:** arrival form and profile dialog titles. Smaller section titles use observed Manrope sizes from (15px) to (19px).
-- **Body:** default interface text. Page descriptions use (13px) with line-height (1.6); map and people metadata frequently use (10px) or (11px).
-- **Label:** primary and secondary button labels. Form labels use (11px), weight (600). Brand lettering is Manrope (31px), weight (800), tracking (-0.03em).
+
+- **Display:** arrival headline keeps the fluid Manrope scale in frontmatter and inherited responsive overrides; the redesigned arrival heading uses pale text.
+- **Headline:** menu page heading uses the frontmatter role and becomes (25px) at most (800px). The world page heading is hidden so the landscape receives the space.
+- **Title:** profile dialog and form headings retain the established Manrope role. Collection summary becomes (20px) on mobile.
+- **Body:** default interface role; collection descriptions use (13px), line-height (1.65), and supporting copy in the collection summary uses line-height (1.7).
+- **Label:** primary/secondary button labels remain (12px). Desktop rail labels use (10px); objective/resource copy uses (11px), reduced to (10px) on mobile.
+- **Quickslot label and key:** the exact small equipment-label and key-number roles are recorded in frontmatter. Key numbers inherit the interface family rather than introducing a separate monospace face.
 
 ## Layout
 
-Desktop uses a persistent sticky sidebar (224px), header (75px), and a flexible content column. The content inset is recorded in frontmatter. The lobby places the map beside a people rail (254px), separated by the lobby gap. Arrival content has a two-column layout with a maximum width (1120px); its copy and form are distinct regions.
+Desktop shell: navigation rail (90px), flexible content, server header (52px). Menu content uses the frontmatter inset. In the active world, the heading/footer disappear and content inset tightens to (14px). The lobby pairs the scene with a people rail (210px) using the lobby gap; at least (1650px), the people rail is (240px). The scene toolbar is (46px), and its surface height is (calc(100svh - 175px)), minimum (460px).
 
-Observed responsive thresholds:
-- **At least 1650px:** content padding (40px 50px), people rail (290px), map height (70vh).
-- **At most 1200px:** sidebar (190px), content padding (25px 23px), map and people rail stack; the people rail becomes two columns. Server and equipment grids use two columns.
-- **At most 800px:** sidebar disappears; fixed bottom navigation replaces it. Header becomes (61px), content padding (24px 18px), and arrival becomes one column with maximum width (580px). The application reserves (65px) below content; bottom navigation also accounts for the safe-area inset. Map height becomes (65svh), minimum (440px).
-- **At most 450px:** server, equipment and people layouts become single-column; profile dialog padding becomes (28px 20px).
+At most (1100px), the shell rail contracts to (74px), the people rail stacks below the scene, and its content uses two columns. At most (800px), the sidebar disappears in favor of the existing fixed bottom navigation, the shell becomes a block layout, the header is (50px), menu inset is (22px 14px), and world inset is (8px). Mobile scene height is (calc(100svh - 180px)), minimum (510px); the people rail becomes a block. The mobile toolbar hides its leading location text to reserve controls space. Bottom navigation retains a safe-area-aware background and the application reserves (65px) for it.
 
-The desktop map surface uses height (clamp(480px, 65vh, 800px)). Fullscreen applies to the map container: (100vw) by (100dvh), with its toolbar retained and the scene height reduced by (52px).
+The belt sits at the scene foot, centered on desktop and spanning left/right insets (10px) on mobile. It scrolls horizontally so all ten slots remain available. Desktop slots have fixed basis (52px), minimum height (62px); mobile slots use (45px) and (56px). The compact atlas is top-right: (155px) desktop, (104px) mobile. The expanded atlas is centered with width (min(720px, calc(100% - 28px))), bounded scrolling and an SVG canvas capped at (55vh); inherited rules at most (650px) cap the canvas at (42vh).
 
-The exploration extension enlarges the original region's area by (15×), scaling its linear span by the square root of that factor. It retains the familiar camp as the central arrival space and adds five paths and six outer destinations. The landscape continues the incumbent forest world with muted green slopes, grey-green rocky heights, warm earth paths, timber viewpoints, a stream, bridge, wildflowers and a cascade. These scene materials do not replace the cream interface palette.
+Collection cards use three columns, gaps (18px), two columns at most (1000px), and one at most (600px). Summary controls wrap at the collection breakpoint. Fullscreen expands only the map container; the retained toolbar leaves scene height (calc(100dvh - 46px)).
 
-The discovery collection uses three columns with gaps (18px). At most (1000px), it becomes two columns and its summary wraps; at most (600px), it becomes one column with summary gaps (12px) and a smaller summary heading (20px). These collection-specific breakpoints supplement the established application breakpoints.
+The exploration area is (150×) the original, with the original-size camp at its center, ten outer destinations and sixteen discoveries. Current exploration.ts defines ten trails (five original routes plus five additions). Paths, water, cave plans, height sampling and forest positions supply both landscape and atlas rather than separate decorative maps.
 
 ## Elevation & Depth
 
-Persistent regions mainly use cream/green tonal layers and thin borders. The map is clipped within its rounded frame. Transient overlays receive stronger separation: a dark translucent forest scrim for profile dialogs, and shadows for map help and status toasts.
+The interface uses dark tonal layers, thin olive borders and restrained rounded panels. Resource HUD explicitly has no box-shadow. Scene-caption and objective backgrounds are translucent dark green, preserving the landscape context. The expanded atlas changes material to pale paper and lifts above scene controls; interaction prompts use a warm contrasting surface.
 
 ### Shadow Vocabulary
-- **Map help:** (0 12px 40px #213b3440), lifting instructions above the scene.
-- **Toast:** (0 8px 30px #23452a33), separating status feedback from the page.
-- **Expanded field map:** (0 8px 30px #28412b30), lifting the readable location legend above the scene.
-- **Nearby discovery action:** (0 6px 24px #20352133), separating the contextual collection action from the landscape.
+
+- **Expanded atlas:** (0 8px 30px #28412b30), inherited from the expanded-map container.
+- **Discovery action:** (0 6px 24px #20352133), lifting the contextual collection prompt.
+- **Map help:** (0 12px 40px #213b3440), retained help panel separation.
+- **Status toast:** (0 8px 30px #23452a33), retained transient feedback.
+
+Spatial depth primarily comes from the isometric orthographic world, lighting, overlapping foliage, slopes and cave cover. The camera rotates without replacing the world with a perspective dashboard. Binocular use can enter a dedicated first-person perspective view.
 
 ## Shapes
 
-Controls use modest curved corners, with the observed radii in frontmatter. The map frame and help panel share their larger radius; profile dialogs are slightly softer. Portraits remain circular: regular portraits are (38px), expanded dialog portraits (85px). Selection is generally a leaf-toned fill or border rather than an additional shadow.
+Equipment slots use tight rectangular corners, inside a broader curved belt frame. Toolbar and atlas actions use small corners; map frame and people rail use the panel radius. Larger inherited dialog and discovery-card corners remain on supporting menu surfaces. Human portraits stay circular.
+
+Caves have rough rock sidewalls following continuous curved gallery centerlines, a recessed floor and wider chamber. Their open stone arches merge into hillside cover. Entry removes the appropriate roof and clips cave walls to expose the interior. This implements the user's rejection of disconnected square-block caves through continuous spatial geometry rather than a new cave-themed UI card.
 
 ## Components
 
-### Buttons
-Primary actions are solid forest green with white text; secondary actions use transparent fill, green text and a thin muted green border. Both use centered inline icon/label composition, the frontmatter padding, and minimum height (43px).
+### Buttons and fields
 
-Buttons transition background and color over (0.15s). Enabled hover applies brightness (0.96); disabled controls use opacity (0.58). Keyboard focus uses an ochre outline (3px solid #ac823e), offset (4px). Reduced-motion preference removes button transitions. Do not infer a spring, bounce or scale interaction from this implementation.
+Primary and secondary buttons retain minimum height (43px), centered icon/label alignment, gap (9px) and frontmatter padding. Primary buttons use olive fill with dark text; secondary buttons are transparent with pale text and an olive stroke. Enabled hover applies brightness (0.96); disabled controls use opacity (0.58). Background/color transitions last (0.15s); reduced-motion removes button transitions. Focus-visible retains an ochre outline (3px solid #ac823e), offset (4px).
 
-### Inputs / Fields
-Arrival and admin fields have height (44px), curved field corners, padding (0 12px), a thin pale green stroke (#cbd4c0), and near-white green-tinted fill (#fbfcf7). Text uses camp ink; placeholder copy stays muted but visible. Inputs share the global focus-visible treatment.
+Profile/arrival/admin fields are dark recessed surfaces with light text, height (44px), padding (0 12px), and field corners. Their placeholders are pale muted green (#acbda0). Profile dialogs preserve Escape dismissal and focus management.
 
-### Navigation
-Desktop navigation combines outline icons and sentence-case Portuguese labels. Rows have minimum height (46px), padding (13px 11px), and navigation corners. Active rows use a pale leaf fill (#e5ebdd) and darker green text (#254d39). At the mobile breakpoint, a fixed bottom bar uses icon-over-label controls with minimum size (68px by 40px), active darker text and weight (700).
+### Navigation and people
 
-### Map and field controls
-The map has a dark forest toolbar, softly translucent paper captions and an optional paper field map. Toolbar buttons remain outlined and compact with minimum dimensions (32px). Nearby people appear as small cream controls; contextual place/pet interactions use warm ochre paper near the lower center. Gesture buttons below the scene expose Acenar, Celebrar and Sentar with a leaf-toned selected state. Equipment links return users to their kit.
+The compact desktop rail stacks outline icons over labels; rows have minimum height (64px), with an olive fill and stroke for the selected destination. Lower profile identification is compact and club detail is not shown in the rail; the people panel still identifies connected visitors through portrait, nickname and club. Mobile navigation retains icon-over-label controls, selected warm text and the dark bar. Chat, server selection, kit, collection and VIP share olive menu surfaces.
 
-The map is focusable and uses its own inset ochre focus outline. Map-only fullscreen removes the rounded frame; a fixed expanded fallback covers the viewport. Touch controls and keyboard control help belong to the scene rather than the persistent page navigation.
+### Quickbelt and resource HUD
 
-The equipped field map has a button with accessible expand/collapse labels and `aria-expanded`. Its compact mobile title, hint and letter markers use (10px) text; markers use camp ink on pale leaf (#d5dfbc). Expanding the card gives it width (min(330px, calc(100% - 30px))), padding (16px), warm paper fill (#fff9e8) and a lifted shadow. The expanded map is (170px) high, reduced to (150px) at most (600px), with letter markers (24px) across and text (12px). The card scrolls within maximum height (calc(100% - 30px)) and permits vertical touch panning. Movement pauses while the field map is expanded. This field-map expansion is separate from map-container fullscreen.
+Ten equipment slots correspond to keys **1–0**: Mapa de campo, Bicicleta, Companheiro, Lanterna, Cantil, Corda, Bússola, Binóculos, Botas and Capacete com luz. Slots expose full equipment names through aria-label/title as well as short visible text. `aria-pressed` indicates selected equipment; its olive fill, warm text and gold border distinguish it from other slots. The belt component toggles the selected item off when clicked again. Numeric keyboard shortcuts select the corresponding item while scene control is active.
 
-Expanded atlas controls offer **Região** and **Acampamento** views using buttons with `aria-pressed`. The selected view has camp-ink fill and cream text; unselected controls are transparent with a muted green border, curved corners (6px), padding (7px) and labels (12px). The region view shows the outer destinations and the campfire reference; the camp view focuses on the original central area. Dashed earth-colored routes connect letter-coded markers, accompanied by a full-name legend in (12px). The gold position dot appears when the player is within the selected view. The compact map remains a camp view; expanding initially selects the region.
+Energy is shown as a percentage with a thin olive progress bar; canteen actions include the current number out of three doses. Context-sensitive actions use **F** or a button to mount/dismount, drink/refill, fix rope, observe, or switch a light. Running and cycling drain energy, rest restores it, and cave exploration requires walking. Light and cave-name copy explain interior conditions. Preserve these meaningful affordances rather than replacing them with decorative meters.
 
-### Discoveries and collection
-The expansion defines **12 local discoveries**, with the text rarities **Comum**, **Incomum** and **Raro**. In the scene, collectible crystals have a small gold ring; rare crystals use muted teal and the others use gold. Labels become visible nearby, and collected crystals disappear. A nearby discovery exposes a warm cream action with an ochre border, rounded corners (12px), and a short label, discovery name and **E ou toque aqui** hint. The action is hidden while the atlas is open.
+### Topographic atlas and waypoint
 
-The **Descobertas** navigation entry opens a summary showing the collected count out of twelve, an accessible progress element and a **Continuar explorando** action. Progress is a thin bar (8px) with green accent (#416f48). Each collection card includes a two-digit ordinal and rarity, an award icon, a title, supporting text and a status. Pending cards use a pale neutral fill (#eeeee4), dashed green-grey border (#b7bfaa), corners (14px), padding (24px) and gaps (12px); their title is **Ainda por descobrir** and their text gives a location hint. Found cards switch to cream (#fff9e9), a solid muted gold border (#b8a464), the discovery name and its story. The explicit status text distinguishes **Siga a pista** from **Na sua coleção** without depending on color alone.
+The map is available through its compact toggle and the **M** shortcut when the scene is focused. `aria-expanded` communicates its state. The expanded instrument supports drag panning, wheel or plus/minus zoom, **Minha posição**, **Toda a região**, and a scrollable destination index. It draws shared terrain heights and contour intervals (10m), trees, trails, the connected watercourse, cave galleries, crossing and camp features. A heading arrow, north mark, player marker, scale and legend explain orientation.
 
-The collection's storage explanation states that these memories are saved in this browser for the current identity and do not award currency or VIP. Returning from another page can restore the latest recorded position when its room matches the active room. Source stores that latest room and position in an application ref; it does not establish a persistent multi-room pose history or restore camera orientation.
+Selecting a destination shows its distance and elevation. **Marcar destino** sets a waypoint, closes the atlas and returns focus to the scene. The objective then reads **Destino marcado**, shows name/distance and offers **Limpar destino**. Without a waypoint it shows **Próxima descoberta**. The atlas is a topographic map of the fictional scene; it is not a geographic map of Lapa. The older region/camp tab instrument has been replaced by this pan/zoom atlas.
 
-### People and profiles
-The people rail uses circular portraits, nickname, optional club identification, and small presence dots. Clicking a person in the rail or selecting a player in the scene opens the same cream profile dialog. The dialog provides wave, server conversation, mute and report actions, with a top-right close button. Dialog behavior includes Escape dismissal and focus management in LobbyApp.tsx. Selected profiles pause the lobby scene.
+### Collection and contextual discoveries
 
-### Cards / Containers
-Server and equipment views pair illustrated scenes with concise labels and actions. Preserve these existing content relationships when extending them. The people rail is a lightly tinted supporting region, not a floating shadow card. Dialogs are centered with bounded height (90svh), scrolling when required; status feedback uses a compact dark green toast.
+All **sixteen** discovery IDs remain intact. Collection cards display ordinal/rarity, award icon, name or **Ainda por descobrir**, story or hint, and a textual status. Pending cards use the dark equipment surface with dashed card-line borders; found cards use a solid gold-olive border and found-surface fill. **Siga a pista** and **Na sua coleção** distinguish state without color alone. Rarities remain **Comum**, **Incomum**, **Raro**. The summary shows count out of sixteen and accessible progress; browser-local identity-scoped storage remains explicit and awards no currency or VIP.
+
+Near a collectible, a contrasting warm prompt exposes its name, **Recolher**, and **E ou toque aqui**. Cave collection requires an equipped, enabled light. Prompts and the belt are suppressed while the atlas is expanded, keeping orientation readable.
+
+### Cave continuity and scene persistence
+
+Two caves, Gruta dos Cristais and Caverna do Eco, use irregular continuous rock galleries and hillside entrances. Cave centerlines and shared height functions inform movement and atlas drawing. Entering triggers the matching hillside roof removal and wall clipping, plus an ambient/sun/fog transition into the darker interior. Flashlight or headlamp supplies the exploration light. These source mechanisms define the cutaway; this document does not independently establish traversability through browser testing.
+
+Menu navigation retains the mounted scene in a hidden world panel and pauses scene interaction rather than remounting it. Position, energy, water, equipment-use state and scene-local waypoint remain in the current room's mounted session when returning from menus. The world is keyed by room ID; changing room or reloading is not the same persistence guarantee. Discovery collection separately persists in this browser for the authenticated identity.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** preserve forest greens, warm paper surfaces, the Trilha name and approachable Portuguese labels.
-- **Do** reuse the existing primary/secondary hierarchy and visible keyboard focus.
-- **Do** maintain circular portraits and legible nickname/club identification.
-- **Do** keep mobile navigation and map fullscreen behavior coherent with the existing breakpoints.
-- **Do** retain reduced-motion handling for button transitions.
+- **Do** follow the approved Project Zomboid reference through isometric readability and compact equipment operation.
+- **Do** retain charcoal/olive chrome, pale text and purposeful atlas paper.
+- **Do** preserve all sixteen IDs, Portuguese names, club identification and current room/admin/VIP rules.
+- **Do** keep cave entry, cutaway, movement and atlas geometry coherent.
+- **Do** preserve the mounted room scene and pause interaction when opening menus.
+- **Do** maintain visible focus, selected-state semantics and usable horizontally scrolling mobile equipment.
 
 ### Don't:
-- **Don't** introduce an unrelated visual identity while extending this lobby.
-- **Don't** describe payment preparation controls as active purchases; their disabled state is part of the implemented interface.
-- **Don't** imply that documentation extraction verifies rendering, mobile hardware performance or runtime capacity.
+- **Don't** restore the stale cream application shell or the twelve-discovery count.
+- **Don't** copy proprietary assets or add zombie/combat mechanics from the reference.
+- **Don't** turn cave galleries into disconnected square-block assemblies.
+- **Don't** imply that equipment trials or local collection are purchased entitlements.
+- **Don't** describe source extraction as browser, hardware, authority or concurrency validation.
 
-Source evidence: PRODUCT.md, src/lobby/lobby.css, src/lobby/LobbyApp.tsx, src/lobby/LobbyWorld.tsx, src/lobby/exploration.ts and src/lobby/landscape.ts. This document records source inspection; no browser inspection was performed for this extraction.
+Source evidence: PRODUCT.md; .impeccable/surfaces/expedition.md; src/lobby/expedition.css; src/lobby/lobby.css (inherited base); src/lobby/LobbyWorld.tsx; src/lobby/Quickbelt.tsx; src/lobby/exploration.ts; src/lobby/caverns.ts; src/lobby/FieldMap.tsx; src/lobby/LobbyApp.tsx. expedition.css is imported after lobby.css and its current overrides define the documented shell. Source-only documentation pass on 27 October 2026.
+
