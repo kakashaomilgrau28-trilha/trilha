@@ -132,7 +132,7 @@ This document records the current code after the authorized redesign. The Expedi
 - Charcoal frame, olive equipment surfaces and pale readable text.
 - Ten numbered quick slots with explicit selected states.
 - A topographic waypoint atlas derived from the scene's data.
-- Natural cave entrances, continuous galleries and interior cutaway.
+- Natural cave entrances, continuous covered galleries and a collision-constrained proximity camera.
 - Sixteen preserved cosmetic discoveries with local collection progress.
 
 ## Colors
@@ -177,11 +177,11 @@ Desktop shell: navigation rail (90px), flexible content, server header (52px). M
 
 At most (1100px), the shell rail contracts to (74px), the people rail stacks below the scene, and its content uses two columns. At most (800px), the sidebar disappears in favor of the existing fixed bottom navigation, the shell becomes a block layout, the header is (50px), menu inset is (22px 14px), and world inset is (8px). Mobile scene height is (calc(100svh - 180px)), minimum (510px); the people rail becomes a block. The mobile toolbar hides its leading location text to reserve controls space. Bottom navigation retains a safe-area-aware background and the application reserves (65px) for it.
 
-The belt sits at the scene foot, centered on desktop and spanning left/right insets (10px) on mobile. It scrolls horizontally so all ten slots remain available. Desktop slots have fixed basis (52px), minimum height (62px); mobile slots use (45px) and (56px). The compact atlas is top-right: (155px) desktop, (104px) mobile. The expanded atlas is centered with width (min(720px, calc(100% - 28px))), bounded scrolling and an SVG canvas capped at (55vh); inherited rules at most (650px) cap the canvas at (42vh).
+The belt sits at the scene foot, centered on desktop and spanning left/right insets (10px) on mobile. It scrolls horizontally so all ten slots remain available. Desktop slots have fixed basis (52px), minimum height (62px); mobile slots use (45px) and (56px). The compact atlas is top-right: (155px) desktop, (104px) mobile. The expanded atlas is centered with width (min(720px, calc(100% - 28px))) and bounded scrolling. At least (700px), it becomes a two-column instrument: map column (minmax(220px, min(43vh, 440px))) and destination/detail column (240px), gaps (8px 14px), width max-content constrained by (calc(100% - 28px)). The detail column scrolls within (calc(43vh + 42px)); its destination buttons have minimum height (36px). Below that breakpoint the instrument stacks; inherited rules at most (650px) cap the canvas at (42vh).
 
 Collection cards use three columns, gaps (18px), two columns at most (1000px), and one at most (600px). Summary controls wrap at the collection breakpoint. Fullscreen expands only the map container; the retained toolbar leaves scene height (calc(100dvh - 46px)).
 
-The exploration area is (150×) the original, with the original-size camp at its center, ten outer destinations and sixteen discoveries. Current exploration.ts defines ten trails (five original routes plus five additions). Paths, water, cave plans, height sampling and forest positions supply both landscape and atlas rather than separate decorative maps.
+The exploration area is (150×) the original, with the original-size camp at its center, ten outer destinations and sixteen preserved discovery IDs. The remapped region has sixteen shared paths, including four curved camp alleys, a connected valley circuit, two ridge ascents, a descending watercourse and approaches to two caves. Curved alleys and an irregular clearing replace the camp disc and central cross. Paths, water, cave plans, height sampling and forest positions supply both landscape and atlas rather than separate decorative maps.
 
 ## Elevation & Depth
 
@@ -194,13 +194,13 @@ The interface uses dark tonal layers, thin olive borders and restrained rounded 
 - **Map help:** (0 12px 40px #213b3440), retained help panel separation.
 - **Status toast:** (0 8px 30px #23452a33), retained transient feedback.
 
-Spatial depth primarily comes from the isometric orthographic world, lighting, overlapping foliage, slopes and cave cover. The camera rotates without replacing the world with a perspective dashboard. Binocular use can enter a dedicated first-person perspective view.
+Spatial depth primarily comes from the isometric orthographic world, lighting, overlapping foliage, slopes and intact cave cover. Near cave portals, shelters and canopies, the camera distance and lens interpolate continuously into a close perspective. A collision-constrained boom retracts from obstacles; leaving cover restores the selected outdoor isometric zoom. Roofs, walls and foliage remain rendered. Binocular use has its own first-person perspective lens.
 
 ## Shapes
 
 Equipment slots use tight rectangular corners, inside a broader curved belt frame. Toolbar and atlas actions use small corners; map frame and people rail use the panel radius. Larger inherited dialog and discovery-card corners remain on supporting menu surfaces. Human portraits stay circular.
 
-Caves have rough rock sidewalls following continuous curved gallery centerlines, a recessed floor and wider chamber. Their open stone arches merge into hillside cover. Entry removes the appropriate roof and clips cave walls to expose the interior. This implements the user's rejection of disconnected square-block caves through continuous spatial geometry rather than a new cave-themed UI card.
+Caves have rough rock sidewalls following continuous curved gallery centerlines, a recessed floor and wider chamber. Their open stone arches merge into hillside cover. Entry brings the camera toward the character beneath the intact roof; rock walls retain their geometry and rendering. This implements the user's rejection of disconnected square-block caves through continuous spatial geometry rather than a new cave-themed UI card.
 
 ## Components
 
@@ -218,11 +218,13 @@ The compact desktop rail stacks outline icons over labels; rows have minimum hei
 
 Ten equipment slots correspond to keys **1–0**: Mapa de campo, Bicicleta, Companheiro, Lanterna, Cantil, Corda, Bússola, Binóculos, Botas and Capacete com luz. Slots expose full equipment names through aria-label/title as well as short visible text. `aria-pressed` indicates selected equipment; its olive fill, warm text and gold border distinguish it from other slots. The belt component toggles the selected item off when clicked again. Numeric keyboard shortcuts select the corresponding item while scene control is active.
 
-Energy is shown as a percentage with a thin olive progress bar; canteen actions include the current number out of three doses. Context-sensitive actions use **F** or a button to mount/dismount, drink/refill, fix rope, observe, or switch a light. Running and cycling drain energy, rest restores it, and cave exploration requires walking. Light and cave-name copy explain interior conditions. Preserve these meaningful affordances rather than replacing them with decorative meters.
+Equipment is modeled as physical geometry attached to articulated hand, chest, head or foot sockets as appropriate. The pet moves independently through the world; a dismounted bicycle stays parked and requires approaching within (3m) to remount. The compass needle follows world north, lights follow their attached model, binoculars rise to the eyes, and fixed rope appears across the traversal. Detailed use gestures remain local; peers receive equipped items and basic poses.
+
+Energy is shown as a percentage with a thin olive progress bar; the canteen reports doses out of three. Context-sensitive actions use **F** or a button to mount/dismount, drink, fix rope, observe, or switch a light. **G** or **Reabastecer cantil** refills near water. Drinking (1.5s) and refilling (1.8s) show progress, prevent repeated starts and commit once on completion. Walking or changing equipment cancels the water action without consumption; pausing suspends it. Full energy prevents unnecessary drinking. Running and cycling drain energy, rest restores it, and cave exploration requires walking. Light and cave-name copy explain interior conditions. Preserve these meaningful affordances rather than replacing them with decorative meters.
 
 ### Topographic atlas and waypoint
 
-The map is available through its compact toggle and the **M** shortcut when the scene is focused. `aria-expanded` communicates its state. The expanded instrument supports drag panning, wheel or plus/minus zoom, **Minha posição**, **Toda a região**, and a scrollable destination index. It draws shared terrain heights and contour intervals (10m), trees, trails, the connected watercourse, cave galleries, crossing and camp features. A heading arrow, north mark, player marker, scale and legend explain orientation.
+The map is available through its compact toggle and the **M** shortcut when the scene is focused. `aria-expanded` communicates its state. The expanded instrument supports drag panning, wheel or plus/minus zoom, **Minha posição**, **Toda a região**, and a scrollable destination index. It draws shared terrain heights and contour intervals (10m), trees, trails, the connected watercourse, cave galleries, crossing and camp features. A heading arrow, north mark, player marker, scale and legend explain orientation. Numbered destination marks retain a (20px) visible diameter in the expanded map with (44px) transparent hit targets, independent of zoom. At regional zoom below (2.5), central camp destinations collapse into the Acampamento marker; zooming in or using the index exposes individual places. Markers support Enter/Space selection and visible keyboard focus; the desktop destination list sits alongside the map.
 
 Selecting a destination shows its distance and elevation. **Marcar destino** sets a waypoint, closes the atlas and returns focus to the scene. The objective then reads **Destino marcado**, shows name/distance and offers **Limpar destino**. Without a waypoint it shows **Próxima descoberta**. The atlas is a topographic map of the fictional scene; it is not a geographic map of Lapa. The older region/camp tab instrument has been replaced by this pan/zoom atlas.
 
@@ -234,7 +236,7 @@ Near a collectible, a contrasting warm prompt exposes its name, **Recolher**, an
 
 ### Cave continuity and scene persistence
 
-Two caves, Gruta dos Cristais and Caverna do Eco, use irregular continuous rock galleries and hillside entrances. Cave centerlines and shared height functions inform movement and atlas drawing. Entering triggers the matching hillside roof removal and wall clipping, plus an ambient/sun/fog transition into the darker interior. Flashlight or headlamp supplies the exploration light. These source mechanisms define the cutaway; this document does not independently establish traversability through browser testing.
+Two caves, Gruta dos Cristais and Caverna do Eco, use irregular continuous rock galleries and hillside entrances. Cave centerlines and shared height functions inform movement and atlas drawing. Entering triggers an ambient/sun/fog transition into the darker interior while cover detection, collision-constrained camera boom and continuous dolly/lens framing approach the character. Flashlight or headlamp supplies the exploration light. Roof visibility toggles, wall clipping and forest discard are absent; scenery remains rendered. This source documentation does not independently establish traversability or visual quality through browser testing.
 
 Menu navigation retains the mounted scene in a hidden world panel and pauses scene interaction rather than remounting it. Position, energy, water, equipment-use state and scene-local waypoint remain in the current room's mounted session when returning from menus. The world is keyed by room ID; changing room or reloading is not the same persistence guarantee. Discovery collection separately persists in this browser for the authenticated identity.
 
@@ -244,7 +246,7 @@ Menu navigation retains the mounted scene in a hidden world panel and pauses sce
 - **Do** follow the approved Project Zomboid reference through isometric readability and compact equipment operation.
 - **Do** retain charcoal/olive chrome, pale text and purposeful atlas paper.
 - **Do** preserve all sixteen IDs, Portuguese names, club identification and current room/admin/VIP rules.
-- **Do** keep cave entry, cutaway, movement and atlas geometry coherent.
+- **Do** keep cave entry, intact cover, proximity camera, movement and atlas geometry coherent.
 - **Do** preserve the mounted room scene and pause interaction when opening menus.
 - **Do** maintain visible focus, selected-state semantics and usable horizontally scrolling mobile equipment.
 
@@ -255,5 +257,5 @@ Menu navigation retains the mounted scene in a hidden world panel and pauses sce
 - **Don't** imply that equipment trials or local collection are purchased entitlements.
 - **Don't** describe source extraction as browser, hardware, authority or concurrency validation.
 
-Source evidence: PRODUCT.md; .impeccable/surfaces/expedition.md; src/lobby/expedition.css; src/lobby/lobby.css (inherited base); src/lobby/LobbyWorld.tsx; src/lobby/Quickbelt.tsx; src/lobby/exploration.ts; src/lobby/caverns.ts; src/lobby/FieldMap.tsx; src/lobby/LobbyApp.tsx. expedition.css is imported after lobby.css and its current overrides define the documented shell. Source-only documentation pass on 27 October 2026.
+Source evidence: docs/map-camera.md; docs/item-interactions.md; PRODUCT.md; .impeccable/surfaces/expedition.md; src/lobby/expedition.css; src/lobby/lobby.css (inherited base); src/lobby/LobbyWorld.tsx; src/lobby/Quickbelt.tsx; src/lobby/exploration.ts; src/lobby/caverns.ts; src/lobby/FieldMap.tsx; src/lobby/coveredCamera.ts; src/lobby/equipment.ts; src/lobby/itemActions.ts; src/lobby/LobbyApp.tsx. expedition.css is imported after lobby.css and its current overrides define the documented shell. Source-only documentation refresh on 28 October 2026. Review images named mapa-*.png under .impeccable/review are SceneLab development fixtures, not production multiplayer proof; Seven local SceneLab development recaptures are complete, including the desktop atlas with its side index and the mobile atlas with direct selection of Gruta dos Cristais; these captures do not establish production behavior. No new product raster was generated for this documentation pass.
 

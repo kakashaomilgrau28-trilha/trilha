@@ -6,15 +6,22 @@ export const BOUNDARY = 38 * Math.sqrt(AREA_MULTIPLIER);
 export const mapPercent = (metres: number, span = SIZE) => metres / span * 100 + 50;
 const codes: Record<string,string> = {fogueira:'F',acampamento:'B',oficina:'O',lago:'L',observatorio:'M',vip:'V',cume:'C',pedras:'S',rio:'R',flores:'P',refugio:'A',cachoeira:'Q'};
 export const mapCode = (id:string) => codes[id] ?? '?';
-const rawTerrain = (x: number, z: number) => {
-  const edge = Math.min(1, Math.max(0, (Math.hypot(x,z)-43)/45));
-  const fade = edge*edge*(3-2*edge), u=x/EXPANSION, v=z/EXPANSION;
-  const hill = (cx:number,cz:number,h:number,r:number) => h*Math.exp(-((u-cx)**2+(v-cz)**2)/(r*r));
-  return fade*(hill(94,-91,70,36)+hill(-99,-86,53,42)+hill(93,97,44,38)+hill(-117,112,28,35)+2*(Math.sin(u*.055)+Math.cos(v*.06)));
+/** A valley between two ridges. The camp stays level; elevations spread gradually. */
+const rawTerrain = (x:number,z:number) => {
+ const edge=Math.min(1,Math.max(0,(Math.hypot(x,z)-43)/55)),fade=edge*edge*(3-2*edge);
+ const hill=(cx:number,cz:number,h:number,r:number)=>h*Math.exp(-((x-cx)**2+(z-cz)**2)/(r*r));
+ let h=fade*(hill(245,-230,58,100)+hill(-245,-255,43,105)+hill(210,205,22,120)+hill(-210,270,18,100)+1.5+1.3*Math.sin(x*.015)*Math.cos(z*.012))-6*Math.exp(-(((x-135)/9)**4+((z+175)/6)**4));
+ let nearest=Infinity,waterHeight=0;
+ for(let i=0;i<riverPoints.length-1;i++){
+  const a=riverPoints[i],b=riverPoints[i+1],dx=b[0]-a[0],dz=b[1]-a[1],t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz))),d=Math.hypot(x-a[0]-dx*t,z-a[1]-dz*t);
+  if(d<nearest){nearest=d;waterHeight=12*(1-(i+t)/(riverPoints.length-1));}
+ }
+ if(nearest<24){const blend=Math.exp(-((nearest/14)**4));h=h*(1-blend)+waterHeight*blend;}
+ return h;
 };
 export const caves = [
-  {id:'gruta-cristais',name:'Gruta dos Cristais',x:342,z:170,length:72},
-  {id:'caverna-eco',name:'Caverna do Eco',x:-350,z:-210,length:60},
+  {id:'gruta-cristais',name:'Gruta dos Cristais',x:250,z:155,length:60},
+  {id:'caverna-eco',name:'Caverna do Eco',x:-270,z:-155,length:54},
 ];
 export type Cave = typeof caves[number];
 export function caveRoute(c:Cave):[number,number][]{return [[c.x,c.z+1],[c.x-1.5,c.z-13],[c.x+2,c.z-28],[c.x-2.5,c.z-43],[c.x,c.z-c.length+4]]}
@@ -30,7 +37,7 @@ export const terrainHeight=(x:number,z:number)=>{
  // Blend the approach into the portal, avoiding an artificial rectangular terrace.
  let h=surfaceHeight(x,z);for(const c of caves){const d=Math.hypot((x-c.x)*1.5,Math.max(0,z-c.z));if(z>=c.z&&d<14){const t=1-d/14;h=h*(1-t)+caveFloor(c,z)*t}}return h;
 };
-export const ropeCrossing={x:180,z:-240,from:{x:166,z:-240},to:{x:194,z:-240}};
+export const ropeCrossing={x:135,z:-175,from:{x:121,z:-175},to:{x:149,z:-175}};
 export function trailDistance(x:number,z:number){return Math.min(...trails.flatMap(t=>t.points.slice(1).map((p,i)=>{const a=t.points[i],dx=p[0]-a[0],dz=p[1]-a[1],f=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[1])*dz)/(dx*dx+dz*dz)));return Math.hypot(x-a[0]-f*dx,z-a[1]-f*dz)})))}
 const originalDestinations = [
   {id:'cume',name:'Cume das Araucárias',x:94,z:-91,description:'Suba pela trilha em zigue-zague até o mirante mais alto.'},
@@ -39,13 +46,6 @@ const originalDestinations = [
   {id:'flores',name:'Prado das Flores',x:89,z:89,description:'Um caminho entre flores silvestres e pequenas colinas.'},
   {id:'refugio',name:'Abrigo dos Pioneiros',x:-111,z:112,description:'Um abrigo de madeira para o fim de uma caminhada longa.'},
   {id:'cachoeira',name:'Cascata da Serra',x:-125,z:-58,description:'Água correndo entre as pedras, perto da trilha da serra.'},
-];
-const originalTrails = [
-  {name:'Trilha do Cume',points:[[23,-18],[44,-39],[80,-44],[60,-65],[108,-66],[80,-86],[94,-91]]},
-  {name:'Travessia das Pedras',points:[[-23,-18],[-44,-40],[-76,-34],[-59,-62],[-104,-58],[-82,-83],[-99,-86]]},
-  {name:'Caminho das Águas',points:[[-24,18],[-44,36],[-70,31],[-83,65],[-106,78],[-111,112]]},
-  {name:'Circuito do Prado',points:[[25,18],[51,35],[48,63],[80,58],[66,83],[89,89],[104,112]]},
-  {name:'Trilha da Cascata',points:[[-76,-34],[-98,-26],[-128,-38],[-125,-58]]},
 ];
 const originalDiscoveries = [
   {id:'primeira-fogueira',name:'Chama da Amizade',x:4,z:12,rarity:'Comum',hint:'Um brilho dourado perto da roda da fogueira.',story:'Toda aventura começa com alguém para dividir a história.'},
@@ -61,28 +61,45 @@ const originalDiscoveries = [
   {id:'insignia-pioneiro',name:'Insígnia do Pioneiro',x:-111,z:112,rarity:'Raro',hint:'O abrigo mais distante guarda uma lembrança.',story:'Estar preparado também é saber acolher quem chega.'},
   {id:'nevoa-cascata',name:'Névoa da Cascata',x:-125,z:-58,rarity:'Raro',hint:'Siga o som da água pela trilha da cascata.',story:'Alguns tesouros são os lugares que conhecemos.'},
 ];
-const scale=(x:number,z:number):[number,number]=>Math.hypot(x,z)<=43?[x,z]:[x*EXPANSION,z*EXPANSION];
+// Shared coordinates drive geometry, the atlas, discoveries and signs.
+const landmarkPositions:Record<string,[number,number]>={cume:[245,-230],pedras:[-245,-255],rio:[-170,120],flores:[210,205],refugio:[-210,270],cachoeira:[-220,-130]};
+const rewardPositions:Record<string,[number,number]>={'semente-trilha':[64,-60],'cume-dourado':landmarkPositions.cume,'cristal-serra':landmarkPositions.pedras,'ponte-amizade':landmarkPositions.rio,'flor-prado':landmarkPositions.flores,'insignia-pioneiro':landmarkPositions.refugio,'nevoa-cascata':landmarkPositions.cachoeira};
+const scale=(x:number,z:number):[number,number]=>[x,z];
 export const destinations = [
- ...originalDestinations.map(p=>{const [x,z]=scale(p.x,p.z);return {...p,x,z}}),
- ...caves.map(c=>({...c,description:'Entre a pé, acenda a lanterna e explore as galerias e a câmara dos cristais.'})),
- {id:'mata-fechada',name:'Mata Fechada',x:240,z:-180,description:'Um corredor estreito entre árvores e vegetação densa.'},
- {id:'travessia-corda',name:'Travessia da Ravina',x:166,z:-240,description:'Use a corda nos pontos de ancoragem para atravessar.'},
+ ...originalDestinations.map(p=>{const [x,z]=landmarkPositions[p.id];return {...p,x,z}}),
+ ...caves.map(c=>({...c,description:'Entre pela abertura da encosta. A câmera se aproxima; leve uma fonte de luz.'})),
+ {id:'mata-fechada',name:'Mata Fechada',x:195,z:-90,description:'Um corredor de araucárias liga o vale à encosta leste.'},
+ {id:'travessia-corda',name:'Travessia da Ravina',x:121,z:-175,description:'Fixe a corda entre as duas margens para cruzar.'},
+];
+export const campPaths=[
+ {name:'Alameda da fogueira',width:4.5,points:[[-38,0],[-15,0],[-9,7],[0,10],[9,7],[15,0],[38,0]]},
+ {name:'Caminho dos pioneiros',width:3.5,points:[[0,38],[0,14],[10,2],[14,-9],[23,-13],[38,-18]]},
+ {name:'Alameda das barracas',width:3,points:[[-38,-18],[-28,-13],[-14,-9],[-8,-15],[0,-23],[0,-26]]},
+ {name:'Caminho do lago',width:3,points:[[-19,15],[-12,12],[0,14],[14,16],[25,12],[38,18]]},
 ];
 export const trails = [
- ...originalTrails.map(t=>({...t,width:3.5,points:t.points.map(([x,z])=>scale(x,z))})),
- {name:'Trilha da Mata Fechada',width:1.8,points:[[23,-18],[80,-55],[135,-100],[110,-140],[180,-165],[205,-120],[240,-180],[290,-145],[310,-65],[320,40],[310,115],[325,184],[342,190],[342,170]]},
- {name:'Caminho dos Cristais',width:2.2,points:[[25,18],[79,57],[160,110],[210,80],[270,135],[310,115],[325,184],[342,190],[342,170]]},
- {name:'Trilha do Eco',width:1.8,points:[[-23,-18],[-75,-55],[-140,-110],[-200,-80],[-270,-160],[-320,-145],[-350,-190],[-350,-210]]},
- {name:'Ligação da Serra',width:2.4,points:[[-350,-210],[-335,-240],[-313,-272],[-365,-235],[-395,-183]]},
- {name:'Passagem da Ravina',width:2,points:[[135,-100],[145,-190],[166,-240],[194,-240],[240,-260],[297,-288]]},
+ ...campPaths,
+ {name:'Circuito do Vale',width:4.2,points:[[0,38],[70,65],[160,150],[210,205],[130,280],[-20,300],[-160,245],[-210,140],[-240,0],[-220,-130],[-145,-200],[0,-240],[110,-210],[200,-145],[270,-35],[250,100],[160,150]]},
+ {name:'Portão da Serra',width:3.5,points:[[-38,-18],[-90,-55],[-160,-85],[-220,-130]]},
+ {name:'Trilha das Araucárias',width:3,points:[[38,-18],[64,-60],[110,-90],[155,-65],[195,-90],[200,-145]]},
+ {name:'Trilha do Riacho',width:3,points:[[-38,0],[-85,40],[-125,95],[-170,120],[-210,140]]},
+ {name:'Trilha do Prado',width:3,points:[[38,18],[85,50],[110,100],[160,150]]},
+ {name:'Subida do Cume',width:2.5,points:[[200,-145],[250,-158],[215,-183],[275,-197],[235,-216],[245,-230]]},
+ {name:'Serra das Pedras',width:2.5,points:[[-145,-200],[-195,-185],[-180,-222],[-245,-213],[-220,-244],[-245,-255]]},
+ {name:'Caminho dos Cristais',width:2.4,points:[[160,150],[205,175],[235,180],[250,175],[250,155]]},
+ {name:'Trilha do Eco',width:2.4,points:[[-220,-130],[-245,-115],[-270,-130],[-270,-155]]},
+ {name:'Caminho do Abrigo',width:3,points:[[-160,245],[-190,240],[-210,270]]},
+ {name:'Passagem da Ravina',width:2,points:[[110,-90],[100,-135],[121,-175],[149,-175],[175,-190],[200,-145]]},
+ {name:'Retorno das Águas',width:2.4,points:[[-170,120],[-130,180],[-65,190],[0,145],[0,38]]},
 ];
 export const discoveries = [
- ...originalDiscoveries.map(r=>{const [x,z]=scale(r.x,r.z);return {...r,x,z}}),
+ ...originalDiscoveries.map(r=>{const [x,z]=rewardPositions[r.id]??scale(r.x,r.z);return {...r,x,z}}),
  ...caves.map(c=>({id:c.id+'-cristal',name:c.id==='gruta-cristais'?'Cristal da Profundeza':'Emblema do Eco',x:c.x,z:c.z-c.length+4,rarity:'Raro',hint:'No fundo de uma caverna. Leve uma fonte de luz.',story:'A luz revelou um novo caminho.'})),
- {id:'segredo-mata',name:'Guardião da Mata',x:240,z:-180,rarity:'Raro',hint:'Siga a trilha estreita até o coração da mata fechada.',story:'Um caminho escondido entre as árvores.'},
- {id:'ancoragem',name:'Nó de Confiança',x:202,z:-240,rarity:'Incomum',hint:'Atravesse a ravina com uma corda.',story:'Preparo e boas amarras abriram a passagem.'},
+ {id:'segredo-mata',name:'Guardião da Mata',x:195,z:-90,rarity:'Raro',hint:'Siga a trilha estreita até o coração da mata fechada.',story:'Um caminho escondido entre as árvores.'},
+ {id:'ancoragem',name:'Nó de Confiança',x:157,z:-175,rarity:'Incomum',hint:'Atravesse a ravina com uma corda.',story:'Preparo e boas amarras abriram a passagem.'},
 ];
 export type Discovery = typeof discoveries[number];
 
 /** One watercourse links the cascade, creek bridge and lower valley. */
-export const riverPoints:[number,number][]=[[-395,-183],[-408,-120],[-394,-40],[-352,55],[-306,136],[-83*EXPANSION,65*EXPANSION],[-55*EXPANSION,83*EXPANSION],[-5*EXPANSION,77*EXPANSION],[35*EXPANSION,96*EXPANSION],[66*EXPANSION,122*EXPANSION]];
+export const riverPoints:[number,number][]=[[-220,-130],[-245,-85],[-220,-20],[-205,45],[-170,120],[-145,180],[-75,225],[5,245],[110,285],[220,340],[330,400]];
+

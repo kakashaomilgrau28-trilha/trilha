@@ -77,6 +77,8 @@ export function person(index: number) {
     const elbow=new THREE.Group();elbow.position.y=-.27;shoulder.add(elbow);elbows.push(elbow);
     limb(elbow,.069,.17,-.12,colors.skin);oval(elbow,.077,0,-.26,0,colors.skin,.85,1.1,.8);
   }
+  const socket=(parent:THREE.Object3D,x:number,y:number,z:number)=>{const n=new THREE.Group();n.position.set(x,y,z);parent.add(n);return n};
+  const sockets={leftHand:socket(elbows[0],0,-.27,.02),rightHand:socket(elbows[1],0,-.27,.02),head:socket(body,0,1.71,0),chest:socket(body,0,1.18,.12),leftFoot:socket(knees[0],0,-.37,.065),rightFoot:socket(knees[1],0,-.37,.065)};
   // Bake non-articulated pieces per joint into one draw, retaining vertex colours.
   const joints:THREE.Object3D[]=[body,eyes,...legs,...knees,...arms,...elbows];
   for(const joint of joints){const pieces=joint.children.filter(n=>n instanceof THREE.Mesh&&n!==scarf) as THREE.Mesh[];if(!pieces.length)continue;
@@ -88,20 +90,37 @@ export function person(index: number) {
   const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1.8,1.8),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(canvas),transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1}));shadow.rotation.x=-Math.PI/2;shadow.position.y=.19;root.add(shadow);
   let previous=0,phase=0,weight=0;
   const ease=(current:number,target:number,dt:number)=>THREE.MathUtils.lerp(current,target,1-Math.exp(-14*dt));
-  return {root,animate(time:number,moving:boolean,gesture='',cycling=false,motion?:{speed:number;air:number;landing:number}){
+  return {root,sockets,animate(time:number,moving:boolean,gesture='',cycling=false,motion?:{speed:number;air:number;landing:number;item?:string;action?:number;observing?:boolean;cyclePhase?:number;crossing?:boolean}){
     const dt=previous?Math.min(.1,Math.max(0,time-previous)):1/60;previous=time;
     const speed=motion?.speed??(moving?3.6:0),air=motion?.air??0,landing=motion?.landing??0;
     weight=ease(weight,moving?Math.min(1,speed/2):0,dt);phase+=speed*dt*(cycling?2.8:2.7);
     const stride=Math.sin(phase)*.62*weight,seated=!moving&&gesture==='Sentar'&&!cycling,run=speed>5&&!cycling;
-    for(let i=0;i<2;i++){const sign=i===0?1:-1,swing=stride*sign;
+    for(let i=0;i<2;i++){const sign=i===0?1:-1,swing=stride*sign,oldArmX=arms[i].rotation.x,oldElbowX=elbows[i].rotation.x;
       legs[i].rotation.x=ease(legs[i].rotation.x,seated?-1.35:cycling?-.65+swing*.6:air>.1?-.25+swing*.15:swing,dt);
       knees[i].rotation.x=ease(knees[i].rotation.x,seated?1.3:cycling?1.1-swing*.75:air>.1?.65:Math.max(0,-Math.sin(phase+(i?Math.PI:0)))*weight*(run?1:.65)+landing*.35,dt);
       arms[i].rotation.x=ease(arms[i].rotation.x,cycling?-1.03:seated?-.25:-swing*(run?1.05:.65),dt);
       elbows[i].rotation.x=ease(elbows[i].rotation.x,cycling?-.35:run?-.7:-.15,dt);
+      const held=motion?.item??'';
+      if(!cycling&&['mapa','binoculos','lanterna','cantil','corda','bussola'].includes(held)){
+       const two=held==='mapa'||held==='binoculos',hand=i===1;
+       if(two||hand){
+        let shoulder=two?-.9:-.7,elbow=two?-.65:-.25;
+        if(held==='binoculos'&&motion?.observing){shoulder=-1.55;elbow=-1.55;}
+        if(held==='cantil'&&motion?.action){shoulder=-.5;elbow=-.3-motion.action*1.8;}
+        if(held==='corda'&&motion?.crossing){shoulder=-1.1;elbow=-.3;}
+        arms[i].rotation.x=ease(oldArmX,shoulder,dt);elbows[i].rotation.x=ease(oldElbowX,elbow,dt);
+       }
+      }
+      if(cycling&&motion?.cyclePhase!==undefined){
+       const t=motion.cyclePhase+(i?Math.PI:0),fy=.55+Math.sin(t)*.17,fz=Math.cos(t)*.17;
+       const dy=fy-1.08,d=Math.min(.71,Math.max(.1,Math.hypot(dy,fz))),l=.36;
+       legs[i].rotation.x=Math.atan2(-fz,-dy)-Math.acos(Math.min(1,d/(2*l)));
+       knees[i].rotation.x=Math.PI-Math.acos(Math.max(-1,Math.min(1,(2*l*l-d*d)/(2*l*l))));
+      }
       const raised=gesture==='Celebrar'||(gesture==='Acenar'&&i===1);
       arms[i].rotation.z=ease(arms[i].rotation.z,raised?(i? -1:1)*(2.3+Math.sin(time*7)*.18):(i?-.07:.07),dt);
     }
-    body.position.y=ease(body.position.y,(seated?-.39:cycling?.14:Math.abs(Math.sin(phase))*weight*(run?.055:.025)+Math.sin(time*2.2)*.009)-landing*.11,dt);
+    body.position.y=ease(body.position.y,(seated?-.39:cycling?.27:Math.abs(Math.sin(phase))*weight*(run?.055:.025)+Math.sin(time*2.2)*.009)-landing*.11,dt);
     body.rotation.x=ease(body.rotation.x,cycling?.18:run?.065:0,dt);body.rotation.z=Math.sin(phase)*weight*(cycling?.012:.018);
     scarf.rotation.x=Math.sin(phase+.5)*weight*.13;eyes.scale.y=Math.sin(time*.7)> .996?.12:1;
     shadow.position.y=.19-air;shadow.scale.setScalar(1+Math.min(air,.8)*.3);shadow.material.opacity=1-Math.min(air*.2,.6);

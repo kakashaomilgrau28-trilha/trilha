@@ -2,7 +2,7 @@ import * as T from 'three';
 import {caves,caveRoute,caveRoofAt,caveFloor,terrainHeight,surfaceHeight} from './exploration';
 import type {Obstacle} from '../world/physics';
 
-/** Galleries are a continuous natural rock formation. Roofs cut away inside. */
+/** Galleries are a continuous natural rock formation. The camera enters below the intact roof. */
 export function buildCaverns(scene:T.Scene,obstacles:Obstacle[]){
  const roofs=new Map<string,T.Group>();
  const stone=new T.MeshStandardMaterial({color:'#777b69',roughness:1,flatShading:true});

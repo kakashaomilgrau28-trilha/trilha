@@ -685,7 +685,7 @@ export default function LobbyApp() {
                           gesture={gesture}
                           paused={!!selected||page!=="world"}
                           vip={lobby.room.id.startsWith("vip-")}
-                          onMove={(x, y) => {lastPosition.current={room:lobby.room!.id,x:(x-50)*SIZE/100,z:(y-50)*SIZE/100};lobby.move(x,y,item)}}
+                          onMove={(x, y, visualItem) => {lastPosition.current={room:lobby.room!.id,x:(x-50)*SIZE/100,z:(y-50)*SIZE/100};lobby.move(x,y,visualItem??item)}}
                           onPlayer={setSelected}
                           onVip={() => setPage("vip")}
                         />

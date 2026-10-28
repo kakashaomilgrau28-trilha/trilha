@@ -27,8 +27,8 @@ export function buildForest(scene:T.Scene,trees:Tree[]){
       transformed.x += sin(forestTime * 0.9 + instanceMatrix[3].x * 0.13 + instanceMatrix[3].z * 0.09) * bend;
     #endif
     leafWorld=(modelMatrix*instanceMatrix*vec4(transformed,1.0)).xyz;`);
-  shader.fragmentShader='uniform vec3 forestFocus; uniform vec2 forestDirection; varying vec3 leafWorld;\n'+shader.fragmentShader;
-  shader.fragmentShader=shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\n vec2 deltaLeaf=leafWorld.xz-forestFocus.xz; float ahead=dot(deltaLeaf,forestDirection); float across=abs(deltaLeaf.x*forestDirection.y-deltaLeaf.y*forestDirection.x); if((length(deltaLeaf)<3.2 && leafWorld.y>forestFocus.y+2.7)||(ahead>0.0 && ahead<22.0 && across<1.2 && abs(leafWorld.y-forestFocus.y-1.4-ahead*0.7071)<2.1)) discard;');
+  // Full foliage remains visible: the camera enters beneath the canopy.
+
  };
  const dummy=new T.Object3D(),color=new T.Color();
  for(const [key,cell] of cells){

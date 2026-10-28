@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-27T18:48:20.6890286-03:00",
+  "generatedAt": "2026-10-28T11:05:08.115370+00:00",
   "title": "Design System: Trilha Expedition",
   "extensions": {
     "colorMeta": {
@@ -172,9 +172,9 @@
     {
       "name": "Expanded field map",
       "kind": "custom",
-      "description": "Static instrument preview of the expanded topographic atlas. Application source provides shared terrain/forest/routes/water/caves, pan/zoom, player heading, scale, destination distance and waypoint marking; this snippet does not simulate navigation.",
-      "html": "<section class=\"field-map\"><button class=\"field-map-toggle\" aria-expanded=\"true\">Fechar mapa de localização ↗</button><div class=\"atlas-tools\"><button aria-label=\"Ampliar mapa\">+</button><button aria-label=\"Reduzir mapa\">−</button><button>Minha posição</button><button>Toda a região</button></div><svg class=\"atlas-canvas\" viewBox=\"0 0 240 160\" role=\"img\" aria-label=\"Amostra esquemática do atlas; não representa o terreno completo\"><rect width=\"240\" height=\"160\" fill=\"#8ca476\"/><path d=\"M0 110Q70 90 95 40T240 50\" stroke=\"#5d999c\" stroke-width=\"8\" fill=\"none\"/><path d=\"M30 140Q90 100 120 80T210 30\" stroke=\"#eee0bb\" stroke-width=\"5\" fill=\"none\"/><path d=\"M30 140Q90 100 120 80T210 30\" stroke=\"#957447\" stroke-width=\"1\" fill=\"none\"/><circle cx=\"120\" cy=\"80\" r=\"4\" fill=\"#f5c867\" stroke=\"#fff\"/><text x=\"215\" y=\"20\" fill=\"#203f30\" font-size=\"10\">N ↑</text><path d=\"M12 145h40\" stroke=\"#244431\"/><text x=\"12\" y=\"138\" font-size=\"8\" fill=\"#203f30\">50 m</text></svg><div class=\"atlas-detail\"><b>Mapa do terreno explorável</b><p>Arraste para navegar, use + e − para ampliar e toque nos pontos.</p><button class=\"atlas-navigate\">Marcar destino · Cume das Araucárias</button><small>Curvas: 10 m · marrom: trilha · azul: água · escuro: galeria · dourado: você</small></div></section>",
-      "css": ".field-map{width:min(720px,calc(100% - 28px));max-height:calc(100% - 30px);overflow:auto;padding:14px;background:#e4e2c4;color:#263c2a;border-radius:8px;font-family:\"DM Sans\",sans-serif;box-shadow:0 8px 30px #28412b30}.field-map-toggle{display:flex;justify-content:space-between;align-items:center;min-height:34px;width:100%;border:0;background:transparent;color:#243e32;font-size:13px;text-align:left}.atlas-tools{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.atlas-tools button{border:1px solid #bac6a8;background:#f2ecd4;color:#2d432b;border-radius:5px;padding:7px 10px;font-size:11px}.atlas-canvas{display:block;width:100%;max-height:55vh;aspect-ratio:1;border:1px solid #677d50;border-radius:6px;touch-action:none}.atlas-detail{padding-top:10px;color:#284332;font-size:12px}.atlas-detail p{margin:5px 0;line-height:1.5}.atlas-navigate{display:block;margin:10px 0;background:#364d2d;color:#f5efd3;border:0;padding:10px;border-radius:5px;width:100%;font-size:12px}.field-map button:hover{filter:brightness(.96)}.field-map button:focus-visible{outline:3px solid #ac823e;outline-offset:4px}@media(max-width:650px){.atlas-canvas{max-height:42vh}.atlas-tools button{font-size:10px;padding:7px}}"
+      "description": "Static instrument preview of the shared-data regional atlas. The application has sixteen paths, continuous water/cave geometry, pan/zoom, fixed 20px numbered marks with 44px hit targets, regional camp clustering, Enter/Space marker selection, and a desktop side index. This snippet illustrates presentation, not live navigation or current production terrain.",
+      "html": "<section class=\"ds-field-map\"><button class=\"ds-field-map-toggle\" aria-expanded=\"true\">Fechar mapa de localização ↗</button><div class=\"ds-atlas-tools\"><button aria-label=\"Ampliar mapa\">+</button><button aria-label=\"Reduzir mapa\">−</button><button>Minha posição</button><button>Toda a região</button></div><svg class=\"ds-atlas-canvas\" viewBox=\"0 0 240 160\" role=\"img\" aria-label=\"Amostra esquemática do atlas; não representa o terreno completo\"><rect width=\"240\" height=\"160\" fill=\"#8ca476\"/><path d=\"M0 110Q70 90 95 40T240 50\" stroke=\"#5d999c\" stroke-width=\"8\" fill=\"none\"/><path d=\"M30 140Q90 100 120 80T210 30\" stroke=\"#eee0bb\" stroke-width=\"5\" fill=\"none\"/><path d=\"M30 140Q90 100 120 80T210 30\" stroke=\"#957447\" stroke-width=\"1\" fill=\"none\"/><g class=\"ds-map-marker\" role=\"button\" tabindex=\"0\" aria-label=\"Cume das Araucárias\"><circle cx=\"180\" cy=\"40\" r=\"22\" fill=\"transparent\"/><circle cx=\"180\" cy=\"40\" r=\"10\" fill=\"#fff4d9\" stroke=\"#3a5545\"/><text x=\"180\" y=\"40\" text-anchor=\"middle\" dominant-baseline=\"central\" font-size=\"12\" font-weight=\"700\" fill=\"#263e30\">7</text></g><circle cx=\"120\" cy=\"80\" r=\"4\" fill=\"#f5c867\" stroke=\"#fff\"/><text x=\"215\" y=\"20\" fill=\"#203f30\" font-size=\"10\">N ↑</text><path d=\"M12 145h40\" stroke=\"#244431\"/><text x=\"12\" y=\"138\" font-size=\"8\" fill=\"#203f30\">50 m</text></svg><div class=\"ds-atlas-detail\"><b>Mapa do terreno explorável</b><p>Arraste para navegar, use + e − para ampliar e toque nos pontos.</p><button class=\"ds-atlas-navigate\">Marcar destino · Cume das Araucárias</button><small>Curvas: 10 m · marrom: trilha · azul: água · escuro: galeria · dourado: você</small><div class=\"ds-atlas-index\"><button>1. Acampamento</button><button>7. Cume das Araucárias</button></div></div></section>",
+      "css": ".ds-field-map{width:min(720px,calc(100% - 28px));max-height:calc(100% - 30px);overflow:auto;padding:14px;background:#e4e2c4;color:#263c2a;border-radius:8px;font-family:\"DM Sans\",sans-serif;box-shadow:0 8px 30px #28412b30}.ds-field-map-toggle{display:flex;justify-content:space-between;align-items:center;min-height:34px;width:100%;border:0;background:transparent;color:#243e32;font-size:13px;text-align:left}.ds-atlas-tools{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.ds-atlas-tools button{border:1px solid #bac6a8;background:#f2ecd4;color:#2d432b;border-radius:5px;padding:7px 10px;font-size:11px}.ds-atlas-canvas{display:block;width:100%;max-height:55vh;aspect-ratio:1;border:1px solid #677d50;border-radius:6px;touch-action:none}.ds-atlas-detail{padding-top:10px;color:#284332;font-size:12px}.ds-atlas-detail p{margin:5px 0;line-height:1.5}.ds-atlas-navigate{display:block;margin:10px 0;background:#364d2d;color:#f5efd3;border:0;padding:10px;border-radius:5px;width:100%;font-size:12px}.ds-field-map button:hover{filter:brightness(.96)}.ds-field-map button:focus-visible{outline:3px solid #ac823e;outline-offset:4px}@media(max-width:650px){.ds-atlas-canvas{max-height:42vh}.ds-atlas-tools button{font-size:10px;padding:7px}} .ds-map-marker{cursor:pointer}.ds-map-marker:focus{outline:none}.ds-map-marker:focus-visible>circle:nth-child(2){stroke:#263e30;stroke-width:3px;vector-effect:non-scaling-stroke}.ds-atlas-index{display:flex;flex-direction:column;gap:4px;margin-top:8px}.ds-atlas-index button{text-align:left;min-height:36px;border:1px solid #bac6a8;background:#f2ecd4;color:#2d432b;border-radius:5px;padding:7px 10px;font-size:11px}@media(min-width:700px){.ds-field-map{display:grid;grid-template-columns:minmax(220px,min(43vh,440px)) 240px;width:max-content;max-width:calc(100% - 28px);gap:8px 14px}.ds-field-map-toggle{grid-column:1/-1}.ds-atlas-tools{grid-column:1;margin:0}.ds-atlas-canvas{grid-column:1;grid-row:3;width:100%;height:auto;aspect-ratio:1;max-height:none}.ds-atlas-detail{grid-column:2;grid-row:2/span 2;overflow:auto;max-height:calc(43vh + 42px);margin:0}}"
     },
     {
       "name": "Discovery collection card",
@@ -194,35 +194,36 @@
   ],
   "narrative": {
     "northStar": "Project Zomboid reference adapted to the Trilha expedition",
-    "overview": "The approved expedition direction uses isometric spatial readability, compact equipment controls and persistent room interaction. Charcoal and dark olive surfaces frame the landscape; pale paper is reserved for the expanded atlas, help and contextual prompts. Trilha retains Portuguese, Desbravadores identity, human characters and club identification. The current source defines ten trails, ten outer destinations and sixteen preserved cosmetic discovery IDs. Menu navigation keeps the room world mounted and paused, preserving scene resources until room changes or reload. This documentation records source inspection only.",
+    "overview": "The approved expedition direction uses Project Zomboid as its primary reference for isometric spatial readability, compact equipment controls and persistent world interaction. The implemented Trilha experience now frames the landscape with charcoal and dark olive surfaces. It keeps the Trilha name, Portuguese labels, Desbravadores context, human characters and optional club identification.\n\nThe scene dominates the first viewport. A narrow navigation rail and shallow server header support the world; a numbered equipment belt, resource readout, objective and compact atlas support exploration. Menus carry the same olive/charcoal language. Pale paper remains a purposeful contrast for the expanded atlas, help and contextual discoveries rather than the default application background.\n\nThis document records the current code after the authorized redesign. The Expedition redesign section of PRODUCT.md and the approved surface direction supersede the older cream-shell description retained elsewhere in PRODUCT.md. This extraction does not claim browser, performance or server-capacity verification.",
     "keyCharacteristics": [
-      "Rotatable orthographic isometric camp",
-      "Charcoal frame and olive equipment surfaces",
-      "Ten numbered quick slots 1-0",
-      "Shared-data topographic waypoint atlas",
-      "Continuous cave galleries with hillside roof and wall cutaway",
-      "Sixteen local cosmetic discoveries"
+      "Rotatable orthographic isometric camp and coherent terrain.",
+      "Charcoal frame, olive equipment surfaces and pale readable text.",
+      "Ten numbered quick slots with explicit selected states.",
+      "A topographic waypoint atlas derived from the scene's data.",
+      "Natural cave entrances, continuous covered galleries and a collision-constrained proximity camera.",
+      "Sixteen preserved cosmetic discoveries with local collection progress."
     ],
     "rules": [
       {
         "name": "The Equipment Frame Rule",
-        "body": "Keep persistent application chrome dark. Use pale atlas and contextual paper where the implementation gives them an orientation or interaction purpose.",
+        "body": "Keep persistent application chrome dark. Use the pale atlas and contextual paper treatments where the current implementation gives them an orientation or interaction purpose.",
         "section": "colors"
       }
     ],
     "dos": [
-      "Do retain the approved isometric spatial readability and compact equipment hierarchy.",
-      "Do preserve sixteen discovery IDs and the current room/admin/VIP rules.",
-      "Do keep cave entrances, interior cutaway and atlas geometry coherent.",
-      "Do retain the mounted room scene while menus pause interaction.",
-      "Do preserve selected-state semantics, focus and mobile belt scrolling."
+      "Do follow the approved Project Zomboid reference through isometric readability and compact equipment operation.",
+      "Do retain charcoal/olive chrome, pale text and purposeful atlas paper.",
+      "Do preserve all sixteen IDs, Portuguese names, club identification and current room/admin/VIP rules.",
+      "Do keep cave entry, intact cover, proximity camera, movement and atlas geometry coherent.",
+      "Do preserve the mounted room scene and pause interaction when opening menus.",
+      "Do maintain visible focus, selected-state semantics and usable horizontally scrolling mobile equipment."
     ],
     "donts": [
-      "Do not restore the stale cream shell or twelve-discovery count.",
-      "Do not copy proprietary assets or add zombies/combat from the reference.",
-      "Do not make caves disconnected square blocks.",
-      "Do not equate local trial equipment with paid entitlement.",
-      "Do not treat source inspection as browser or concurrency validation."
+      "Don't restore the stale cream application shell or the twelve-discovery count.",
+      "Don't copy proprietary assets or add zombie/combat mechanics from the reference.",
+      "Don't turn cave galleries into disconnected square-block assemblies.",
+      "Don't imply that equipment trials or local collection are purchased entitlements.",
+      "Don't describe source extraction as browser, hardware, authority or concurrency validation."
     ]
   }
 }

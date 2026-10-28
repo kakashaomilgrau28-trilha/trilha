@@ -52,7 +52,7 @@ export const places = [
     description: "Jardim reservado, lounge e observatório exclusivo.",
   },
 ];
-places.push(...destinations);
+places.push({id:'abrigo-campo',name:'Abrigo do acampamento',x:0,z:30,description:'Um teto para descansar entre as trilhas.'},...destinations);
 const mat = (color: string) =>
   new T.MeshStandardMaterial({ color, roughness: 0.85 });
 function cylinder(
@@ -149,34 +149,13 @@ function tent(scene: T.Scene, x: number, z: number, color: string) {
 }
 export function buildLobby(scene: T.Scene, vip: boolean) {
   const obstacles: Obstacle[] = buildLandscape(scene);
-  const island = cylinder(scene, 43, 0.22, 0, -0.02, 0, "#a0ae7c", 64);
-  island.receiveShadow = true;
-  cylinder(scene, 11, 0.05, 0, 0.13, 0, "#d2be94", 48);
-  box(scene, 7, 0.06, 75, 0, 0.14, 0, "#cfbd97");
-  box(scene, 75, 0.06, 6, 0, 0.145, 0, "#cfbd97");
-  for (const side of [-1, 1]) {
-    box(scene, 32, 0.06, 3, side * 18, 0.15, -18, "#cdbb94");
-    box(scene, 32, 0.06, 3, side * 18, 0.15, 18, "#cdbb94");
-  }
-  for (let i = 0; i < 38; i++) {
-    const angle = (i / 38) * Math.PI * 2;
-    tree(
-      scene,
-      Math.cos(angle) * (41 + (i % 3)),
-      Math.sin(angle) * (41 + (i % 3)),
-      i,
-    );
-  }
-  for (let i = 0; i < 20; i++) {
-    const angle = i * 2.4;
-    sphere(
-      scene,
-      0.45,
-      Math.cos(angle) * 35,
-      0.32,
-      Math.sin(angle) * 35,
-      "#899087",
-    );
+  // A meadow follows the camp alleys instead of a circular platform.
+  const clearing=new T.Shape();
+  clearing.moveTo(-42,-12);clearing.bezierCurveTo(-45,-36,-23,-40,-7,-39);clearing.bezierCurveTo(16,-42,39,-34,42,-10);clearing.bezierCurveTo(49,10,30,40,9,43);clearing.bezierCurveTo(-15,45,-44,33,-42,-12);
+  const meadow=new T.Mesh(new T.ShapeGeometry(clearing,32),mat('#a0ae7c'));meadow.rotation.x=-Math.PI/2;meadow.position.y=.12;meadow.receiveShadow=true;scene.add(meadow);
+  // Small groves frame the entrances, leaving every connecting alley open.
+  for(const [i,x,z] of [[0,-38,-30],[1,-34,-34],[2,-15,-38],[3,17,32],[4,34,30],[5,39,-7],[6,-39,8],[7,13,-41]]){
+    tree(scene,x,z,i);obstacles.push({x,z,width:.65,depth:.65,height:7,canopy:2.5});
   }
   // Fire circle, individual stones, crossed logs and warm light.
   for (let i = 0; i < 14; i++) {
@@ -330,7 +309,7 @@ export function buildLobby(scene: T.Scene, vip: boolean) {
     box(scene, 5, 2.5, 0.25, 0, 1.25, -26, "#ba9a60");
     obstacles.push({ x: 0, z: -26, width: 5, depth: 0.8 });
   }
-  if (!vip) box(scene, 15, 0.35, 13, 0, 4.1, -32, "#365344");
+  box(scene, 15, 0.35, 13, 0, 4.1, -32, "#365344");
   for (const x of [-5, 5]) {
     box(scene, 2, 0.6, 4, x, 0.9, -32, "#d7bf91");
     box(scene, 2, 1, 4, x, 1.4, -33, "#b9c28b");
@@ -344,6 +323,11 @@ export function buildLobby(scene: T.Scene, vip: boolean) {
       p.x + (p.id === "vip" ? 0 : 3),
       p.z + (p.id === "vip" ? 4 : 5),
     );
+  // The roof stays in the world; entering the shelter brings the camera inside.
+  const shelter=new T.Group();scene.add(shelter);
+  for(const x of [-7,7])for(const z of [25,35]){box(shelter,.25,4,.25,x,2,z,'#765b3e');obstacles.push({x,z,width:.5,depth:.5})}
+  box(shelter,15,.3,12,0,4.1,30,'#49614a');
+  for(const x of [-4,4]){box(shelter,1.2,.15,6,x,.65,30,'#b1966b');for(const z of [28,32])box(shelter,.2,.6,.2,x,.3,z,'#765b3e');obstacles.push({x,z:30,width:1.4,depth:6})}
   // String lights suspended over the gathering place.
   for (const x of [-12, 12]) cylinder(scene, 0.12, 6, x, 3, 8, "#765b41");
   for (let i = 0; i < 18; i++) {
@@ -361,56 +345,4 @@ export function buildLobby(scene: T.Scene, vip: boolean) {
       firelight.intensity = 15 + Math.sin(time * 9);
     },
   };
-}
-export function equipment(item: string) {
-  const root = new T.Group();
-  if (item === "bicicleta") {
-    const wheels:T.Group[]=[];
-    for(const z of [-.85,.85]){
-      const pivot=new T.Group();pivot.position.set(0,.5,z);root.add(pivot);wheels.push(pivot);
-      const wheel=new T.Mesh(new T.TorusGeometry(.48,.055,7,28),mat('#343e37'));wheel.rotation.y=Math.PI/2;pivot.add(wheel);
-      for(let i=0;i<10;i++){const a=i*Math.PI/5;pole(pivot,new T.Vector3(0,0,0),new T.Vector3(0,Math.cos(a)*.43,Math.sin(a)*.43),.012,'#bcc5bd')}
-    }
-    root.userData.wheels=wheels;
-    for(const [a,b] of [[[0,.95,0],[0,.5,-.85]],[[0,.5,-.85],[0,.5,.85]],[[0,.5,.85],[0,.95,0]],[[0,1.2,.65],[0,.5,.85]]])pole(root,new T.Vector3(...a as [number,number,number]),new T.Vector3(...b as [number,number,number]),.045,'#c28548');
-    box(root,.35,.08,.3,0,1.15,0,'#384738');box(root,.7,.06,.08,0,1.35,.65,'#394b40');
-  } else if (item === "pet") {
-    sphere(root, 0.32, -1, 0.42, -0.5, "#b68e60");
-    sphere(root, 0.25, -1, 0.7, -0.22, "#b68e60");
-    for (const x of [-1.2, -0.8]) {
-      sphere(root, 0.12, x, 0.85, -0.25, "#765333");
-      box(root, 0.08, 0.25, 0.09, x, 0.18, -0.55, "#b68e60");
-    }
-    for (const x of [-1.08, -0.92]) sphere(root, 0.025, x, 0.75, 0, "#27362d");
-    pole(
-      root,
-      new T.Vector3(-1, 0.5, -0.7),
-      new T.Vector3(-1, 0.8, -1),
-      0.06,
-      "#b68e60",
-    );
-  } else if (item === "mapa") {
-    box(root, 0.6, 0.03, 0.4, 0.45, 1.1, 0.4, "#e4d5ad");
-    for (let i = 0; i < 3; i++)
-      box(root, 0.35, 0.007, 0.018, 0.45, 1.12, 0.3 + i * 0.08, "#749270");
-  } else if (item === "lanterna") {
-    const m = cylinder(root, 0.09, 0.35, 0.45, 1, 0.25, "#d7b15e");
-    m.rotation.x = Math.PI / 2;
-
-  } else if (item === "cantil") {
-    cylinder(root, 0.15, 0.4, 0.35, 1, 0.2, "#75978d");
-    cylinder(root, 0.07, 0.1, 0.35, 1.25, 0.2, "#d3c9a4");
-  } else if (item === "corda") {
-    const rope = new T.Mesh(
-      new T.TorusGeometry(0.23, 0.06, 6, 20),
-      mat("#d9bb7e"),
-    );
-    rope.position.set(0.35, 1, 0.2);
-    root.add(rope);
-  }
-  if(item==='bussola'){cylinder(root,.2,.06,.45,1.05,.3,'#d9b766',16);box(root,.05,.04,.25,.45,1.1,.3,'#ad4f42')}
-  if(item==='binoculos')for(const x of [.3,.55]){const m=cylinder(root,.11,.4,x,1.5,.35,'#344e43',12);m.rotation.x=Math.PI/2;}
-  if(item==='botas')for(const x of [-.145,.145])box(root,.27,.25,.38,x,.15,.06,'#a47a48');
-  if(item==='capacete'){const helmet=new T.Mesh(new T.SphereGeometry(.27,12,8,0,Math.PI*2,0,Math.PI/2),mat('#d8b151'));helmet.position.y=1.85;root.add(helmet);box(root,.2,.12,.16,0,1.93,.24,'#fcf2c8')}
-  return root;
 }
