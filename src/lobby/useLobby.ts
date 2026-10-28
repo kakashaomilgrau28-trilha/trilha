@@ -36,7 +36,6 @@ export function useLobby(profile: Profile) {
     [connected, setConnected] = useState(false);
   const [busy, setBusy] = useState(false),
     [admin, setAdmin] = useState(false),
-    [vip, setVip] = useState(false),
     [lapa, setLapa] = useState(false);
   const channel = useRef<RealtimeChannel | null>(null);
   const position = useRef({
@@ -55,7 +54,7 @@ export function useLobby(profile: Profile) {
       throw new Error(
         "Não foi possível consultar os servidores. Tente novamente.",
       );
-    setServers(data ?? []);
+    setServers((data ?? []).filter((server: Server) => !server.id.startsWith("vip-")));
   }
   async function authenticate() {
     if (!db) throw new Error("A conexão do lobby ainda não foi configurada.");
@@ -74,17 +73,11 @@ export function useLobby(profile: Profile) {
     if (userId && userId !== session.user.id) setRoom(null);
     setUserId(session.user.id);
     await db.rpc("lobby_activate_admin");
-    const [a, v, w] = await Promise.all([
+    const [a, w] = await Promise.all([
       db.from("lobby_admins").select("user_id").eq("user_id", session.user.id),
-      db
-        .from("lobby_entitlements")
-        .select("vip")
-        .eq("user_id", session.user.id)
-        .maybeSingle(),
       db.from("lobby_worlds").select("id,enabled"),
     ]);
     setAdmin(!!a.data?.length);
-    setVip(v.data?.vip === true);
     setLapa(
       !!w.data?.some(
         (r: { id: string; enabled: boolean }) => r.id === "lapa" && r.enabled,
@@ -107,6 +100,7 @@ export function useLobby(profile: Profile) {
   async function join(server: Server) {
     setBusy(true);
     try {
+      if (server.id.startsWith("vip-")) throw new Error("Servidor indisponível.");
       if (!db) throw new Error("Conexão indisponível.");
       if (!userId) await authenticate();
       const p = liveProfile.current;
@@ -328,7 +322,6 @@ export function useLobby(profile: Profile) {
     busy,
     connected,
     admin,
-    vip,
     lapa,
     start,
     join,

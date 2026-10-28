@@ -44,13 +44,7 @@ export const places = [
     z: 18,
     description: "Um telescópio para descobrir as constelações.",
   },
-  {
-    id: "vip",
-    name: "Refúgio VIP",
-    x: 0,
-    z: -31,
-    description: "Jardim reservado, lounge e observatório exclusivo.",
-  },
+
 ];
 places.push({id:'abrigo-campo',name:'Abrigo do acampamento',x:0,z:30,description:'Um teto para descansar entre as trilhas.'},...destinations);
 const mat = (color: string) =>
@@ -147,7 +141,7 @@ function tent(scene: T.Scene, x: number, z: number, color: string) {
   }
   box(g, 1.8, 0.06, 1.1, 0, 0.04, 2.8, "#b98a5a");
 }
-export function buildLobby(scene: T.Scene, vip: boolean) {
+export function buildLobby(scene: T.Scene) {
   const obstacles: Obstacle[] = buildLandscape(scene);
   // A meadow follows the camp alleys instead of a circular platform.
   const clearing=new T.Shape();
@@ -293,35 +287,12 @@ export function buildLobby(scene: T.Scene, vip: boolean) {
   scope.rotation.z = -0.85;
   scope.rotation.x = 0.4;
   obstacles.push({ x: 25, z: 18, width: 2.8, depth: 2.8 });
-  // VIP lodge; solid boundary is always closed to visitors without entitlement.
-  box(scene, 14, 0.6, 12, 0, 0.3, -32, "#c7ae7a");
-  box(scene, 14, 4, 0.3, 0, 2, -38, "#3f6150");
-  for (const x of [-7, 7]) {
-    box(scene, 0.3, 4, 12, x, 2, -32, "#3f6150");
-    obstacles.push({ x, z: -32, width: 0.6, depth: 12 });
-  }
-  for (const x of [-4.8, 4.8]) {
-    box(scene, 4.4, 3, 0.3, x, 1.5, -26, "#3f6150");
-    obstacles.push({ x, z: -26, width: 4.4, depth: 0.8 });
-  }
-  obstacles.push({ x: 0, z: -38, width: 14, depth: 0.6 });
-  if (!vip) {
-    box(scene, 5, 2.5, 0.25, 0, 1.25, -26, "#ba9a60");
-    obstacles.push({ x: 0, z: -26, width: 5, depth: 0.8 });
-  }
-  box(scene, 15, 0.35, 13, 0, 4.1, -32, "#365344");
-  for (const x of [-5, 5]) {
-    box(scene, 2, 0.6, 4, x, 0.9, -32, "#d7bf91");
-    box(scene, 2, 1, 4, x, 1.4, -33, "#b9c28b");
-  }
-  cylinder(scene, 1, 0.7, 0, 1, -33, "#956b48", 16);
-  sphere(scene, 0.6, 0, 1.8, -33, "#d5bd72");
   for (const p of places.filter(p=>Math.hypot(p.x,p.z)<45))
     sign(
       scene,
       p.name,
-      p.x + (p.id === "vip" ? 0 : 3),
-      p.z + (p.id === "vip" ? 4 : 5),
+      p.x + 3,
+      p.z + 5,
     );
   // The roof stays in the world; entering the shelter brings the camera inside.
   const shelter=new T.Group();scene.add(shelter);

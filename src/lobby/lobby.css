@@ -1263,124 +1263,6 @@ button:hover:not(:disabled) {
   margin-top: 12px;
   font-size: 11px;
 }
-.vip-page {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  max-width: 1150px;
-  min-height: 570px;
-  background: #fffdf4;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid #d9decf;
-}
-.vip-scene {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: end;
-  background: #2b493b;
-  color: #a9bf94;
-  gap: 0;
-  overflow: hidden;
-  padding-bottom: 80px;
-}
-.vip-scene > svg:nth-child(2) {
-  position: absolute;
-  bottom: 80px;
-  left: 3%;
-  width: 93%;
-  height: 300px;
-}
-.vip-scene > svg:nth-child(3) {
-  position: absolute;
-  bottom: 80px;
-  right: 0;
-  height: 190px;
-  width: 160px;
-  color: #66866c;
-}
-.vip-moon {
-  position: absolute;
-  top: 110px;
-  right: 65px;
-  background: #decea3;
-  width: 85px;
-  height: 85px;
-  border-radius: 50%;
-}
-.vip-scene-crown {
-  position: absolute;
-  left: 35px;
-  top: 35px;
-  color: #dac08b;
-}
-.vip-scene > span {
-  position: absolute;
-  bottom: 30px;
-  left: 30px;
-  color: #d1dfbf;
-  font-size: 12px;
-}
-.vip-copy {
-  padding: 45px 40px;
-  color: #47643c;
-}
-.vip-copy > svg {
-  color: #aa824b;
-}
-.vip-copy h2 {
-  font: 600 38px/1.15 var(--camp-display);
-  letter-spacing: -0.035em;
-  color: #2d4a32;
-  margin: 23px 0;
-}
-.vip-copy > p {
-  font-size: 13px;
-  line-height: 1.8;
-}
-.vip-copy ul {
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 13px;
-  margin: 25px 0;
-  font-size: 12px;
-}
-.vip-copy li {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-.vip-price {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  margin: 30px 0 22px;
-}
-.vip-price strong {
-  font: 600 31px var(--camp-display);
-  letter-spacing: -0.03em;
-  color: #2f4a32;
-}
-.vip-price > span {
-  font-size: 11px;
-}
-.vip-copy > .camp-primary {
-  width: 100%;
-}
-.vip-copy > small {
-  display: block;
-  font-size: 10px;
-  line-height: 1.8;
-  margin-top: 11px;
-  color: #607655;
-}
-.vip-copy p.vip-fairness {
-  font-size: 11px;
-  border-top: 1px solid var(--camp-line);
-  padding-top: 20px;
-  margin-top: 23px;
-}
 .camp-admin {
   max-width: 750px;
   font-size: 13px;
@@ -1539,12 +1421,6 @@ button:hover:not(:disabled) {
   }
   .equipment-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .vip-copy {
-    padding: 30px;
-  }
-  .vip-copy h2 {
-    font-size: 32px;
   }
   .camp-footer > span {
     display: none;
@@ -1822,31 +1698,6 @@ button:hover:not(:disabled) {
   }
   .kit-intro p {
     font-size: 11px;
-  }
-  .vip-page {
-    grid-template-columns: 1fr;
-  }
-  .vip-scene {
-    min-height: 260px;
-  }
-  .vip-scene > svg:nth-child(2) {
-    height: 210px;
-    bottom: 35px;
-  }
-  .vip-scene > svg:nth-child(3) {
-    height: 140px;
-    bottom: 35px;
-  }
-  .vip-moon {
-    top: 40px;
-    width: 65px;
-    height: 65px;
-  }
-  .vip-copy {
-    padding: 28px;
-  }
-  .vip-copy h2 {
-    font-size: 35px;
   }
   .camp-toast {
     bottom: 80px;

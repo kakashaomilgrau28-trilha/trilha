@@ -37,10 +37,8 @@ type Props = {
   onEquip: (id:string)=>void;
   gesture: string;
   paused: boolean;
-  vip: boolean;
   onMove: (x: number, y: number, visualItem?:string) => void;
   onPlayer: (p: Visitor) => void;
-  onVip: () => void;
   initialPosition?: {x:number;z:number};
   fixture?:boolean;
   foundIds: string[];
@@ -121,7 +119,7 @@ export default function LobbyWorld(props: Props) {
     sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=sun.shadow.camera.bottom=-32;sun.shadow.camera.right=sun.shadow.camera.top=32;sun.shadow.camera.near=1;sun.shadow.camera.far=140;sun.shadow.normalBias=.04;sun.shadow.bias=-.00012;sun.shadow.radius=2;scene.add(sun.target);
     sun.position.set(-25, 45, 20);
     scene.add(sun);
-    const world = buildLobby(scene, props.vip);
+    const world = buildLobby(scene);
     const environmentLabels:T.Sprite[]=[];scene.traverse(n=>{if(n instanceof T.Sprite)environmentLabels.push(n)});
     const treasureMeshes = discoveries.map(reward => {
       const root=new T.Group();root.position.set(reward.x,terrainHeight(reward.x,reward.z)+1.1,reward.z);
@@ -496,7 +494,7 @@ export default function LobbyWorld(props: Props) {
       container.replaceChildren();
       equipped.dispose();if(equipped!==cachedBike)cachedBike.dispose();for(const a of actors.values())a.item.dispose();disposeScene(scene);
     };
-  }, [props.profile.avatar, props.profile.nickname, props.vip]);
+  }, [props.profile.avatar, props.profile.nickname]);
   function start(e: PointerEvent<HTMLDivElement>) {
     if (
       latest.current.paused ||
@@ -672,17 +670,6 @@ export default function LobbyWorld(props: Props) {
         >
           Correr
         </button>
-        {near.id === "vip" && (
-          <button
-            className="place-interact"
-            onClick={() => void openPanel(props.onVip)}
-          >
-            {props.vip
-              ? "Seu acesso VIP está liberado"
-              : "Conhecer o Refúgio VIP"}{" "}
-            →
-          </button>
-        )}
         {nearReward && !props.foundIds.includes(nearReward.id) && !mapExpanded && <button className="discover-button" onClick={()=>props.onDiscover(nearReward)}><span>Descoberta por perto</span><strong>Recolher {nearReward.name}</strong><small>E ou toque aqui</small></button>}
         {nearby.length > 0 && (
           <div className="nearby-on-map">

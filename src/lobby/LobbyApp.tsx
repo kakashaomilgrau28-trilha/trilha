@@ -12,7 +12,6 @@ import {
   Users,
   MessageCircle,
   Backpack,
-  Crown,
   LogOut,
   ArrowRight,
   RefreshCw,
@@ -124,7 +123,7 @@ export default function LobbyApp() {
     [draft, setDraft] = useState<Profile>(savedProfile);
   const lobby = useLobby(profile);
   const lastPosition=useRef({room:"",x:0,z:8});
-  const [page, setPage] = useState<"world" | "chat" | "kit" | "vip" | "admin" | "collection">(
+  const [page, setPage] = useState<"world" | "chat" | "kit" | "admin" | "collection">(
       "world",
     ),
     [editing, setEditing] = useState(false),
@@ -273,7 +272,6 @@ export default function LobbyApp() {
     { id: "chat" as const, label: "Conversa", icon: MessageCircle },
     { id: "collection" as const, label: "Descobertas", icon: Award },
     { id: "kit" as const, label: "Equipamentos", icon: Backpack },
-    { id: "vip" as const, label: "Refúgio VIP", icon: Crown },
   ];
   return (
     <div className={`camp-app expedition-app ${ready&&lobby.room?"in-server":""} ${page==="world"?"on-world":""}`}>
@@ -302,7 +300,6 @@ export default function LobbyApp() {
             >
               <Icon size={19} />
               {label}
-              {id === "vip" && <span className="small-gold">VIP</span>}
             </button>
           ))}
           {lobby.admin && (
@@ -615,8 +612,6 @@ export default function LobbyApp() {
                         ? "Uma boa conversa vai longe."
                         : page === "collection" ? "Toda trilha guarda uma descoberta." : page === "kit"
                           ? "Pronto para a próxima aventura."
-                          : page === "vip"
-                            ? "Um refúgio para chamar de seu."
                             : "Cuide do acampamento."}
                   </h1>
                   <p>
@@ -626,8 +621,6 @@ export default function LobbyApp() {
                         ? `Conversa do servidor ${lobby.room.name}.`
                         : page === "collection" ? "Explore, encontre e guarde lembranças da sua aventura." : page === "kit"
                           ? "Equipamentos que fazem parte da vida de campo."
-                          : page === "vip"
-                            ? "Um espaço especial dentro do mesmo mundo."
                             : "Acesso restrito aos administradores cadastrados."}
                   </p>
                 </div>
@@ -684,10 +677,8 @@ export default function LobbyApp() {
                           onEquip={setItem}
                           gesture={gesture}
                           paused={!!selected||page!=="world"}
-                          vip={lobby.room.id.startsWith("vip-")}
                           onMove={(x, y, visualItem) => {lastPosition.current={room:lobby.room!.id,x:(x-50)*SIZE/100,z:(y-50)*SIZE/100};lobby.move(x,y,visualItem??item)}}
                           onPlayer={setSelected}
-                          onVip={() => setPage("vip")}
                         />
                       )}
                     </Suspense>
@@ -805,7 +796,7 @@ export default function LobbyApp() {
                   </aside>
                 </div>
               </div>)}
-              {page === "collection" && <section className="collection-panel"><div className="collection-summary"><Award size={32}/><div><h2>{foundIds.length} de {discoveries.length} descobertas</h2><p>Procure os cristais pelo mapa. Aproxime-se e pressione E ou toque em Recolher.</p></div><button className="camp-primary" onClick={()=>setPage('world')}>Continuar explorando <ArrowRight size={16}/></button></div><progress value={foundIds.length} max={discoveries.length} aria-label="Progresso das descobertas"/><p className="collection-storage">Coleção de lembranças salva neste navegador para sua identidade atual. Não gera moedas ou acesso VIP.</p><div className="discovery-grid">{discoveries.map((r,index)=>{const found=foundIds.includes(r.id);return <article key={r.id} className={found?'discovery found':'discovery'}><span className="discovery-number">{String(index+1).padStart(2,'0')} · {r.rarity}</span><Award size={32}/><h3>{found?r.name:'Ainda por descobrir'}</h3><p>{found?r.story:r.hint}</p><b>{found?'Na sua coleção':'Siga a pista'}</b></article>})}</div></section>}
+              {page === "collection" && <section className="collection-panel"><div className="collection-summary"><Award size={32}/><div><h2>{foundIds.length} de {discoveries.length} descobertas</h2><p>Procure os cristais pelo mapa. Aproxime-se e pressione E ou toque em Recolher.</p></div><button className="camp-primary" onClick={()=>setPage('world')}>Continuar explorando <ArrowRight size={16}/></button></div><progress value={foundIds.length} max={discoveries.length} aria-label="Progresso das descobertas"/><p className="collection-storage">Coleção de lembranças salva neste navegador para sua identidade atual. Não gera moedas.</p><div className="discovery-grid">{discoveries.map((r,index)=>{const found=foundIds.includes(r.id);return <article key={r.id} className={found?'discovery found':'discovery'}><span className="discovery-number">{String(index+1).padStart(2,'0')} · {r.rarity}</span><Award size={32}/><h3>{found?r.name:'Ainda por descobrir'}</h3><p>{found?r.story:r.hint}</p><b>{found?'Na sua coleção':'Siga a pista'}</b></article>})}</div></section>}
               {page === "chat" && (
                 <section className="camp-chat">
                   <div className="chat-room-title">
@@ -938,79 +929,6 @@ export default function LobbyApp() {
                   </div>
                 </section>
               )}
-              {page === "vip" && (
-                <section className="vip-page">
-                  <div className="vip-scene">
-                    <div className="vip-moon" />
-                    <Mountain size={180} strokeWidth={0.7} />
-                    <TreePine size={100} strokeWidth={0.8} />
-                    <Crown className="vip-scene-crown" size={46} />
-                    <span>Refúgio entre as araucárias</span>
-                  </div>
-                  <div className="vip-copy">
-                    <Crown size={31} />
-                    <h2>
-                      Um cantinho
-                      <br />
-                      além da trilha.
-                    </h2>
-                    <p>
-                      Um refúgio reservado dentro do acampamento, com lounge de
-                      campo, jardim e observatório para novos encontros.
-                    </p>
-                    <ul>
-                      <li>
-                        <Check size={17} />
-                        Entrada no Refúgio VIP
-                      </li>
-                      <li>
-                        <Check size={17} />
-                        Lounge e mirante reservado
-                      </li>
-                      <li>
-                        <Check size={17} />
-                        Sem renovação automática
-                      </li>
-                    </ul>
-                    <div className="vip-price">
-                      <strong>R$ 14,90</strong>
-                      <span>pagamento único</span>
-                    </div>
-                    {lobby.vip ? (
-                      <button
-                        className="camp-primary"
-                        onClick={async () => {
-                          const base = lobby.room!.id.replace(/^vip-/, "");
-                          await lobby.join({
-                            id: `vip-${base}`,
-                            name: "Refúgio VIP",
-                            capacity: 25,
-                            online: 0,
-                          });
-                          setPage("world");
-                        }}
-                      >
-                        Entrar no meu refúgio
-                        <ArrowRight size={17} />
-                      </button>
-                    ) : (
-                      <>
-                        <button className="camp-primary" disabled>
-                          Vendas em preparação
-                        </button>
-                        <small>
-                          As vendas abrirão após a ativação do recebimento.
-                          Nenhum valor é cobrado nesta versão.
-                        </small>
-                      </>
-                    )}
-                    <p className="vip-fairness">
-                      O encontro, a conversa e a exploração do lobby continuam
-                      abertos a todos.
-                    </p>
-                  </div>
-                </section>
-              )}
               {page === "admin" && lobby.admin && (
                 <section className="camp-admin">
                   <Shield size={30} />
@@ -1045,10 +963,6 @@ export default function LobbyApp() {
                       ? "Recolher acesso público à Lapa"
                       : "Liberar Lapa para os jogadores"}
                   </button>
-                  <p>
-                    O VIP é confirmado pelo servidor. A concessão por pagamento
-                    aguarda a integração do checkout.
-                  </p>
                 </section>
               )}
             </>

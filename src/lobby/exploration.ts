@@ -6,7 +6,7 @@ export const AREA_MULTIPLIER = PREVIOUS_AREA_MULTIPLIER * 10;
 export const SIZE = 100 * Math.sqrt(AREA_MULTIPLIER);
 export const BOUNDARY = 38 * Math.sqrt(AREA_MULTIPLIER);
 export const mapPercent = (metres: number, span = SIZE) => metres / span * 100 + 50;
-const codes: Record<string,string> = {fogueira:'F',acampamento:'B',oficina:'O',lago:'L',observatorio:'M',vip:'V',cume:'C',pedras:'S',rio:'R',flores:'P',refugio:'A',cachoeira:'Q'};
+const codes: Record<string,string> = {fogueira:'F',acampamento:'B',oficina:'O',lago:'L',observatorio:'M',cume:'C',pedras:'S',rio:'R',flores:'P',refugio:'A',cachoeira:'Q'};
 export const mapCode = (id:string) => codes[id] ?? '?';
 /** A valley between two ridges. The camp stays level; elevations spread gradually. */
 const poolHeights=new Map<string,number>(),pools=nodes.filter(n=>['water','fish'].includes(n.kind)&&Math.hypot(n.x,n.z)>55);
