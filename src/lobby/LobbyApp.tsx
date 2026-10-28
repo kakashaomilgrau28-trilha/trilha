@@ -83,7 +83,7 @@ const items = [
     icon: Droplets,
     type: "Equipamento",
     description:
-      "Beba para recuperar energia. Reabasteça o cantil perto do lago e dos pontos de água.",
+      "Beba para recuperar hidratação. Encha o cantil na base ou em fontes naturais e ferva água não tratada antes de beber.",
   },
   {
     id: "corda",

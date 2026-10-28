@@ -1,0 +1,29 @@
+# Expedição de sobrevivência
+
+## Regras e duração
+Seis regiões compartilham um mapa estilizado: floresta tropical, deserto, savana, tundra, taiga e calota polar. Sua identidade aparece no solo, vegetação, recursos, clima e fauna. Uma jornada completa de dia/noite dura 12 minutos ativos. A estação muda a cada quatro dias; seca e chuva alteram água na savana. Clima usa sorteio determinístico por intervalo; a pausa de interface não causa mortes fora da tela.
+
+Vida, stamina, hidratação, fome, temperatura corporal e peso são distintos. Corrida, subidas, nado, salto, carga e clima consomem reservas. A exaustão permanece até recuperar 25 de stamina; retoma devagar em pé e mais rápido sentado ou dormindo. Andar exausto reduz velocidade e bloqueia corrida/salto. Roupas precisam ser vestidas na mochila. A fogueira aquece no frio; sombra reduz exposição ao calor. Quedas, sangramento, infecção, veneno, afogamento, gelo fino e tempestades afetam vida e fuga. Bandagem contém sangramento; ervas ajudam o ferimento; kit médico trata intoxicação/infecção; a base oferece enfermaria.
+
+O cantil comporta três doses. F bebe para hidratar; G enche apenas junto de fonte, rio/lago ou água tratada da base. Água suja exige fervura no fogo. Alimento cru e estragado provoca penalidade; cozinhar usa alimento e fogo reais. Guardar alimento não o cozinha. Frutos, peixes, carne, madeira, pedra, fibras e ervas são finitos. Coleta, pesca, fabricação, cozimento, fervura, construção e sono possuem duração e cancelamento; andar interrompe a atividade. Ferramentas/armas, corda, luzes e bicicleta têm desgaste e podem ser reparadas no acampamento. Mochila: limite de 22 kg; penalidade de carga a partir de 13 kg.
+
+O mapa contém névoa de exploração: terreno, trilhas e pontos aparecem apenas nas células percorridas. O cume amplia a área revelada. Não há teletransporte livre. Salvar só funciona vivo, sem atividade e na base, num dos dois acampamentos fixos ou em um acampamento construído com 3 madeiras e 3 fibras. Acender apenas uma fogueira não cria um ponto de salvamento. A morte explica a causa e permite voltar ao último checkpoint. Consumo de recursos do mundo é persistido separadamente, impedindo regeneração imediata por restauração de checkpoint. Regeneração em 24 minutos reais; o inventário/personagem só persiste no checkpoint explícito.
+
+## Fauna e missões
+Espécies reais, com modelos procedurais 3D, territórios, rotina e estados de passeio, alerta, perseguição limitada, retirada e distração. O jogador recebe aviso antes da investida. Ruído, furtividade, vento, carne/peixe/restos, crias, matilhas, luz/fogo, água e árvores influenciam conforme a espécie. Ursos/felinos não são automaticamente neutralizados por subir em árvore; fogo não afasta todos. Piranhas são risco contextual em água quando há sangue ou seca. Urso-polar ocupa o setor ártico; foca-leopardo ocupa a margem antártica separada. Leopardo-marinho/foca-leopardo representam a mesma espécie, não dois animais. Caça exige arco, tempo e vários disparos com desgaste; pesca exige corda. A posse de alimento cru aumenta o cheiro.
+
+As 18 missões são as do pedido: cinco regiões; cume/revelação; fundo da caverna; seis nascentes; artefato; noite segura; refeição cozida; dez recursos; ferramenta; caça/pesca; travessia a nado; subida; 180 m em deserto/gelo com suprimentos; puzzle com porta física; despistar animal; Helena; três páginas; farol até dia 6. Progresso deriva de exploração, ações e consequências reais do loop, com recompensa única por missão. A sequência das ruínas é anotada nas páginas; o artefato fica atrás da porta.
+
+## Referências naturais e limites
+As taxas, tratamentos e reações são regras de jogo inspiradas na natureza; não são orientações médicas ou de segurança para encontros reais.
+- NPS: armazenamento de comida e encontros defensivos: https://www.nps.gov/locations/alaska/wildlife-safety.htm
+- FWS: habitat e atração alimentar do urso-polar: https://www.fws.gov/Safety-Polar-Bear-Habitat
+- Australian Antarctic Program: foca-leopardo: https://www.antarctica.gov.au/about-antarctica/animals/seals/leopard-seal/
+
+A simulação nova, fauna, missões, inventário e checkpoints são locais ao navegador/identidade. A presença e conversa dos jogadores reais permanecem nos servidores existentes. Estado da fauna, dano, recursos e progressão ainda não são arbitrados por um servidor autoritativo nem sincronizados entre dispositivos; isso exige uma camada de servidor antes de tratar o modo como economia/mundo competitivo compartilhado. Nenhum teste de 20 mil acessos simultâneos é implícito nesta entrega.
+
+## Verificação
+`node scripts/check-survival.mjs`: necessidades/clima, desgaste, ações temporizadas e interrupção, tratamento específico, coleta/ledger, fogo/campamento, save/load, sono até amanhecer, exploração e 18 objetivos/recompensas, prazo, aviso/perseguição/desistência e morte. Os testes anteriores de movimento, câmera, cavernas e equipamentos também continuam disponíveis. SceneLab oferece fixtures de desenvolvimento identificadas na tela para cada bioma e território; a rota não compõe a produção.
+
+### Correções da revisão
+A travessia usa o mesmo arco de corda do modelo visual, a 1,6 m/s, com aproximação a pé e reserva de stamina calculada pelo tempo/carga/frio. O corpo acompanha a altura do cabo, acima da ravina; a pausa congela o percurso e a morte cancela a travessia. A subida do cume exige 20 m de desnível acumulado a pé na região da montanha; bicicleta, chegada direta por coordenadas e desmontar no pico não concedem a missão. A revelação do ponto de vista permanece independente. Água não tratada é identificada ao completar o enchimento e no próprio botão de beber. No celular, avisos completos reservam altura acima do cinto, com controles reposicionados; norte/escala possuem fundo de instrumento contrastante sobre a névoa.

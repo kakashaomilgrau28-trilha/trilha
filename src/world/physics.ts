@@ -1,5 +1,5 @@
 export type Position = { x: number; y: number }
-export type Obstacle = { x: number; z: number; width: number; depth: number; height?: number; canopy?: number; polygon?: [number, number][] }
+export type Obstacle = { x: number; z: number; width: number; depth: number; height?: number; canopy?: number; disabled?: boolean; polygon?: [number, number][] }
 export const WORLD_SIZE = 600
 export const LAPA = { lat: -25.7675993, lng: -49.7164928 }
 export function geographicPosition(x: number, z: number) {
@@ -8,6 +8,7 @@ export function geographicPosition(x: number, z: number) {
 export function stepPosition(p: Position, dx: number, dz: number, seconds: number, speed: number, obstacles: Obstacle[], boundary = WORLD_SIZE / 2 - 4) {
   const length = Math.max(1, Math.hypot(dx, dz))
   const blocked = (x: number, z: number) => Math.abs(x) > boundary || Math.abs(z) > boundary || obstacles.some(o => {
+    if(o.disabled)return false;
     if (Math.abs(x - o.x) >= o.width / 2 + .5 || Math.abs(z - o.z) >= o.depth / 2 + .5) return false
     if (!o.polygon) return true
     // Polygon containment plus a half-meter clearance around mapped buildings.

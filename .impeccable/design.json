@@ -1,58 +1,398 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-28T11:05:08.115370+00:00",
+  "generatedAt": "2026-10-28T15:57:11.249752+00:00",
   "title": "Design System: Trilha Expedition",
   "extensions": {
     "colorMeta": {
       "camp-ink": {
         "displayName": "Pale interface ink",
         "role": "neutral",
-        "canonical": "#e6e6d7"
+        "canonical": "#e6e6d7",
+        "tonalRamp": [
+          "oklch(15.00% 0.0200 106.79)",
+          "oklch(26.43% 0.0200 106.79)",
+          "oklch(37.86% 0.0200 106.79)",
+          "oklch(49.29% 0.0200 106.79)",
+          "oklch(60.71% 0.0200 106.79)",
+          "oklch(72.14% 0.0200 106.79)",
+          "oklch(83.57% 0.0200 106.79)",
+          "oklch(95.00% 0.0200 106.79)"
+        ]
       },
       "camp-mute": {
         "displayName": "Muted leaf text",
         "role": "neutral",
-        "canonical": "#a8b5a6"
+        "canonical": "#a8b5a6",
+        "tonalRamp": [
+          "oklch(15.00% 0.0256 141.50)",
+          "oklch(26.43% 0.0256 141.50)",
+          "oklch(37.86% 0.0256 141.50)",
+          "oklch(49.29% 0.0256 141.50)",
+          "oklch(60.71% 0.0256 141.50)",
+          "oklch(72.14% 0.0256 141.50)",
+          "oklch(83.57% 0.0256 141.50)",
+          "oklch(95.00% 0.0256 141.50)"
+        ]
       },
       "camp-green": {
         "displayName": "Supporting camp green",
         "role": "primary",
-        "canonical": "#58794c"
+        "canonical": "#58794c",
+        "tonalRamp": [
+          "oklch(15.00% 0.0775 137.63)",
+          "oklch(26.43% 0.0775 137.63)",
+          "oklch(37.86% 0.0775 137.63)",
+          "oklch(49.29% 0.0775 137.63)",
+          "oklch(60.71% 0.0775 137.63)",
+          "oklch(72.14% 0.0775 137.63)",
+          "oklch(83.57% 0.0775 137.63)",
+          "oklch(95.00% 0.0775 137.63)"
+        ]
       },
       "camp-gold": {
         "displayName": "Camp gold",
         "role": "secondary",
-        "canonical": "#d2b274"
+        "canonical": "#d2b274",
+        "tonalRamp": [
+          "oklch(15.00% 0.0882 83.22)",
+          "oklch(26.43% 0.0882 83.22)",
+          "oklch(37.86% 0.0882 83.22)",
+          "oklch(49.29% 0.0882 83.22)",
+          "oklch(60.71% 0.0882 83.22)",
+          "oklch(72.14% 0.0882 83.22)",
+          "oklch(83.57% 0.0882 83.22)",
+          "oklch(95.00% 0.0882 83.22)"
+        ]
       },
       "camp-paper": {
         "displayName": "Charcoal ground",
         "role": "neutral",
-        "canonical": "#202820"
+        "canonical": "#202820",
+        "tonalRamp": [
+          "oklch(15.00% 0.0185 145.03)",
+          "oklch(26.43% 0.0185 145.03)",
+          "oklch(37.86% 0.0185 145.03)",
+          "oklch(49.29% 0.0185 145.03)",
+          "oklch(60.71% 0.0185 145.03)",
+          "oklch(72.14% 0.0185 145.03)",
+          "oklch(83.57% 0.0185 145.03)",
+          "oklch(95.00% 0.0185 145.03)"
+        ]
       },
       "camp-line": {
         "displayName": "Olive divider",
         "role": "neutral",
-        "canonical": "#3a4739"
+        "canonical": "#3a4739",
+        "tonalRamp": [
+          "oklch(15.00% 0.0288 143.10)",
+          "oklch(26.43% 0.0288 143.10)",
+          "oklch(37.86% 0.0288 143.10)",
+          "oklch(49.29% 0.0288 143.10)",
+          "oklch(60.71% 0.0288 143.10)",
+          "oklch(72.14% 0.0288 143.10)",
+          "oklch(83.57% 0.0288 143.10)",
+          "oklch(95.00% 0.0288 143.10)"
+        ]
       },
       "action-fill": {
         "displayName": "Olive primary action",
         "role": "primary",
-        "canonical": "#728c53"
+        "canonical": "#728c53",
+        "tonalRamp": [
+          "oklch(15.00% 0.0864 128.70)",
+          "oklch(26.43% 0.0864 128.70)",
+          "oklch(37.86% 0.0864 128.70)",
+          "oklch(49.29% 0.0864 128.70)",
+          "oklch(60.71% 0.0864 128.70)",
+          "oklch(72.14% 0.0864 128.70)",
+          "oklch(83.57% 0.0864 128.70)",
+          "oklch(95.00% 0.0864 128.70)"
+        ]
       },
       "action-ink": {
         "displayName": "Dark action ink",
         "role": "neutral",
-        "canonical": "#10190e"
+        "canonical": "#10190e",
+        "tonalRamp": [
+          "oklch(15.00% 0.0252 139.95)",
+          "oklch(26.43% 0.0252 139.95)",
+          "oklch(37.86% 0.0252 139.95)",
+          "oklch(49.29% 0.0252 139.95)",
+          "oklch(60.71% 0.0252 139.95)",
+          "oklch(72.14% 0.0252 139.95)",
+          "oklch(83.57% 0.0252 139.95)",
+          "oklch(95.00% 0.0252 139.95)"
+        ]
       },
       "atlas-paper": {
         "displayName": "Topographic paper",
         "role": "neutral",
-        "canonical": "#e4e2c4"
+        "canonical": "#e4e2c4",
+        "tonalRamp": [
+          "oklch(15.00% 0.0398 104.03)",
+          "oklch(26.43% 0.0398 104.03)",
+          "oklch(37.86% 0.0398 104.03)",
+          "oklch(49.29% 0.0398 104.03)",
+          "oklch(60.71% 0.0398 104.03)",
+          "oklch(72.14% 0.0398 104.03)",
+          "oklch(83.57% 0.0398 104.03)",
+          "oklch(95.00% 0.0398 104.03)"
+        ]
       },
       "equipment-surface": {
         "displayName": "Equipment olive",
         "role": "neutral",
-        "canonical": "#2c3927"
+        "canonical": "#2c3927",
+        "tonalRamp": [
+          "oklch(15.00% 0.0354 137.15)",
+          "oklch(26.43% 0.0354 137.15)",
+          "oklch(37.86% 0.0354 137.15)",
+          "oklch(49.29% 0.0354 137.15)",
+          "oklch(60.71% 0.0354 137.15)",
+          "oklch(72.14% 0.0354 137.15)",
+          "oklch(83.57% 0.0354 137.15)",
+          "oklch(95.00% 0.0354 137.15)"
+        ]
+      },
+      "condition-surface": {
+        "displayName": "Condition surface",
+        "role": "secondary",
+        "canonical": "#1d2a20ed",
+        "tonalRamp": [
+          "oklch(15.00% 0.0257 151.47)",
+          "oklch(26.43% 0.0257 151.47)",
+          "oklch(37.86% 0.0257 151.47)",
+          "oklch(49.29% 0.0257 151.47)",
+          "oklch(60.71% 0.0257 151.47)",
+          "oklch(72.14% 0.0257 151.47)",
+          "oklch(83.57% 0.0257 151.47)",
+          "oklch(95.00% 0.0257 151.47)"
+        ]
+      },
+      "condition-health": {
+        "displayName": "Condition health",
+        "role": "secondary",
+        "canonical": "#c47a66",
+        "tonalRamp": [
+          "oklch(15.00% 0.0979 35.89)",
+          "oklch(26.43% 0.0979 35.89)",
+          "oklch(37.86% 0.0979 35.89)",
+          "oklch(49.29% 0.0979 35.89)",
+          "oklch(60.71% 0.0979 35.89)",
+          "oklch(72.14% 0.0979 35.89)",
+          "oklch(83.57% 0.0979 35.89)",
+          "oklch(95.00% 0.0979 35.89)"
+        ]
+      },
+      "condition-hydration": {
+        "displayName": "Condition hydration",
+        "role": "secondary",
+        "canonical": "#83b9bc",
+        "tonalRamp": [
+          "oklch(15.00% 0.0565 200.37)",
+          "oklch(26.43% 0.0565 200.37)",
+          "oklch(37.86% 0.0565 200.37)",
+          "oklch(49.29% 0.0565 200.37)",
+          "oklch(60.71% 0.0565 200.37)",
+          "oklch(72.14% 0.0565 200.37)",
+          "oklch(83.57% 0.0565 200.37)",
+          "oklch(95.00% 0.0565 200.37)"
+        ]
+      },
+      "condition-reserve": {
+        "displayName": "Condition reserve",
+        "role": "secondary",
+        "canonical": "#b5bc7b",
+        "tonalRamp": [
+          "oklch(15.00% 0.0865 113.44)",
+          "oklch(26.43% 0.0865 113.44)",
+          "oklch(37.86% 0.0865 113.44)",
+          "oklch(49.29% 0.0865 113.44)",
+          "oklch(60.71% 0.0865 113.44)",
+          "oklch(72.14% 0.0865 113.44)",
+          "oklch(83.57% 0.0865 113.44)",
+          "oklch(95.00% 0.0865 113.44)"
+        ]
+      },
+      "condition-critical": {
+        "displayName": "Condition critical",
+        "role": "secondary",
+        "canonical": "#f1af98",
+        "tonalRamp": [
+          "oklch(15.00% 0.0842 40.03)",
+          "oklch(26.43% 0.0842 40.03)",
+          "oklch(37.86% 0.0842 40.03)",
+          "oklch(49.29% 0.0842 40.03)",
+          "oklch(60.71% 0.0842 40.03)",
+          "oklch(72.14% 0.0842 40.03)",
+          "oklch(83.57% 0.0842 40.03)",
+          "oklch(95.00% 0.0842 40.03)"
+        ]
+      },
+      "journal-surface": {
+        "displayName": "Journal surface",
+        "role": "neutral",
+        "canonical": "#202b23",
+        "tonalRamp": [
+          "oklch(15.00% 0.0211 153.30)",
+          "oklch(26.43% 0.0211 153.30)",
+          "oklch(37.86% 0.0211 153.30)",
+          "oklch(49.29% 0.0211 153.30)",
+          "oklch(60.71% 0.0211 153.30)",
+          "oklch(72.14% 0.0211 153.30)",
+          "oklch(83.57% 0.0211 153.30)",
+          "oklch(95.00% 0.0211 153.30)"
+        ]
+      },
+      "journal-action": {
+        "displayName": "Journal action",
+        "role": "neutral",
+        "canonical": "#3c4c32",
+        "tonalRamp": [
+          "oklch(15.00% 0.0468 133.85)",
+          "oklch(26.43% 0.0468 133.85)",
+          "oklch(37.86% 0.0468 133.85)",
+          "oklch(49.29% 0.0468 133.85)",
+          "oklch(60.71% 0.0468 133.85)",
+          "oklch(72.14% 0.0468 133.85)",
+          "oklch(83.57% 0.0468 133.85)",
+          "oklch(95.00% 0.0468 133.85)"
+        ]
+      },
+      "journal-selected": {
+        "displayName": "Journal selected",
+        "role": "neutral",
+        "canonical": "#b8bb78",
+        "tonalRamp": [
+          "oklch(15.00% 0.0883 110.48)",
+          "oklch(26.43% 0.0883 110.48)",
+          "oklch(37.86% 0.0883 110.48)",
+          "oklch(49.29% 0.0883 110.48)",
+          "oklch(60.71% 0.0883 110.48)",
+          "oklch(72.14% 0.0883 110.48)",
+          "oklch(83.57% 0.0883 110.48)",
+          "oklch(95.00% 0.0883 110.48)"
+        ]
+      },
+      "fauna-warning-surface": {
+        "displayName": "Fauna warning surface",
+        "role": "secondary",
+        "canonical": "#43372c",
+        "tonalRamp": [
+          "oklch(15.00% 0.0251 64.36)",
+          "oklch(26.43% 0.0251 64.36)",
+          "oklch(37.86% 0.0251 64.36)",
+          "oklch(49.29% 0.0251 64.36)",
+          "oklch(60.71% 0.0251 64.36)",
+          "oklch(72.14% 0.0251 64.36)",
+          "oklch(83.57% 0.0251 64.36)",
+          "oklch(95.00% 0.0251 64.36)"
+        ]
+      },
+      "fauna-warning-text": {
+        "displayName": "Fauna warning text",
+        "role": "secondary",
+        "canonical": "#f2ddbc",
+        "tonalRamp": [
+          "oklch(15.00% 0.0493 79.13)",
+          "oklch(26.43% 0.0493 79.13)",
+          "oklch(37.86% 0.0493 79.13)",
+          "oklch(49.29% 0.0493 79.13)",
+          "oklch(60.71% 0.0493 79.13)",
+          "oklch(72.14% 0.0493 79.13)",
+          "oklch(83.57% 0.0493 79.13)",
+          "oklch(95.00% 0.0493 79.13)"
+        ]
+      },
+      "biome-tropical": {
+        "displayName": "Biome tropical",
+        "role": "secondary",
+        "canonical": "#64865a",
+        "tonalRamp": [
+          "oklch(15.00% 0.0758 138.69)",
+          "oklch(26.43% 0.0758 138.69)",
+          "oklch(37.86% 0.0758 138.69)",
+          "oklch(49.29% 0.0758 138.69)",
+          "oklch(60.71% 0.0758 138.69)",
+          "oklch(72.14% 0.0758 138.69)",
+          "oklch(83.57% 0.0758 138.69)",
+          "oklch(95.00% 0.0758 138.69)"
+        ]
+      },
+      "biome-desert": {
+        "displayName": "Biome desert",
+        "role": "secondary",
+        "canonical": "#d1b27c",
+        "tonalRamp": [
+          "oklch(15.00% 0.0793 80.98)",
+          "oklch(26.43% 0.0793 80.98)",
+          "oklch(37.86% 0.0793 80.98)",
+          "oklch(49.29% 0.0793 80.98)",
+          "oklch(60.71% 0.0793 80.98)",
+          "oklch(72.14% 0.0793 80.98)",
+          "oklch(83.57% 0.0793 80.98)",
+          "oklch(95.00% 0.0793 80.98)"
+        ]
+      },
+      "biome-savanna": {
+        "displayName": "Biome savanna",
+        "role": "secondary",
+        "canonical": "#a9a36c",
+        "tonalRamp": [
+          "oklch(15.00% 0.0744 102.78)",
+          "oklch(26.43% 0.0744 102.78)",
+          "oklch(37.86% 0.0744 102.78)",
+          "oklch(49.29% 0.0744 102.78)",
+          "oklch(60.71% 0.0744 102.78)",
+          "oklch(72.14% 0.0744 102.78)",
+          "oklch(83.57% 0.0744 102.78)",
+          "oklch(95.00% 0.0744 102.78)"
+        ]
+      },
+      "biome-tundra": {
+        "displayName": "Biome tundra",
+        "role": "secondary",
+        "canonical": "#b4bcb0",
+        "tonalRamp": [
+          "oklch(15.00% 0.0189 134.95)",
+          "oklch(26.43% 0.0189 134.95)",
+          "oklch(37.86% 0.0189 134.95)",
+          "oklch(49.29% 0.0189 134.95)",
+          "oklch(60.71% 0.0189 134.95)",
+          "oklch(72.14% 0.0189 134.95)",
+          "oklch(83.57% 0.0189 134.95)",
+          "oklch(95.00% 0.0189 134.95)"
+        ]
+      },
+      "biome-taiga": {
+        "displayName": "Biome taiga",
+        "role": "secondary",
+        "canonical": "#59745f",
+        "tonalRamp": [
+          "oklch(15.00% 0.0454 151.37)",
+          "oklch(26.43% 0.0454 151.37)",
+          "oklch(37.86% 0.0454 151.37)",
+          "oklch(49.29% 0.0454 151.37)",
+          "oklch(60.71% 0.0454 151.37)",
+          "oklch(72.14% 0.0454 151.37)",
+          "oklch(83.57% 0.0454 151.37)",
+          "oklch(95.00% 0.0454 151.37)"
+        ]
+      },
+      "biome-ice": {
+        "displayName": "Biome ice",
+        "role": "secondary",
+        "canonical": "#dce9e9",
+        "tonalRamp": [
+          "oklch(15.00% 0.0139 196.92)",
+          "oklch(26.43% 0.0139 196.92)",
+          "oklch(37.86% 0.0139 196.92)",
+          "oklch(49.29% 0.0139 196.92)",
+          "oklch(60.71% 0.0139 196.92)",
+          "oklch(72.14% 0.0139 196.92)",
+          "oklch(83.57% 0.0139 196.92)",
+          "oklch(95.00% 0.0139 196.92)"
+        ]
       }
     },
     "typographyMeta": {
@@ -151,62 +491,83 @@
       "kind": "button",
       "refersTo": "button-primary",
       "description": "Olive filled action with dark lettering on the charcoal expedition shell.",
-      "html": "<button class=\"camp-primary\">Abrir conversa</button>",
-      "css": ".camp-primary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;padding:11px 16px;border-radius:8px;font-family:\"DM Sans\",sans-serif;font-size:12px;font-weight:600;line-height:1.4;background:#728c53;color:#10190e;border:0;transition:background .15s,color .15s}.camp-primary:hover:not(:disabled){filter:brightness(.96)}.camp-primary:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.camp-primary:disabled{opacity:.58}@media(prefers-reduced-motion:reduce){.camp-primary{transition:none}}"
+      "html": "<button class=\"ds-camp-primary\">Abrir conversa</button>",
+      "css": ".ds-camp-primary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;padding:11px 16px;border-radius:8px;font-family:\"DM Sans\",sans-serif;font-size:12px;font-weight:600;line-height:1.4;background:#728c53;color:#10190e;border:0;transition:background .15s,color .15s}.ds-camp-primary:hover:not(:disabled){filter:brightness(.96)}.ds-camp-primary:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.ds-camp-primary:disabled{opacity:.58}@media(prefers-reduced-motion:reduce){.ds-camp-primary{transition:none}}"
     },
     {
       "name": "Secondary action",
       "kind": "button",
       "refersTo": "button-secondary",
       "description": "Outlined action for supporting tasks.",
-      "html": "<button class=\"camp-secondary\">Copiar convite</button>",
-      "css": ".camp-secondary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;padding:11px 16px;border-radius:8px;font-family:\"DM Sans\",sans-serif;font-size:12px;font-weight:600;line-height:1.4;background:transparent;border:1px solid #71835d;color:#d7e3c8;transition:background .15s,color .15s}.camp-secondary:hover:not(:disabled){filter:brightness(.96)}.camp-secondary:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.camp-secondary:disabled{opacity:.58}@media(prefers-reduced-motion:reduce){.camp-secondary{transition:none}}"
+      "html": "<button class=\"ds-camp-secondary\">Copiar convite</button>",
+      "css": ".ds-camp-secondary{display:inline-flex;justify-content:center;align-items:center;gap:9px;min-height:43px;padding:11px 16px;border-radius:8px;font-family:\"DM Sans\",sans-serif;font-size:12px;font-weight:600;line-height:1.4;background:transparent;border:1px solid #71835d;color:#d7e3c8;transition:background .15s,color .15s}.ds-camp-secondary:hover:not(:disabled){filter:brightness(.96)}.ds-camp-secondary:focus-visible{outline:3px solid #ac823e;outline-offset:4px}.ds-camp-secondary:disabled{opacity:.58}@media(prefers-reduced-motion:reduce){.ds-camp-secondary{transition:none}}"
     },
     {
       "name": "Profile field",
       "kind": "input",
       "description": "Dark recessed field for arrival and administration forms.",
-      "html": "<label class=\"field-label\" for=\"demo-nickname\">Seu apelido</label><input class=\"camp-field\" id=\"demo-nickname\" placeholder=\"Como a turma chama você?\" />",
-      "css": ".field-label{display:block;font:600 11px \"DM Sans\",sans-serif;color:#bac9ad;margin:16px 0 8px}.camp-field{width:100%;height:44px;border:1px solid #5d7050;border-radius:7px;padding:0 12px;background:#1f2a20;color:#eef0dd;font:13px \"DM Sans\",sans-serif}.camp-field::placeholder{color:#acbda0;opacity:1}.camp-field:focus-visible{outline:3px solid #ac823e;outline-offset:4px}"
+      "html": "<label class=\"ds-field-label\" for=\"demo-nickname\">Seu apelido</label><input class=\"ds-camp-field\" id=\"demo-nickname\" placeholder=\"Como a turma chama você?\" />",
+      "css": ".ds-field-label{display:block;font:600 11px \"DM Sans\",sans-serif;color:#bac9ad;margin:16px 0 8px}.ds-camp-field{width:100%;height:44px;border:1px solid #5d7050;border-radius:7px;padding:0 12px;background:#1f2a20;color:#eef0dd;font:13px \"DM Sans\",sans-serif}.ds-camp-field::placeholder{color:#acbda0;opacity:1}.ds-camp-field:focus-visible{outline:3px solid #ac823e;outline-offset:4px}"
     },
     {
       "name": "Expanded field map",
       "kind": "custom",
-      "description": "Static instrument preview of the shared-data regional atlas. The application has sixteen paths, continuous water/cave geometry, pan/zoom, fixed 20px numbered marks with 44px hit targets, regional camp clustering, Enter/Space marker selection, and a desktop side index. This snippet illustrates presentation, not live navigation or current production terrain.",
-      "html": "<section class=\"ds-field-map\"><button class=\"ds-field-map-toggle\" aria-expanded=\"true\">Fechar mapa de localização ↗</button><div class=\"ds-atlas-tools\"><button aria-label=\"Ampliar mapa\">+</button><button aria-label=\"Reduzir mapa\">−</button><button>Minha posição</button><button>Toda a região</button></div><svg class=\"ds-atlas-canvas\" viewBox=\"0 0 240 160\" role=\"img\" aria-label=\"Amostra esquemática do atlas; não representa o terreno completo\"><rect width=\"240\" height=\"160\" fill=\"#8ca476\"/><path d=\"M0 110Q70 90 95 40T240 50\" stroke=\"#5d999c\" stroke-width=\"8\" fill=\"none\"/><path d=\"M30 140Q90 100 120 80T210 30\" stroke=\"#eee0bb\" stroke-width=\"5\" fill=\"none\"/><path d=\"M30 140Q90 100 120 80T210 30\" stroke=\"#957447\" stroke-width=\"1\" fill=\"none\"/><g class=\"ds-map-marker\" role=\"button\" tabindex=\"0\" aria-label=\"Cume das Araucárias\"><circle cx=\"180\" cy=\"40\" r=\"22\" fill=\"transparent\"/><circle cx=\"180\" cy=\"40\" r=\"10\" fill=\"#fff4d9\" stroke=\"#3a5545\"/><text x=\"180\" y=\"40\" text-anchor=\"middle\" dominant-baseline=\"central\" font-size=\"12\" font-weight=\"700\" fill=\"#263e30\">7</text></g><circle cx=\"120\" cy=\"80\" r=\"4\" fill=\"#f5c867\" stroke=\"#fff\"/><text x=\"215\" y=\"20\" fill=\"#203f30\" font-size=\"10\">N ↑</text><path d=\"M12 145h40\" stroke=\"#244431\"/><text x=\"12\" y=\"138\" font-size=\"8\" fill=\"#203f30\">50 m</text></svg><div class=\"ds-atlas-detail\"><b>Mapa do terreno explorável</b><p>Arraste para navegar, use + e − para ampliar e toque nos pontos.</p><button class=\"ds-atlas-navigate\">Marcar destino · Cume das Araucárias</button><small>Curvas: 10 m · marrom: trilha · azul: água · escuro: galeria · dourado: você</small><div class=\"ds-atlas-index\"><button>1. Acampamento</button><button>7. Cume das Araucárias</button></div></div></section>",
+      "description": "Presentation-only atlas sample; the application masks terrain/paths and filters destinations to explored 40m cells. Six biome materials share scene data; pan/zoom, keyboard markers and a desktop side index remain available. This sample is not a production capture. North/scale have contrasting paper backplates over unexplored fog.",
+      "html": "<section class=\"ds-field-map\"><button class=\"ds-field-map-toggle\" aria-expanded=\"true\">Fechar mapa de localização ↗</button><div class=\"ds-atlas-tools\"><button aria-label=\"Ampliar mapa\">+</button><button aria-label=\"Reduzir mapa\">−</button><button>Minha posição</button><button>Toda a região</button></div><svg class=\"ds-atlas-canvas\" viewBox=\"0 0 240 160\" role=\"img\" aria-label=\"Amostra esquemática do atlas; não representa o terreno completo\"><rect width=\"240\" height=\"160\" fill=\"#8ca476\"/><rect x=\"0\" y=\"0\" width=\"90\" height=\"90\" fill=\"#26352c\"/><path d=\"M0 110Q70 90 95 40T240 50\" stroke=\"#5d999c\" stroke-width=\"8\" fill=\"none\"/><path d=\"M30 140Q90 100 120 80T210 30\" stroke=\"#eee0bb\" stroke-width=\"5\" fill=\"none\"/><path d=\"M30 140Q90 100 120 80T210 30\" stroke=\"#957447\" stroke-width=\"1\" fill=\"none\"/><g class=\"ds-map-marker\" role=\"button\" tabindex=\"0\" aria-label=\"Cume das Araucárias\"><circle cx=\"180\" cy=\"40\" r=\"22\" fill=\"transparent\"/><circle cx=\"180\" cy=\"40\" r=\"10\" fill=\"#fff4d9\" stroke=\"#3a5545\"/><text x=\"180\" y=\"40\" text-anchor=\"middle\" dominant-baseline=\"central\" font-size=\"12\" font-weight=\"700\" fill=\"#263e30\">7</text></g><circle cx=\"120\" cy=\"80\" r=\"4\" fill=\"#f5c867\" stroke=\"#fff\"/><rect x=\"200\" y=\"6\" width=\"34\" height=\"22\" rx=\"3\" fill=\"#e4e2c4\"/><text x=\"215\" y=\"20\" fill=\"#203f30\" font-size=\"10\">N ↑</text><rect x=\"8\" y=\"125\" width=\"60\" height=\"28\" rx=\"3\" fill=\"#e4e2c4\"/><path d=\"M12 145h40\" stroke=\"#244431\"/><text x=\"12\" y=\"138\" font-size=\"8\" fill=\"#203f30\">50 m</text></svg><div class=\"ds-atlas-detail\"><b>Mapa do terreno explorado</b><p>Somente áreas exploradas aparecem; arraste e amplie para navegar.</p><button class=\"ds-atlas-navigate\">Marcar destino · Cume das Araucárias</button><small>Curvas: 10 m · marrom: trilha · azul: água · escuro: galeria · dourado: você</small><div class=\"ds-atlas-index\"><button>1. Acampamento</button><button>7. Cume das Araucárias</button></div></div></section>",
       "css": ".ds-field-map{width:min(720px,calc(100% - 28px));max-height:calc(100% - 30px);overflow:auto;padding:14px;background:#e4e2c4;color:#263c2a;border-radius:8px;font-family:\"DM Sans\",sans-serif;box-shadow:0 8px 30px #28412b30}.ds-field-map-toggle{display:flex;justify-content:space-between;align-items:center;min-height:34px;width:100%;border:0;background:transparent;color:#243e32;font-size:13px;text-align:left}.ds-atlas-tools{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.ds-atlas-tools button{border:1px solid #bac6a8;background:#f2ecd4;color:#2d432b;border-radius:5px;padding:7px 10px;font-size:11px}.ds-atlas-canvas{display:block;width:100%;max-height:55vh;aspect-ratio:1;border:1px solid #677d50;border-radius:6px;touch-action:none}.ds-atlas-detail{padding-top:10px;color:#284332;font-size:12px}.ds-atlas-detail p{margin:5px 0;line-height:1.5}.ds-atlas-navigate{display:block;margin:10px 0;background:#364d2d;color:#f5efd3;border:0;padding:10px;border-radius:5px;width:100%;font-size:12px}.ds-field-map button:hover{filter:brightness(.96)}.ds-field-map button:focus-visible{outline:3px solid #ac823e;outline-offset:4px}@media(max-width:650px){.ds-atlas-canvas{max-height:42vh}.ds-atlas-tools button{font-size:10px;padding:7px}} .ds-map-marker{cursor:pointer}.ds-map-marker:focus{outline:none}.ds-map-marker:focus-visible>circle:nth-child(2){stroke:#263e30;stroke-width:3px;vector-effect:non-scaling-stroke}.ds-atlas-index{display:flex;flex-direction:column;gap:4px;margin-top:8px}.ds-atlas-index button{text-align:left;min-height:36px;border:1px solid #bac6a8;background:#f2ecd4;color:#2d432b;border-radius:5px;padding:7px 10px;font-size:11px}@media(min-width:700px){.ds-field-map{display:grid;grid-template-columns:minmax(220px,min(43vh,440px)) 240px;width:max-content;max-width:calc(100% - 28px);gap:8px 14px}.ds-field-map-toggle{grid-column:1/-1}.ds-atlas-tools{grid-column:1;margin:0}.ds-atlas-canvas{grid-column:1;grid-row:3;width:100%;height:auto;aspect-ratio:1;max-height:none}.ds-atlas-detail{grid-column:2;grid-row:2/span 2;overflow:auto;max-height:calc(43vh + 42px);margin:0}}"
     },
     {
       "name": "Discovery collection card",
       "kind": "card",
       "description": "One of sixteen preserved local discoveries. Pending cards show rarity and hint; found cards reveal name/story, solid gold border and explicit collection status.",
-      "html": "<article class=\"discovery\"><span class=\"discovery-number\">01 · Comum</span><svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"8\" r=\"6\"/><path d=\"m8.2 13-1.1 9L12 19l4.9 3-1.1-9\"/></svg><h3>Ainda por descobrir</h3><p>Um brilho dourado perto da roda da fogueira.</p><b>Siga a pista</b></article>",
-      "css": ".discovery{padding:24px;border:1px dashed #536547;border-radius:14px;display:flex;flex-direction:column;align-items:start;gap:12px;background:#2c3927;color:#e0e8cf;font-family:\"DM Sans\",sans-serif}.discovery.found{border-style:solid;background:#3b4329;border-color:#a89c60}.discovery-number{font-size:11px;color:#bdccb0}.discovery h3{font-size:17px;margin:0}.discovery p{font-size:13px;line-height:1.65;margin:0;flex:1;color:#bdccb0}.discovery>b{font-size:11px;color:#cadba8}.discovery>svg{color:#7b8c68}.discovery.found>svg{color:#9a6a28}"
+      "html": "<article class=\"ds-discovery\"><span class=\"ds-discovery-number\">01 · Comum</span><svg width=\"32\" height=\"32\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"8\" r=\"6\"/><path d=\"m8.2 13-1.1 9L12 19l4.9 3-1.1-9\"/></svg><h3>Ainda por descobrir</h3><p>Um brilho dourado perto da roda da fogueira.</p><b>Siga a pista</b></article>",
+      "css": ".ds-discovery{padding:24px;border:1px dashed #536547;border-radius:14px;display:flex;flex-direction:column;align-items:start;gap:12px;background:#2c3927;color:#e0e8cf;font-family:\"DM Sans\",sans-serif}.ds-discovery.found{border-style:solid;background:#3b4329;border-color:#a89c60}.ds-discovery-number{font-size:11px;color:#bdccb0}.ds-discovery h3{font-size:17px;margin:0}.ds-discovery p{font-size:13px;line-height:1.65;margin:0;flex:1;color:#bdccb0}.ds-discovery>b{font-size:11px;color:#cadba8}.ds-discovery>svg{color:#7b8c68}.ds-discovery.found>svg{color:#9a6a28}"
     },
     {
       "name": "Quick equipment slot",
       "kind": "button",
       "refersTo": "quickslot-selected",
       "description": "Selected example from the ten-slot horizontal belt. Full labels and pressed states are available to assistive technology; app actions change equipment.",
-      "html": "<nav class=\"quickbelt\" aria-label=\"Mochila de acesso rápido\"><button aria-label=\"Equipar Mapa de campo · tecla 1\" aria-pressed=\"true\" title=\"Mapa de campo\"><kbd>1</kbd><svg width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Mapa de campo</span></button></nav>",
-      "css": ".quickbelt{display:flex;padding:6px;gap:4px;background:#1b281eea;border:1px solid #5a674b;border-radius:8px;max-width:calc(100% - 26px);overflow:auto;font-family:\"DM Sans\",sans-serif}.quickbelt button{position:relative;flex:0 0 52px;min-height:62px;border:1px solid #4c5f41;border-radius:4px;color:#d1ddbe;background:#2a3b27;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;padding:12px 3px 5px}.quickbelt button[aria-pressed=true]{background:#677646;color:#fff4ca;border-color:#d5c383}.quickbelt kbd{position:absolute;left:4px;top:2px;font-size:9px;font-family:inherit;color:inherit}.quickbelt span{font-size:8px;white-space:nowrap}.quickbelt button:hover{filter:brightness(.96)}.quickbelt button:focus-visible{outline:3px solid #ac823e;outline-offset:4px}@media(max-width:800px){.quickbelt button{flex-basis:45px;min-height:56px}}"
+      "html": "<nav class=\"ds-quickbelt\" aria-label=\"Mochila de acesso rápido\"><button aria-label=\"Equipar Mapa de campo · tecla 1\" aria-pressed=\"true\" title=\"Mapa de campo\"><kbd>1</kbd><svg width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Mapa de campo</span></button></nav>",
+      "css": ".ds-quickbelt{display:flex;padding:6px;gap:4px;background:#1b281eea;border:1px solid #5a674b;border-radius:8px;max-width:calc(100% - 26px);overflow:auto;font-family:\"DM Sans\",sans-serif}.ds-quickbelt button{position:relative;flex:0 0 52px;min-height:62px;border:1px solid #4c5f41;border-radius:4px;color:#d1ddbe;background:#2a3b27;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;padding:12px 3px 5px}.ds-quickbelt button[aria-pressed=true]{background:#677646;color:#fff4ca;border-color:#d5c383}.ds-quickbelt kbd{position:absolute;left:4px;top:2px;font-size:9px;font-family:inherit;color:inherit}.ds-quickbelt span{font-size:8px;white-space:nowrap}.ds-quickbelt button:hover{filter:brightness(.96)}.ds-quickbelt button:focus-visible{outline:3px solid #ac823e;outline-offset:4px}@media(max-width:800px){.ds-quickbelt button{flex-basis:45px;min-height:56px}}"
+    },
+    {
+      "name": "Survival condition readout",
+      "kind": "custom",
+      "description": "Labelled life, stamina, hydration and food; values plus color communicate danger. Static sample of the scene HUD, not simulated gameplay.",
+      "html": "<section class=\"ds-survival-vitals\" aria-label=\"Condição de sobrevivência\"><button class=\"ds-survival-open\">Expedição · dia 1 · 08h</button><strong>Base Trilha · 30°C</strong><div class=\"ds-vital-grid\"><label class=\"ds-is-critical\"><span>Vida 20%</span><progress aria-label=\"Vida\" value=\"20\" max=\"100\"></progress></label><label><span>Stamina 80%</span><progress aria-label=\"Stamina\" value=\"80\" max=\"100\"></progress></label><label><span>Água 65%</span><progress aria-label=\"Água\" value=\"65\" max=\"100\"></progress></label><label><span>Comida 85%</span><progress aria-label=\"Comida\" value=\"85\" max=\"100\"></progress></label></div><small>10.8/22 kg · corpo 37.0°C</small></section>",
+      "css": ".ds-survival-vitals{width:205px;padding:10px;background:#1d2a20ed;color:#e4ead8;border-radius:6px;font:10px \"DM Sans\",sans-serif}.ds-survival-vitals>strong{display:block;margin:6px 0;font-size:11px}.ds-survival-open{width:100%;border:0;background:transparent;color:#e6dfbd;padding:3px 0;text-align:left;font:700 10px \"DM Sans\",sans-serif;cursor:pointer}.ds-vital-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}.ds-vital-grid label{display:grid;gap:3px}.ds-vital-grid progress{height:4px;width:100%;accent-color:#b5bc7b}.ds-vital-grid label:first-child progress{accent-color:#c47a66}.ds-vital-grid label:nth-child(3) progress{accent-color:#83b9bc}.ds-vital-grid .ds-is-critical{color:#f1af98}.ds-survival-vitals>small{display:block;margin-top:7px;color:#c9d2bb}.ds-survival-open:hover{color:#fff4ca}.ds-survival-open:focus-visible{outline:2px solid #e1c883;outline-offset:2px}@media(max-width:650px){.ds-survival-vitals{width:146px;padding:8px;font-size:9px}}"
+    },
+    {
+      "name": "Expedition journal navigation",
+      "kind": "nav",
+      "description": "Sticky mission, inventory and field tabs; individual local expedition identity remains explicit. Presentation sample with focus and selected states.",
+      "html": "<aside class=\"ds-survival-panel\"><div class=\"ds-journal-chrome\"><header><div><h2>Diário da expedição</h2><p>Expedição individual · Floresta tropical · dia 1/6</p></div><button aria-label=\"Fechar diário\">Fechar</button></header><nav aria-label=\"Seções da expedição\"><button aria-pressed=\"true\">Missões</button><button aria-pressed=\"false\">Mochila</button><button aria-pressed=\"false\">Campo</button></nav></div><p>Conclua objetivos no mundo e receba cada recompensa uma vez.</p></aside>",
+      "css": ".ds-survival-panel{width:100%;max-width:650px;background:#202b23;color:#e5eadb;padding:18px;border:1px solid #5c6b53;border-radius:8px;font:12px/1.6 \"DM Sans\",sans-serif}.ds-survival-panel header{display:flex;justify-content:space-between;gap:14px;align-items:start}.ds-survival-panel h2{font-size:20px;margin:0}.ds-survival-panel p{margin:7px 0 12px;color:#c3ceb8}.ds-survival-panel button{border:1px solid #637350;background:#3c4c32;color:#edf0dc;border-radius:4px;padding:8px 11px;min-height:36px;font:inherit;cursor:pointer}.ds-survival-panel button:hover{background:#50613e}.ds-survival-panel button:disabled{opacity:.45;cursor:not-allowed}.ds-survival-panel button:focus-visible{outline:2px solid #e1c883;outline-offset:2px}.ds-survival-panel button[aria-pressed=true]{background:#b8bb78;color:#202b23}.ds-journal-chrome{position:sticky;top:0;z-index:3;background:#202b23;padding-top:3px;border-bottom:1px solid #4c5b46}.ds-journal-chrome header p{margin:4px 0}.ds-journal-chrome>nav{display:flex;gap:7px;margin:10px 0}.ds-journal-chrome>nav button{display:flex;gap:6px;align-items:center;flex:1;justify-content:center}@media(max-width:650px){.ds-survival-panel{padding:12px}.ds-survival-panel h2{font-size:18px}.ds-survival-panel button{min-height:44px;padding:8px}.ds-journal-chrome>nav{gap:4px}.ds-journal-chrome>nav button{font-size:11px;padding:7px}}"
     }
   ],
   "narrative": {
     "northStar": "Project Zomboid reference adapted to the Trilha expedition",
-    "overview": "The approved expedition direction uses Project Zomboid as its primary reference for isometric spatial readability, compact equipment controls and persistent world interaction. The implemented Trilha experience now frames the landscape with charcoal and dark olive surfaces. It keeps the Trilha name, Portuguese labels, Desbravadores context, human characters and optional club identification.\n\nThe scene dominates the first viewport. A narrow navigation rail and shallow server header support the world; a numbered equipment belt, resource readout, objective and compact atlas support exploration. Menus carry the same olive/charcoal language. Pale paper remains a purposeful contrast for the expanded atlas, help and contextual discoveries rather than the default application background.\n\nThis document records the current code after the authorized redesign. The Expedition redesign section of PRODUCT.md and the approved surface direction supersede the older cream-shell description retained elsewhere in PRODUCT.md. This extraction does not claim browser, performance or server-capacity verification.",
+    "overview": "The approved expedition direction uses Project Zomboid as its primary reference for isometric spatial readability, compact equipment controls and persistent world interaction. The implemented Trilha experience now frames the landscape with charcoal and dark olive surfaces. It keeps the Trilha name, Portuguese labels, Desbravadores context, human characters and optional club identification.\n\nThe scene dominates the first viewport. A narrow navigation rail and shallow server header support the world; a numbered equipment belt, resource readout, objective and compact atlas support exploration. Menus carry the same olive/charcoal language. Pale paper remains a purposeful contrast for the expanded atlas, help and contextual discoveries rather than the default application background.\n\nThis document records the current code after the authorized redesign and survival expansion. The current surface brief and PRODUCT.md continuation supersede the older cream-shell and no-combat descriptions. Natural-animal hunting is now in scope; supernatural and zombie content remain excluded. New survival, fauna, inventory, missions and checkpoints are individual browser-local simulation alongside existing shared presence/chat. This source extraction does not establish production deployment, physical-device performance, server authority or concurrency capacity.",
     "keyCharacteristics": [
       "Rotatable orthographic isometric camp and coherent terrain.",
       "Charcoal frame, olive equipment surfaces and pale readable text.",
       "Ten numbered quick slots with explicit selected states.",
       "A topographic waypoint atlas derived from the scene's data.",
       "Natural cave entrances, continuous covered galleries and a collision-constrained proximity camera.",
-      "Sixteen preserved cosmetic discoveries with local collection progress."
+      "Sixteen preserved cosmetic discoveries with local collection progress.",
+      "Six visibly distinct biome materials, condition readouts and explored-only cartography.",
+      "Eighteen mission rows, finite inventory/crafting and explicit camp checkpoints."
     ],
     "rules": [
       {
         "name": "The Equipment Frame Rule",
         "body": "Keep persistent application chrome dark. Use the pale atlas and contextual paper treatments where the current implementation gives them an orientation or interaction purpose.",
+        "section": "colors"
+      },
+      {
+        "name": "The Condition Evidence Rule",
+        "body": "Pair condition color with a named value or explicit state; distinguish stamina from hydration and show environmental temperature separately from body temperature.",
         "section": "colors"
       }
     ],
@@ -216,11 +577,13 @@
       "Do preserve all sixteen IDs, Portuguese names, club identification and current room/admin/VIP rules.",
       "Do keep cave entry, intact cover, proximity camera, movement and atlas geometry coherent.",
       "Do preserve the mounted room scene and pause interaction when opening menus.",
-      "Do maintain visible focus, selected-state semantics and usable horizontally scrolling mobile equipment."
+      "Do maintain visible focus, selected-state semantics and usable horizontally scrolling mobile equipment.",
+      "Do distinguish the eighteen survival missions from sixteen cosmetic discoveries, and local simulation from real connected presence.",
+      "Do preserve explored-only cartography, explicit camp saves, death cause/lesson and finite resource/tool consequences."
     ],
     "donts": [
       "Don't restore the stale cream application shell or the twelve-discovery count.",
-      "Don't copy proprietary assets or add zombie/combat mechanics from the reference.",
+      "Don't copy proprietary assets or introduce zombies/supernatural creatures; natural-animal hunting is the authorized combat scope.",
       "Don't turn cave galleries into disconnected square-block assemblies.",
       "Don't imply that equipment trials or local collection are purchased entitlements.",
       "Don't describe source extraction as browser, hardware, authority or concurrency validation."

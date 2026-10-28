@@ -49,3 +49,5 @@ let lastHorizontal=Infinity,lastFov=0;
 for(let i=0;i<=100;i++){const f=e.coveredFraming(i/100,30,3.5);assert.ok(f.horizontal<=lastHorizontal&&f.fov>=lastFov,'continuous camera dolly and lens');lastHorizontal=f.horizontal;lastFov=f.fov;}
 assert.ok(Math.abs(e.coveredFraming(1,30,3.5).fov-65)<1e-8,'close lens reaches its intended field');
 console.log('PASS: continuous matched framing from distant isometric view to the close lens');
+
+assert.equal(e.coverAt(0,0,[{x:0,z:6,width:.6,depth:.6,canopy:3}],0),'copa','foreground canopy approaches camera before hiding the player');

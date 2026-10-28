@@ -16,13 +16,19 @@ import {configureRenderer,type GraphicQuality} from './rendering';
 import { avatars } from "./profiles";
 import { buildLobby, places, SIZE } from "./scene";
 import type { Profile, Visitor } from "./useLobby";
-import {BOUNDARY, terrainHeight, caveAt, ropeCrossing, discoveries, type Discovery} from './exploration';
-import {movementSpeed,energyStep,gearIds} from './gear';
+import {BOUNDARY, terrainHeight, caveAt, discoveries, type Discovery} from './exploration';
+import {movementSpeed,gearIds} from './gear';
 import FieldMap from './FieldMap';
 import Quickbelt from './Quickbelt';
 import {createEquipment,type Equipment} from './equipment';
 import {startWaterAction,advanceWaterAction,type WaterAction} from './itemActions';
 import {coverAt,cameraBoom,coveredFraming} from './coveredCamera';
+import SurvivalPanel,{SurvivalVitals} from './SurvivalPanel';
+import {worldClimate} from './biomes';
+import {createExpedition,checkpointLoad,checkpointSave,loadLedger,persistLedger,stepSurvival,act,note,damage,wear,weight,waterAt,swimmingAt,available,consumeNode,startActivity,interactionAt} from './survival';
+import {distract,huntHit} from './fauna';
+import {buildExpeditionWorld} from './expeditionWorld';
+import {ropeAnchors,ropePoint,createRopeTrip,ropeFrame,ropeStaminaNeeded,type RopeTrip} from './traversal';
 import {frameProfiler} from './diagnostics';
 type Props = {
   profile: Profile;
@@ -36,13 +42,17 @@ type Props = {
   onPlayer: (p: Visitor) => void;
   onVip: () => void;
   initialPosition?: {x:number;z:number};
+  fixture?:boolean;
   foundIds: string[];
   onDiscover: (reward: Discovery) => void;
 };
 export default function LobbyWorld(props: Props) {
   const section = useRef<HTMLElement>(null),
     host = useRef<HTMLDivElement>(null),
-    surface = useRef<HTMLDivElement>(null);
+    surface = useRef<HTMLDivElement>(null),notice=useRef<HTMLParagraphElement>(null);
+  const [initialExpedition]=useState(()=>props.fixture?createExpedition():checkpointLoad(props.profile.nickname));
+  const survival=useRef(initialExpedition),action=useRef<(id:string)=>void>(()=>{}),sneaking=useRef(false),tree=useRef(false);
+  const [expedition,setExpedition]=useState(()=>({...initialExpedition,explored:[...initialExpedition.explored]})),[journal,setJournal]=useState(false),[animalText,setAnimalText]=useState(''),[context,setContext]=useState<{id:string;label:string}|null>(null);
   const latest = useRef(props);
   latest.current = props;
   const view = useRef({ yaw: Math.PI/4, pitch: Math.atan(1/Math.sqrt(2)), distance: 30 }),
@@ -65,14 +75,19 @@ export default function LobbyWorld(props: Props) {
     [run, setRun] = useState(false),
     [help, setHelp] = useState(false),
     [mapExpanded, setMapExpanded] = useState(false);
-  const resources=useRef({energy:100,water:3,light:true,observing:false,mounted:true,message:'',messageUntil:0,action:null as WaterAction|null,crossing:null as null|{from:{x:number;y:number};to:{x:number;y:number};elapsed:number}});
+  const resources=useRef({energy:100,thirst:100,water:3,refillId:'',refillDirty:false,light:true,observing:false,mounted:true,message:'',messageUntil:0,action:null as WaterAction|null,crossing:null as RopeTrip|null});
   const useItem=useRef<(mode?:'refill')=>void>(()=>{});
   const [hud,setHud]=useState({energy:100,water:3,cave:'',heading:0,light:true,observing:false,mounted:true,message:'',bearing:'',distance:0,action:'',progress:0,canRefill:false});
   const [nearReward,setNearReward] = useState<Discovery|null>(null);
   const [coords, setCoords] = useState({ x: 0, z: 7 });
   const petUntil = useRef(0);
   latest.current = { ...props,onEquip:equip, paused: props.paused || help || mapExpanded };
-  function equip(id:string){if(resources.current.crossing){resources.current.message='Conclua a travessia antes de trocar o item.';resources.current.messageUntil=performance.now()+4000;return}props.onEquip(id)}
+  useEffect(()=>{
+    const node=notice.current;if(!node||!section.current)return;
+    const target=section.current,observer=new ResizeObserver(()=>target.style.setProperty('--notice-height',`${node.getBoundingClientRect().height}px`));
+    observer.observe(node);return()=>observer.disconnect();
+  },[expedition.message,mapExpanded,journal,expedition.messageTime>0]);
+  function equip(id:string){const parked=survival.current.bikePosition??{x:0,z:8};if(id==='bicicleta'&&Math.hypot(coords.x-parked.x,coords.z-parked.z)>4){note(survival.current,'A bicicleta ficou estacionada. Volte até ela para montar.');return}if(resources.current.crossing){resources.current.message='Conclua a travessia antes de trocar o item.';resources.current.messageUntil=performance.now()+4000;return}props.onEquip(id)}
   useEffect(() => {
     const change = () =>
       setFullscreen(document.fullscreenElement === section.current);
@@ -96,6 +111,7 @@ export default function LobbyWorld(props: Props) {
   }
   useEffect(() => {
     if (!host.current) return;
+    const saveKey=props.fixture?'__scene-lab__':props.profile.nickname;
     const container = host.current,
       scene = new T.Scene();
     scene.background = new T.Color("#c2d4c6");
@@ -135,32 +151,54 @@ export default function LobbyWorld(props: Props) {
         signature: string;
       }
     >();
-    let itemId=latest.current.item,equipped=createEquipment(actor,scene,itemId);
+    loadLedger(survival.current,saveKey);
+    const expeditionWorld=buildExpeditionWorld(scene,actor);
+    survival.current.bikePosition??={x:0,z:8};
+    const cachedBike=createEquipment(actor,scene,'bicicleta');
+    let itemId=latest.current.item,equipped=itemId==='bicicleta'?cachedBike:createEquipment(actor,scene,itemId);
     const tell=(text:string)=>{resources.current.message=text;resources.current.messageUntil=performance.now()+4500};
-    const syncEquipment=()=>{if(resources.current.crossing||itemId===latest.current.item)return;equipped.dispose();itemId=latest.current.item;resources.current.observing=false;resources.current.action=null;resources.current.mounted=itemId==='bicicleta';equipped=createEquipment(actor,scene,itemId)};
+    const syncEquipment=()=>{if(resources.current.crossing||itemId===latest.current.item)return;if(itemId!=='bicicleta')equipped.dispose();itemId=latest.current.item;resources.current.observing=false;resources.current.action=null;resources.current.mounted=itemId==='bicicleta';if(itemId)survival.current.torchLit=false;equipped=itemId==='bicicleta'?cachedBike:createEquipment(actor,scene,itemId)};
     const ropeVisual=new T.Group();ropeVisual.userData.dynamic=true;scene.add(ropeVisual);
     const showRope=()=>{
       disposeScene(ropeVisual);ropeVisual.clear();
-      const a=ropeCrossing.from,b=ropeCrossing.to,pa=new T.Vector3(a.x,terrainHeight(a.x,a.z)+1.5,a.z+1.7),pb=new T.Vector3(b.x,terrainHeight(b.x,b.z)+1.5,b.z+1.7),mid=pa.clone().lerp(pb,.5);mid.y-=.4;
-      const cable=new T.Mesh(new T.TubeGeometry(new T.CatmullRomCurve3([pa,mid,pb]),32,.045,6,false),new T.MeshStandardMaterial({color:'#d4b77d',roughness:1}));ropeVisual.add(cable);
+      const [a,b]=ropeAnchors();
+      const curve=new(class extends T.Curve<T.Vector3>{constructor(){super()}getPoint(t:number,target=new T.Vector3()){const p=ropePoint(a,b,t);return target.set(p.x,p.y,p.z)}})();
+      const cable=new T.Mesh(new T.TubeGeometry(curve,64,.045,6,false),new T.MeshStandardMaterial({color:'#d4b77d',roughness:1}));ropeVisual.add(cable);
     };
 
     let p = {
-        x: props.initialPosition?.x ?? Math.random() * 4 - 2,
-        y: props.initialPosition?.z ?? (props.vip ? -31 : 7 + Math.random() * 2),
+        x: props.fixture?(props.initialPosition?.x??0):survival.current.checkpoint.x,
+        y: props.fixture?(props.initialPosition?.z??8):survival.current.checkpoint.z,
       },
       frame = 0,
       last = performance.now(),
       published = 0;
     const groundHeight=(x:number,z:number)=>terrainHeight(x,z)+(Math.hypot(x,z)<43?.17:0);
+    world.obstacles.push(...expeditionWorld.obstacles);
     const motion=createMotion(p.x,p.y,groundHeight),queryObstacles=obstacleIndex(world.obstacles);
     const lookTarget=new T.Vector3(p.x,groundHeight(p.x,p.y)+1,p.y),desiredLook=new T.Vector3(),peerTarget=new T.Vector3();
     const daylight=new T.Color('#d4dbcc'),night=new T.Color('#1e2824');
+    let lastLedgerSnapshot='',lastFallY=0;
     let coverBlend=0,coverBoom=3.5,caveBlend=0,cameraDistance=view.current.distance,cameraYaw=view.current.yaw,autoScale=1,lastTuning=0,appliedQuality=qualityRef.current;
+    action.current=(id)=>{
+      const s=survival.current;
+      if(id==='respawn'){if(!s.dead)return;const fresh=checkpointLoad(saveKey);loadLedger(fresh,saveKey);Object.assign(s,fresh);motion.x=p.x=s.checkpoint.x;motion.z=p.y=s.checkpoint.z;motion.y=groundHeight(p.x,p.y);motion.vx=motion.vz=motion.vy=0;resources.current.action=null;resources.current.crossing=null;tree.current=false;keys.clear();setJournal(false);return}
+      if(s.dead)return;
+      if(resources.current.crossing&&!id.startsWith('track:')){note(s,'Conclua a travessia antes de iniciar outra ação.');return}
+      if(id==='water'){if(itemId!=='cantil'){latest.current.onEquip('cantil');note(s,'Cantil equipado. Use G para encher na fonte.')}else useItem.current('refill');return}
+      if(id.startsWith('track:')){s.selectedTask=Number(id.slice(6));return}
+      if(id==='sneak'){sneaking.current=!sneaking.current;return}
+      if(id==='tree'){if(tree.current){tree.current=false;return}const trunk=queryObstacles(p.x,p.y,3).find(o=>o.canopy&&Math.hypot(p.x-o.x,p.y-o.z)<3);if(!trunk||s.stamina<20){note(s,'Aproxime-se de uma árvore e reserve ao menos 20 de stamina.');return}tree.current=true;note(s,'Você subiu. Lobos ficam no chão; felinos e alguns ursos ainda podem alcançar você.');return}
+      if(id==='distract'){distract(expeditionWorld.animals,s,p.x,p.y);return}
+      if(id==='hunt'){latest.current.onEquip('');const a=expeditionWorld.nearest(p.x,p.y);if(!a||Math.hypot(a.x-p.x,a.z-p.y)>16||!s.inventory.bow||s.durability.bow<25||weight(s)>20){note(s,'A caça exige um arco utilizável, espaço na mochila e animal a menos de 16 m.');return}startActivity(s,'hunt',a.id,4);return}
+      if(id==='save'){if(Math.hypot(motion.vx,motion.vz)>.2){note(s,'Pare antes de salvar no acampamento.');return}checkpointSave(s,saveKey,p.x,p.y);return}
+      if(id==='torch'){latest.current.onEquip('')}
+      act(s,id,p.x,p.y);persistLedger(s,saveKey);
+    };
     useItem.current=(mode)=>{
       syncEquipment();
-      const r=resources.current,item=itemId;
-      if(latest.current.paused)return;
+      const r=resources.current,item=itemId,s=survival.current;
+      if(latest.current.paused||survival.current.dead)return;
       if(r.crossing){tell('Conclua a travessia antes de usar outro item.');return}
       if(r.action){tell('Espere concluir a ação do cantil.');return}
       if(item==='mapa'){setMapExpanded(true);return}
@@ -168,17 +206,19 @@ export default function LobbyWorld(props: Props) {
       if(item==='botas'){tell('Botas calçadas: melhor aderência e velocidade nas subidas.');return}
       if(item==='pet'){petUntil.current=performance.now()+5000;tell('Seu companheiro está farejando os arredores.');return}
       if(item==='lanterna'||item==='capacete'){r.light=!r.light;tell(r.light?'Luz ligada':'Luz desligada')}
-      else if(item==='bicicleta'){if(caveAt(p.x,p.y)){tell('A bicicleta fica do lado de fora. Explore a caverna a pé.');return}if(!r.mounted&&equipped.parkedDistance(p.x,p.y)>3){tell(`Aproxime-se da bicicleta estacionada (${Math.round(equipped.parkedDistance(p.x,p.y))} m).`);return}r.mounted=!r.mounted;tell(r.mounted?'Bicicleta montada: pedale com WASD ou analógico':'Você desceu da bicicleta')}
+      else if(item==='bicicleta'){if(s.durability.bicicleta<=0){tell('Bicicleta avariada. Repare-a no acampamento.');return}if(caveAt(p.x,p.y)){tell('A bicicleta fica do lado de fora. Explore a caverna a pé.');return}if(!r.mounted&&equipped.parkedDistance(p.x,p.y)>3){tell(`Aproxime-se da bicicleta estacionada (${Math.round(equipped.parkedDistance(p.x,p.y))} m).`);return}r.mounted=!r.mounted;tell(r.mounted?'Bicicleta montada: pedale com WASD ou analógico':'Você desceu da bicicleta')}
       else if(item==='binoculos')r.observing=!r.observing;
       else if(item==='cantil'){
-        const waters=[{x:-24,z:18},...places.filter(v=>['rio','cachoeira'].includes(v.id))];
-        const nearWater=waters.some(v=>Math.hypot(v.x-p.x,v.z-p.y)<12);
-        if(mode==='refill'&&!nearWater){tell('Aproxime-se do lago ou do riacho para reabastecer.');return}
+        const source=waterAt(p.x,p.y);
+        if(mode==='refill'&&(!source||!available(s,source))){tell('Procure uma fonte com água ou retorne à base.');return}
+        if(mode==='refill'&&source){r.refillId=source.id;r.refillDirty=!source.clean;}
+        r.thirst=s.thirst;
         tell(startWaterAction(r,mode==='refill'));
       }else if(item==='corda'){
-        const from=ropeCrossing.from,to=ropeCrossing.to;
-        const a=Math.hypot(p.x-from.x,p.y-from.z),b=Math.hypot(p.x-to.x,p.y-to.z);
-        if(Math.min(a,b)<7&&!r.crossing){const dest=a<b?to:from;r.crossing={from:{...p},to:{x:dest.x,y:dest.z},elapsed:0};showRope();tell('Corda fixada: atravessando a ravina')}
+        const trip=createRopeTrip(p.x,p.y),climate=worldClimate(s.time,p.x,p.y),needed=ropeStaminaNeeded(trip,weight(s),climate.temp<0&&!(s.thermalWorn&&s.inventory.thermal));
+        if(needed>100){tell('Carga excessiva para a travessia. Deixe parte dos materiais no acampamento.');return}
+        if(!s.inventory.rope||s.durability.rope<18||s.stamina<needed){tell(`A travessia exige corda utilizável e ${needed} de stamina.`);return}
+        if(Math.hypot(p.x-trip.a.x,p.y-trip.a.z)<3.5&&!r.crossing){wear(s,'rope',18);r.crossing=trip;showRope();tell('Corda fixada: aproxime-se da ancoragem e atravesse sem soltar.')}
         else tell('Leve a corda a um ponto de ancoragem da ravina');
       }
     };
@@ -222,6 +262,7 @@ export default function LobbyWorld(props: Props) {
       touches.current.clear();setJoystick(null);
     };
     const down = (e: KeyboardEvent) => {
+      if(survival.current.dead)return;
       if(e.code==='KeyM'&&surface.current?.contains(document.activeElement)){e.preventDefault();setMapExpanded(v=>!v);return}
       if(e.code==='Escape'){setMapExpanded(false);resources.current.observing=false;return}
       if (
@@ -249,10 +290,12 @@ export default function LobbyWorld(props: Props) {
       if(/^Digit[0-9]$/.test(e.code)&&!e.repeat){const n=Number(e.code.slice(-1));latest.current.onEquip(gearIds[(n+9)%10]);e.preventDefault()}
       if(e.code==='KeyQ'&&!e.repeat)view.current.yaw-=Math.PI/2;
       if(e.code==='KeyR'&&!e.repeat)view.current.yaw+=Math.PI/2;
+      if(e.code==='KeyC'&&!e.repeat){e.preventDefault();action.current('sneak')}
+      if(e.code==='KeyJ'&&!e.repeat){e.preventDefault();setJournal(v=>!v)}
       if(e.code==='Space'&&!e.repeat){e.preventDefault();input.current.jump=true}
       if(e.code==='KeyG'&&!e.repeat&&latest.current.item==='cantil'){e.preventDefault();useItem.current('refill')}
       if(e.code==='KeyF'&&!e.repeat){e.preventDefault();useItem.current()}
-      if(e.code==='KeyE'&&!e.repeat){if(caveAt(p.x,p.y)&&!(['lanterna','capacete'].includes(latest.current.item)&&resources.current.light))return;const reward=discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5);if(reward)latest.current.onDiscover(reward)}
+      if(e.code==='KeyE'&&!e.repeat){if(caveAt(p.x,p.y)&&!(['lanterna','capacete'].includes(latest.current.item)&&resources.current.light))return;const reward=discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5);if(reward)latest.current.onDiscover(reward);else {const context=interactionAt(survival.current,p.x,p.y);if(context)action.current(context.id)}}
     };
     const up = (e: KeyboardEvent) => keys.delete(e.code);
     window.addEventListener("keydown", down);
@@ -262,7 +305,8 @@ export default function LobbyWorld(props: Props) {
       const dt = Math.max(0,Math.min(0.1, (now - last) / 1000));
       last = now;
       if (latest.current.paused || document.hidden) reset();
-      const enabled = !latest.current.paused && !document.hidden;
+      const enabled = !latest.current.paused && !document.hidden && !survival.current.dead;
+      const s=survival.current;
       const dx = enabled
         ? Number(keys.has("KeyD") || keys.has("ArrowRight")) -
           Number(keys.has("KeyA") || keys.has("ArrowLeft")) +
@@ -273,43 +317,58 @@ export default function LobbyWorld(props: Props) {
           Number(keys.has("KeyW") || keys.has("ArrowUp")) +
           input.current.z
         : 0;
-      const covered=coverAt(p.x,p.y,queryObstacles(p.x,p.y,5));
+      const covered=coverAt(p.x,p.y,queryObstacles(p.x,p.y,14),view.current.yaw);
       const closeInspection=(view.current.distance<12||!!covered)&&!overviewRef.current;
       for(const tag of environmentLabels)tag.visible=!closeInspection;
       const { yaw, pitch, distance } = view.current,
         wx = dx * Math.cos(yaw) + dz * Math.sin(yaw),
         wz = -dx * Math.sin(yaw) + dz * Math.cos(yaw);
       syncEquipment();
-      const r=resources.current,cave=caveAt(p.x,p.y),bike=itemId==='bicicleta'&&r.mounted&&!cave;
+      const r=resources.current;r.energy=s.stamina;r.thirst=s.thirst;r.water=s.water;
+      const cave=caveAt(p.x,p.y),bike=itemId==='bicicleta'&&r.mounted&&!cave&&s.durability.bicicleta>0;
       if(cave&&itemId==='bicicleta'&&r.mounted){r.mounted=false;tell('Você desceu da bicicleta para entrar na caverna.')}
       if((dx||dz)&&r.action){r.action=null;tell('Ação do cantil interrompida pela caminhada.')}
-      const waterMessage=advanceWaterAction(r,dt,itemId,enabled);if(waterMessage)tell(waterMessage);
+      const oldWaterAction=r.action?.kind,oldWater=r.water;
+      const waterMessage=advanceWaterAction(r,dt,itemId,enabled);if(waterMessage){tell(waterMessage);if(oldWaterAction==='refill'&&!r.action){s.dirtyWater=r.refillDirty;const source=waterAt(p.x,p.y);if(source)consumeNode(s,source);if(s.dirtyWater){tell('Água não tratada no cantil — ferva antes de beber.');note(s,'Água não tratada no cantil — ferva no fogo antes de beber para evitar doença.')}persistLedger(s,saveKey)}if(oldWaterAction==='drink'&&r.water<oldWater&&s.dirtyWater){s.infection=Math.min(100,s.infection+25);damage(s,8,'Água contaminada: faltou ferver');note(s,'Água contaminada. Ferva o próximo cantil e trate a infecção.')}}
+      s.thirst=r.thirst;s.water=r.water;
       const slope=Math.abs(terrainHeight(p.x+Math.sin(actor.root.rotation.y)*2,p.y+Math.cos(actor.root.rotation.y)*2)-terrainHeight(p.x,p.y))/2;
-      const sprint=input.current.run||keys.has('ShiftLeft');
-      const speed=movementSpeed(bike?'bicicleta':latest.current.item==='bicicleta'?'':latest.current.item,sprint,r.energy,slope,!!cave);
-      advanceMotion(motion,{x:wx,z:wz,speed,jump:input.current.jump,enabled,bike},dt,groundHeight,queryObstacles,BOUNDARY);input.current.jump=false;
+      const sprint=(input.current.run||keys.has('ShiftLeft'))&&!r.crossing&&!s.exhausted&&!sneaking.current&&s.stamina>1;
+      const swimming=swimmingAt(p.x,p.y,worldClimate(s.time,p.x,p.y).storm),burden=Math.max(.4,1-Math.max(0,weight(s)-13)*.045);
+      const baseSpeed=movementSpeed(bike?'bicicleta':latest.current.item==='bicicleta'?'':latest.current.item,sprint,r.energy,slope,!!cave);
+      const speed=baseSpeed*burden*(s.exhausted?.32:1)*(s.injured>0?.75:1)*(sneaking.current?.55:1)*(swimming?.4:1)*(tree.current?0:1);
+      const wasGrounded=motion.grounded;
+      if(!motion.grounded)lastFallY=Math.max(lastFallY,motion.y);
+      advanceMotion(motion,{x:wx,z:wz,speed,jump:input.current.jump&&!s.exhausted&&s.stamina>10&&!swimming&&!tree.current&&!r.crossing,enabled,bike},dt,groundHeight,queryObstacles,BOUNDARY);input.current.jump=false;if(wasGrounded&&!motion.grounded&&motion.vy>0)s.stamina=Math.max(0,s.stamina-8);
       if(r.crossing){
         if(enabled)r.crossing.elapsed+=dt;
-        const t=Math.min(1,r.crossing.elapsed/2.4),smooth=t*t*(3-2*t);
-        motion.x=r.crossing.from.x+(r.crossing.to.x-r.crossing.from.x)*smooth;motion.z=r.crossing.from.y+(r.crossing.to.y-r.crossing.from.y)*smooth;
-        motion.y=groundHeight(motion.x,motion.z)+Math.sin(t*Math.PI)*.35;motion.vx=motion.vz=0;
-        if(t>=1)r.crossing=null;
+        const position=ropeFrame(r.crossing);
+        motion.x=position.x;motion.z=position.z;motion.y=position.y;motion.vx=motion.vz=motion.vy=0;motion.grounded=true;
+        if(position.done)r.crossing=null;
       }
       const moved=Math.hypot(motion.x-p.x,motion.z-p.y),moving=moved>.0005,actualSpeed=moved/Math.max(dt,.001);
       if(moving)actor.root.rotation.y=dampAngle(actor.root.rotation.y,Math.atan2(motion.x-p.x,motion.z-p.y),bike?9:18,dt);
       p.x=motion.x;p.y=motion.z;
       const altitude=groundHeight(p.x,p.y),air=Math.max(0,motion.y-altitude);
-      actor.root.position.set(p.x,motion.y,p.y);
-      actor.animate(now/1000,moving,latest.current.gesture,bike,{speed:actualSpeed,air,landing:motion.landing,item:itemId,action:r.action?.kind==='drink'?Math.sin(Math.PI*r.action.elapsed/r.action.duration):0,observing:r.observing,cyclePhase:equipped.phase,crossing:!!r.crossing});
-      if(enabled)r.energy=energyStep(r.energy,moving,sprint,bike,dt);
-      const inside=caveAt(p.x,p.y),hasLight=['lanterna','capacete'].includes(latest.current.item)&&r.light;
+      actor.root.position.set(p.x,motion.y+(tree.current?3.5:swimming?-.45:0),p.y);
+      actor.animate(now/1000,moving,s.activity&&['rest','sleep'].includes(s.activity.kind)?'Sentar':latest.current.gesture,bike,{speed:actualSpeed,air,landing:motion.landing,item:s.activity?.kind==='hunt'?'mapa':s.torchLit?'lanterna':itemId,action:r.action?.kind==='drink'?Math.sin(Math.PI*r.action.elapsed/r.action.duration):0,observing:r.observing,cyclePhase:equipped.phase,crossing:!!r.crossing});
+      const nearestAnimal=expeditionWorld.nearest(p.x,p.y),threat=!!nearestAnimal&&nearestAnimal.mode==='pursue'&&Math.hypot(nearestAnimal.x-p.x,nearestAnimal.z-p.y)<30;
+      const completedActivity=s.activity;
+      if(enabled){stepSurvival(s,dt,{x:p.x,z:p.y,moving,running:sprint,climbing:slope>.3||!!r.crossing||tree.current,swimming,seated:latest.current.gesture==='Sentar',sheltered:!!covered,cycling:bike,distance:moved,fall:!wasGrounded&&motion.grounded?lastFallY-motion.y:0,item:bike?'bicicleta':itemId==='bicicleta'?'':itemId,rope:!!r.crossing,threat});expeditionWorld.update(s,dt,{x:p.x,z:p.y,running:sprint,sneaking:sneaking.current,swimming,tree:tree.current,light:r.light&&['lanterna','capacete'].includes(itemId)&&s.durability[itemId]>0},queryObstacles)}
+      if(motion.grounded)lastFallY=motion.y;
+      if(tree.current&&s.stamina<=0){tree.current=false;damage(s,8,'Queda da árvore por exaustão');s.injured+=15}
+      if(completedActivity?.kind==='hunt'&&!s.activity&&completedActivity.elapsed>=completedActivity.duration){const target=expeditionWorld.animals.find(a=>a.id===completedActivity.target);if(target)huntHit(target,s,p.x,p.y);persistLedger(s,saveKey)}
+      r.energy=s.stamina;
+      const climate=worldClimate(s.time,p.x,p.y),dayLight=climate.hour<6||climate.hour>=19?.1:climate.hour<8?.1+(climate.hour-6)*.45:climate.hour>17?1-(climate.hour-17)*.45:1;
+      const inside=caveAt(p.x,p.y),hasLight=(['lanterna','capacete'].includes(latest.current.item)&&r.light&&s.durability[latest.current.item]>0)||s.torchLit;
       caveBlend+=(Number(!!inside)-caveBlend)*(1-Math.exp(-4*dt));
-      ambient.intensity=T.MathUtils.lerp(1.65,.48,caveBlend);sun.intensity=T.MathUtils.lerp(2.6,.05,caveBlend);
-      const fog=scene.fog as T.Fog;fog.color.copy(daylight).lerp(night,caveBlend);fog.near=resources.current.observing?180:380;fog.far=resources.current.observing?650:T.MathUtils.lerp(1100,650,caveBlend);
+      ambient.intensity=T.MathUtils.lerp(1.65*dayLight,.3,caveBlend);sun.intensity=T.MathUtils.lerp(2.6*dayLight,.03,caveBlend);
+      const fog=scene.fog as T.Fog;fog.color.copy(daylight).lerp(night,Math.max(caveBlend,1-dayLight));fog.near=climate.storm?8:dayLight<.3?20:resources.current.observing?180:380;fog.far=climate.storm?75:dayLight<.3?(hasLight?65:38):resources.current.observing?650:T.MathUtils.lerp(1100,650,caveBlend);
       (scene.background as T.Color).copy(fog.color);
       const shadowX=Math.round(p.x*16)/16,shadowZ=Math.round(p.y*16)/16;sun.position.set(shadowX-28,altitude+48,shadowZ+22);sun.target.position.set(shadowX,altitude,shadowZ);
       const petGoal=discoveries.reduce<Discovery|undefined>((best,g)=>latest.current.foundIds.includes(g.id)?best:!best||Math.hypot(g.x-p.x,g.z-p.y)<Math.hypot(best.x-p.x,best.z-p.y)?g:best,undefined);
       equipped.update({time:now/1000,dt:enabled?dt:0,x:p.x,y:motion.y,z:p.y,heading:actor.root.rotation.y,speed:actualSpeed,distance:moved,mounted:bike,light:hasLight,observing:r.observing,action:r.action?.kind==='drink'?Math.sin(Math.PI*r.action.elapsed/r.action.duration):0,playing:petUntil.current>now,goal:petGoal&&Math.hypot(petGoal.x-p.x,petGoal.z-p.y)<25?petGoal:undefined,height:groundHeight,obstacles:queryObstacles});
+      if(bike)s.bikePosition={x:p.x,z:p.y};
+      if(itemId!=='bicicleta'){const parked=s.bikePosition;cachedBike.update({time:now/1000,dt:0,x:parked.x,y:groundHeight(parked.x,parked.z),z:parked.z,heading:0,speed:0,distance:0,mounted:false,light:false,observing:false,action:0,playing:false,height:groundHeight,obstacles:queryObstacles})}
       const ids = new Set(latest.current.players.map((v) => v.id));
       for (const [id, a] of actors)
         if (!ids.has(id)) {
@@ -368,27 +427,27 @@ export default function LobbyWorld(props: Props) {
         const forestCells=scene.userData.forestLods as T.LOD[]|undefined;
         if(forestCells)for(const lod of forestCells){const distance=Math.hypot(lod.position.x-p.x,lod.position.z-p.y);lod.levels.forEach((level,i)=>level.object.visible=i===(distance<125?0:distance<460?1:2))}
         latest.current.onMove((p.x / SIZE) * 100 + 50,(p.y / SIZE) * 100 + 50,itemId==='bicicleta'&&!bike?'':itemId);
+        setExpedition(prev=>({...s,inventory:{...s.inventory},progress:{...s.progress},claimed:[...s.claimed],explored:prev.explored.length===s.explored.length?prev.explored:[...s.explored]}));
+        setContext(interactionAt(s,p.x,p.y));
+        setAnimalText(nearestAnimal&&Math.hypot(nearestAnimal.x-p.x,nearestAnimal.z-p.y)<30?`${nearestAnimal.species.name} · ${Math.round(Math.hypot(nearestAnimal.x-p.x,nearestAnimal.z-p.y))} m · ${nearestAnimal.mode==='pursue'?'perseguindo':nearestAnimal.mode==='alert'?'alerta':'observado'}`:'');
+        const ledgerSnapshot=JSON.stringify(s.ledger);if(ledgerSnapshot!==lastLedgerSnapshot){lastLedgerSnapshot=ledgerSnapshot;persistLedger(s,saveKey)}
         setCoords(prev=>prev.x===Math.round(p.x)&&prev.z===Math.round(p.y)?prev:{x:Math.round(p.x),z:Math.round(p.y)});
         if(showPerformanceRef.current&&container.dataset.performance){const stats=JSON.parse(container.dataset.performance);setPerformanceText(`${stats.fps} FPS · quadro p95 ${stats.p95} ms · ${stats.calls} desenhos · ${stats.triangles.toLocaleString('pt-BR')} triângulos`)}
         const goal=waypoint.current??discoveries.reduce<(typeof discoveries)[number]|undefined>((best,g)=>latest.current.foundIds.includes(g.id)?best:!best||Math.hypot(g.x-p.x,g.z-p.y)<Math.hypot(best.x-p.x,best.z-p.y)?g:best,undefined);
         const bearing=goal?Math.atan2(goal.x-p.x,-(goal.z-p.y))*180/Math.PI:0;
-        setHud({energy:Math.round(r.energy),water:r.water,cave:inside?.name??'',heading:actor.root.rotation.y,light:r.light,observing:r.observing,mounted:r.mounted,message:r.messageUntil>now?r.message:'',bearing:goal?`${goal.name} · ${Math.round((bearing+360)%360)}°`:'Coleção completa',distance:goal?Math.round(Math.hypot(goal.x-p.x,goal.z-p.y)):0,action:r.action?.kind==='drink'?'Bebendo água':r.action?.kind==='refill'?'Reabastecendo cantil':'',progress:r.action?r.action.elapsed/r.action.duration:0,canRefill:[{x:-24,z:18},...places.filter(v=>['rio','cachoeira'].includes(v.id))].some(v=>Math.hypot(v.x-p.x,v.z-p.y)<12)});
+        setHud({energy:Math.round(r.energy),water:r.water,cave:inside?.name??'',heading:actor.root.rotation.y,light:r.light,observing:r.observing,mounted:r.mounted,message:r.messageUntil>now?r.message:'',bearing:goal?`${goal.name} · ${Math.round((bearing+360)%360)}°`:'Coleção completa',distance:goal?Math.round(Math.hypot(goal.x-p.x,goal.z-p.y)):0,action:r.action?.kind==='drink'?'Bebendo água':r.action?.kind==='refill'?'Reabastecendo cantil':'',progress:r.action?r.action.elapsed/r.action.duration:0,canRefill:!!waterAt(p.x,p.y)});
         setNearReward((!inside||hasLight)?discoveries.find(r=>!latest.current.foundIds.includes(r.id)&&Math.hypot(r.x-p.x,r.z-p.y)<3.5)??null:null);
-        setNear(
-          places.reduce((a, b) =>
-            Math.hypot(p.x - a.x, p.y - a.z) < Math.hypot(p.x - b.x, p.y - b.z)
-              ? a
-              : b,
-          ),
-        );
+        const closestPlace=places.reduce((a,b)=>Math.hypot(p.x-a.x,p.y-a.z)<Math.hypot(p.x-b.x,p.y-b.z)?a:b);
+        const biome=worldClimate(s.time,p.x,p.y).biome;
+        setNear(Math.hypot(p.x-closestPlace.x,p.y-closestPlace.z)<28?closestPlace:{id:'biome-'+biome.id,name:biome.name,x:p.x,z:p.y,description:biome.risk});
       }
-      world.animate(now/1000,camera,caveBlend);
+      world.animate(now/1000,camera,Math.max(caveBlend,1-dayLight));
       for(const {reward,root,gem,tag} of treasureMeshes){root.visible=!latest.current.foundIds.includes(reward.id);root.position.y=terrainHeight(reward.x,reward.z)+1.1+Math.sin(now*.002+reward.x)*.13;gem.rotation.y=now*.001;tag.visible=!closeInspection&&Math.hypot(reward.x-p.x,reward.z-p.y)<22}
       const firstPerson=r.observing&&latest.current.item==='binoculos';
       name.visible=!inside&&!covered&&!overviewRef.current&&!closeInspection;
       cameraDistance+=((firstPerson?8:overviewRef.current?1100:distance)-cameraDistance)*(1-Math.exp(-10*dt));
       cameraYaw=dampAngle(cameraYaw,yaw,16,dt);
-      desiredLook.set(p.x,motion.y+1.2-motion.landing*.035,p.y);lookTarget.lerp(desiredLook,1-Math.exp(-20*dt));
+      desiredLook.set(p.x,motion.y+1.2+(tree.current?3.5:0)-motion.landing*.035,p.y);lookTarget.lerp(desiredLook,1-Math.exp(-20*dt));
       const inCover=!!covered&&!overviewRef.current;
       coverBlend+=(Number(inCover)-coverBlend)*(1-Math.exp(-7*dt));
       camera=firstPerson?eyeCamera:inCover||coverBlend>.002?coveredView:isoCamera;
@@ -435,7 +494,7 @@ export default function LobbyWorld(props: Props) {
       window.removeEventListener("blur", reset);
       sun.shadow.dispose();renderer.dispose();
       container.replaceChildren();
-      equipped.dispose();for(const a of actors.values())a.item.dispose();disposeScene(scene);
+      equipped.dispose();if(equipped!==cachedBike)cachedBike.dispose();for(const a of actors.values())a.item.dispose();disposeScene(scene);
     };
   }, [props.profile.avatar, props.profile.nickname, props.vip]);
   function start(e: PointerEvent<HTMLDivElement>) {
@@ -485,7 +544,7 @@ export default function LobbyWorld(props: Props) {
   return (
     <section
       ref={section}
-      className={`lobby-world isometric-world ${expanded ? "expanded" : ""}`}
+      className={`lobby-world isometric-world ${expanded ? "expanded" : ""} ${expedition.messageTime>0&&!journal&&!mapExpanded?'has-survival-notice':''}`}
     >
       <div className="lobby-mapbar">
         <div>
@@ -503,7 +562,7 @@ export default function LobbyWorld(props: Props) {
           </button>
           <button onClick={()=>{view.current.yaw-=Math.PI/2;surface.current?.focus()}} aria-label="Girar câmera à esquerda · Q"><RotateCcw size={16}/></button>
           <button onClick={()=>{view.current.yaw+=Math.PI/2;surface.current?.focus()}} aria-label="Girar câmera à direita · R"><RotateCw size={16}/></button>
-          <button className="view-switch" aria-pressed={overview} aria-label={overview?'Voltar ao personagem':'Ver toda a região'} onClick={()=>setOverview(v=>!v)}><Binoculars size={16}/><span>{overview?'Personagem':'Região'}</span></button>
+          <button className="view-switch" aria-pressed={overview} aria-label="Ver atlas explorado" onClick={()=>setMapExpanded(true)}><Binoculars size={16}/><span>Atlas</span></button>
           <select className="graphics-select" aria-label="Qualidade gráfica" value={quality} onChange={e=>{const q=e.target.value as GraphicQuality;setQuality(q);try{localStorage.setItem('trilha.graphics',q)}catch{}surface.current?.focus()}}><option value="auto">Gráficos: auto</option><option value="high">Gráficos: alta</option><option value="economy">Gráficos: leve</option></select>
           <button onClick={() => setMapExpanded(v=>!v)} aria-label="Abrir mapa de localização detalhado"><MapIcon size={17}/></button>
           <button
@@ -551,28 +610,34 @@ export default function LobbyWorld(props: Props) {
       >
         <div className="lobby-renderer" ref={host} />
         {joystick&&<div className="floating-stick" style={{left:joystick.x,top:joystick.y}} aria-hidden="true"><div ref={stick}/></div>}
-        <button className="jump-button" aria-label="Pular" onClick={()=>{input.current.jump=true;surface.current?.focus()}}>Pular <small>Espaço</small></button>
+        <button className="jump-button" aria-label="Pular" onClick={()=>{if(!survival.current.exhausted&&survival.current.stamina>10)input.current.jump=true;surface.current?.focus()}}>Pular <small>Espaço</small></button>
         {hud.observing&&props.item==='binoculos'&&<div className="binocular-view" aria-hidden="true"><span>+</span></div>}
         <div className="place-caption">
           <strong>{near.name}</strong>
           <span>{near.description}</span>
         </div>
-        <FieldMap onNavigate={p=>{waypoint.current=p;setMapExpanded(false);surface.current?.focus()}} x={coords.x} z={coords.z} heading={hud.heading} expanded={mapExpanded} onToggle={()=>setMapExpanded(v=>!v)}/>
-        {!mapExpanded&&!showPerformance&&<div className="expedition-goal"><b>{waypoint.current?'Destino marcado':'Próxima descoberta'}</b><p>{hud.bearing.split(' · ')[0]} · {hud.distance} m</p>{waypoint.current&&<button onClick={()=>{waypoint.current=null}}>Limpar destino</button>}</div>}
+        <FieldMap explored={expedition.explored} onNavigate={p=>{waypoint.current=p;setMapExpanded(false);surface.current?.focus()}} x={coords.x} z={coords.z} heading={hud.heading} expanded={mapExpanded} onToggle={()=>setMapExpanded(v=>!v)}/>
+        {false&&!mapExpanded&&!showPerformance&&<div className="expedition-goal"><b>{waypoint.current?'Destino marcado':'Próxima descoberta'}</b><p>{hud.bearing.split(' · ')[0]} · {hud.distance} m</p>{waypoint.current&&<button onClick={()=>{waypoint.current=null}}>Limpar destino</button>}</div>}
         {!mapExpanded&&<Quickbelt item={props.item} onEquip={id=>{equip(id);surface.current?.focus()}}/>}
         {!mapExpanded&&<div className="gear-hud">
           <label>Equipamento <select value={props.item} onChange={e=>{equip(e.target.value);surface.current?.focus()}}><option value="">Mãos livres</option>{gearIds.map(id=><option key={id} value={id}>{({mapa:'Mapa',bicicleta:'Bicicleta',pet:'Companheiro',lanterna:'Lanterna',cantil:'Cantil',corda:'Corda',bussola:'Bússola',binoculos:'Binóculos',botas:'Botas',capacete:'Capacete com luz'} as Record<string,string>)[id]}</option>)}</select></label>
-          <span>Energia {hud.energy}% <progress value={hud.energy} max={100}/></span>
+
           {hud.cave&&<strong>{hud.cave} · {['lanterna','capacete'].includes(props.item)&&hud.light?'luz ligada':'equipe uma fonte de luz'}</strong>}
           {props.item==='bussola'&&<strong>↑ N · {hud.bearing} · {hud.distance} m</strong>}
           {props.item==='pet'&&hud.distance<30&&<strong>Seu companheiro encontrou uma pista a {hud.distance} m</strong>}
-          {['mapa','bicicleta','lanterna','capacete','binoculos','cantil','corda','bussola','pet'].includes(props.item)&&<button disabled={!!hud.action} onClick={()=>{useItem.current();surface.current?.focus()}}>{hud.action|| (props.item==='mapa'?'Abrir e consultar o mapa':props.item==='bussola'?'Orientar câmera ao norte':props.item==='pet'?'Farejar / brincar':props.item==='bicicleta'?(hud.mounted?'Descer da bicicleta':'Montar bicicleta'):props.item==='cantil'?`Beber água · ${hud.water}/3`:props.item==='corda'?'Fixar corda na ravina':props.item==='binoculos'?(hud.observing?'Guardar binóculos':'Observar com binóculos'):(hud.light?'Desligar luz':'Ligar luz'))} · F</button>}
-          {props.item==='cantil'&&hud.canRefill&&hud.water<3&&<button disabled={!!hud.action} onClick={()=>{useItem.current('refill');surface.current?.focus()}}>Reabastecer cantil · G</button>}
+          {['mapa','bicicleta','lanterna','capacete','binoculos','cantil','corda','bussola','pet'].includes(props.item)&&<button disabled={!!hud.action||!!expedition.dead} onClick={()=>{useItem.current();surface.current?.focus()}}>{hud.action|| (props.item==='mapa'?'Abrir e consultar o mapa':props.item==='bussola'?'Orientar câmera ao norte':props.item==='pet'?'Farejar / brincar':props.item==='bicicleta'?(hud.mounted?'Descer da bicicleta':'Montar bicicleta'):props.item==='cantil'?`${expedition.dirtyWater?'Beber água não tratada (risco) — ferva antes':'Beber água'} · ${hud.water}/3`:props.item==='corda'?'Fixar corda na ravina':props.item==='binoculos'?(hud.observing?'Guardar binóculos':'Observar com binóculos'):(hud.light?'Desligar luz':'Ligar luz'))} · F</button>}
+          {props.item==='cantil'&&hud.canRefill&&hud.water<3&&<button disabled={!!hud.action||!!expedition.dead} onClick={()=>{useItem.current('refill');surface.current?.focus()}}>Reabastecer cantil · G</button>}
           {props.item==='botas'&&<strong>Botas calçadas · aderência nas subidas</strong>}
           {props.item&&<button onClick={()=>{view.current.distance=8;setOverview(false);surface.current?.focus()}}>Ver equipamento de perto</button>}
           {hud.action&&<progress value={hud.progress} max={1} aria-label={hud.action}/>}
           {hud.message&&<p role="status">{hud.message}</p>}
         </div>}
+        {!mapExpanded&&!journal&&<SurvivalVitals state={expedition} x={coords.x} z={coords.z} onOpen={()=>setJournal(true)}/>}
+        {!mapExpanded&&!journal&&animalText&&<div className="fauna-warning" role="status">{animalText}</div>}
+        {!mapExpanded&&!journal&&expedition.messageTime>0&&<p ref={notice} className="survival-notice" role="status">{expedition.message}</p>}
+        {!journal&&!mapExpanded&&!nearReward&&context&&<button className="field-context" onClick={()=>{action.current(context.id);surface.current?.focus()}}>{context.label}</button>}
+        {journal&&<SurvivalPanel state={expedition} x={coords.x} z={coords.z} onAction={id=>{action.current(id);surface.current?.focus()}} onClose={()=>setJournal(false)} animal={animalText} sneaking={sneaking.current} tree={tree.current}/>}
+        {expedition.dead&&<div className="expedition-death"><h2>A expedição terminou</h2><p>{expedition.dead}</p><p>Os recursos usados no mundo não reaparecem ao retomar. Refaça o preparo no último acampamento salvo.</p><button onClick={()=>action.current('respawn')}>Retomar último acampamento</button></div>}
         <div className="lobby-zoom">
           <button
             onClick={() =>
@@ -651,6 +716,7 @@ export default function LobbyWorld(props: Props) {
               mapa de campo mostra os lugares; a bicicleta aumenta a velocidade;
               o pet acompanha você e fareja descobertas. Use F ou os botões para montar a bicicleta, beber água, acender a luz e fixar a corda na ravina. Use G ou Reabastecer com o cantil perto da água. Cavernas são exploradas a pé; leve lanterna ou capacete com luz.
             </p>
+<p>J: diário com missões, mochila e ações de campo. C: furtividade. Beber repõe hidratação; descansar sentado recupera stamina. Salve na base ou nos acampamentos. Água não tratada exige fervura.</p>
             <label className="performance-toggle"><input type="checkbox" checked={showPerformance} onChange={e=>setShowPerformance(e.target.checked)}/> Exibir desempenho medido neste aparelho</label>
             <p>Espaço ou Pular: salto. Gráficos automáticos ajustam a resolução durante a exploração. Use Alta para priorizar detalhes ou Leve para reduzir o custo gráfico.</p>
             <button onClick={() => setHelp(false)}>Entendi</button>

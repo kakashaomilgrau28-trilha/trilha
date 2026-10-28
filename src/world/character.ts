@@ -102,12 +102,12 @@ export function person(index: number) {
       elbows[i].rotation.x=ease(elbows[i].rotation.x,cycling?-.35:run?-.7:-.15,dt);
       const held=motion?.item??'';
       if(!cycling&&['mapa','binoculos','lanterna','cantil','corda','bussola'].includes(held)){
-       const two=held==='mapa'||held==='binoculos',hand=i===1;
+       const two=held==='mapa'||held==='binoculos'||held==='corda'&&motion?.crossing,hand=i===1;
        if(two||hand){
         let shoulder=two?-.9:-.7,elbow=two?-.65:-.25;
         if(held==='binoculos'&&motion?.observing){shoulder=-1.55;elbow=-1.55;}
         if(held==='cantil'&&motion?.action){shoulder=-.5;elbow=-.3-motion.action*1.8;}
-        if(held==='corda'&&motion?.crossing){shoulder=-1.1;elbow=-.3;}
+        if(held==='corda'&&motion?.crossing){shoulder=-2.8;elbow=-.1;}
         arms[i].rotation.x=ease(oldArmX,shoulder,dt);elbows[i].rotation.x=ease(oldElbowX,elbow,dt);
        }
       }

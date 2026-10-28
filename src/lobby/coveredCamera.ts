@@ -2,13 +2,15 @@ import type {Obstacle} from '../world/physics';
 import {caveAt,caves,destinations} from './exploration';
 
 /** Cover detection and camera collision share the walkable world's coordinates. */
-export function coverAt(x:number,z:number,nearby:Obstacle[]){
+export function coverAt(x:number,z:number,nearby:Obstacle[],yaw=0){
+ if([[-145,-220],[-140,220]].some(([a,b])=>Math.abs(x-a)<7&&Math.abs(z-b)<7))return 'abrigo';
+ if(Math.abs(x-285)<5&&z>54&&z<72)return 'ruína';
  if(caveAt(x,z)||caves.some(c=>Math.abs(x-c.x)<7&&z>=c.z&&z<c.z+12))return 'caverna';
  if(Math.abs(x)<11&&z>19&&z<41)return 'abrigo';
  if(Math.abs(x)<10&&z>-41&&z<-22)return 'refúgio';
  const hut=destinations.find(p=>p.id==='refugio')!;
  if(Math.abs(x-hut.x)<4.4&&Math.abs(z-hut.z)<3.8)return 'abrigo';
- if(nearby.some(o=>o.canopy&&Math.hypot(x-o.x,z-o.z)<o.canopy+1.1))return 'copa';
+ if(nearby.some(o=>{if(!o.canopy)return false;const dx=o.x-x,dz=o.z-z,ahead=dx*Math.sin(yaw)+dz*Math.cos(yaw),across=Math.abs(dx*Math.cos(yaw)-dz*Math.sin(yaw));return Math.hypot(dx,dz)<o.canopy+1.1||ahead>0&&ahead<14&&across<o.canopy+.8}))return 'copa';
  return '';
 }
 /** Sweep a short third-person boom against solid bounds; preserve a safety margin. */

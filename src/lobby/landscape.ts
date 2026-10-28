@@ -1,4 +1,6 @@
 import * as T from 'three';
+import {biomeAt,biomeColor} from './biomes';
+import {nodes,camps,landmarks} from './expeditionData';
 import {buildCaverns} from './caverns';
 import {buildForest} from './forest';
 import {surfaceTexture} from './rendering';
@@ -23,7 +25,7 @@ export function buildLandscape(scene:T.Scene){
   const nearCave=caves.some(c=>Math.abs(cx-c.x)<width/2+20 && cz>c.z-c.length-width/2-15 && cz<c.z+width/2+5),segments=nearCave?64:20;
   const geo=new T.PlaneGeometry(width,width,segments,segments);geo.rotateX(-Math.PI/2);
   const points=geo.attributes.position,colors:number[]=[];
-  for(let i=0;i<points.count;i++){const x=points.getX(i)+cx,z=points.getZ(i)+cz,h=surfaceHeight(x,z);points.setY(i,h);const c=new T.Color(h>36?'#bcbfb1':h>23?'#85907b':h>12?'#7c9369':'#8ca476');c.multiplyScalar(1+Math.sin(x*.3)*Math.cos(z*.2)*.035);colors.push(c.r,c.g,c.b)}
+  for(let i=0;i<points.count;i++){const x=points.getX(i)+cx,z=points.getZ(i)+cz,h=surfaceHeight(x,z);points.setY(i,h);const c=new T.Color(biomeColor(x,z,h));c.multiplyScalar(1+Math.sin(x*.3)*Math.cos(z*.2)*.035);colors.push(c.r,c.g,c.b)}
   geo.setAttribute('color',new T.Float32BufferAttribute(colors,3));geo.computeVertexNormals();
   const visible:number[]=[],covered=new Map<string,number[]>(),index=geo.index!;
   for(let i=0;i<index.count;i+=3){const ids=[index.getX(i),index.getX(i+1),index.getX(i+2)],x=ids.reduce((n,j)=>n+points.getX(j),0)/3+cx,z=ids.reduce((n,j)=>n+points.getZ(j),0)/3+cz,c=caveRoofAt(x,z);
@@ -36,7 +38,7 @@ export function buildLandscape(scene:T.Scene){
  ribbon(scene,riverPoints,8,'#659c9b',.14);
  // Cell-based instancing and three distance levels let the GPU skip distant forest.
  const forest=getForestLayout();buildForest(scene,forest);
- forest.forEach(({x,z,s})=>obstacles.push({x,z,width:.7*s,depth:.7*s,height:9.5*s,canopy:2.8*s}));
+ forest.forEach(({x,z,s})=>obstacles.push({x,z,width:.7*s,depth:.7*s,height:(biomeAt(x,z).id==='savanna'?6.3:9.5)*s,canopy:(biomeAt(x,z).id==='savanna'?4:3.2)*s}));
  const dummy=new T.Object3D();
  // Rest stops, trail signs and mountaintop viewing decks.
  for(const p of destinations.filter(p=>!caves.some(c=>c.id===p.id))){const group=new T.Group();group.position.set(p.x,terrainHeight(p.x,p.z),p.z);scene.add(group);box(group,.16,2.6,.16,3,1.3,3,'#796144');const tag=label(p.name);tag.position.set(3,3,3);tag.scale.set(5,.8,1);group.add(tag);
@@ -48,11 +50,11 @@ export function buildLandscape(scene:T.Scene){
  const rocks=new T.InstancedMesh(new T.IcosahedronGeometry(1,1),material('#969b89'),75);
  for(let i=0;i<75;i++){const a=i*2.399,x=-245+Math.cos(a)*(8+i%13),z=-255+Math.sin(a)*(8+i%19);dummy.position.set(x,terrainHeight(x,z)+.45,z);dummy.scale.set(1+i%3,.7+i%2,1.5);dummy.rotation.y=a;dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix)}scene.add(rocks);
  const flowers=new T.InstancedMesh(new T.IcosahedronGeometry(.22,0),material('#e2bd76'),150);
- for(let i=0;i<150;i++){const a=i*2.399,r=5+Math.sqrt(i)*1.5,x=210+Math.cos(a)*r,z=205+Math.sin(a)*r;dummy.position.set(x,terrainHeight(x,z)+.3,z);dummy.scale.set(1,1,1);dummy.updateMatrix();flowers.setMatrixAt(i,dummy.matrix);flowers.setColorAt(i,new T.Color(i%3===0?'#dfb6bd':i%3===1?'#f3d984':'#e4e9cd'))}scene.add(flowers);
+ for(let i=0;i<150;i++){const a=i*2.399,r=5+Math.sqrt(i)*1.5,x=-160+Math.cos(a)*r,z=245+Math.sin(a)*r;dummy.position.set(x,terrainHeight(x,z)+.3,z);dummy.scale.set(1,1,1);dummy.updateMatrix();flowers.setMatrixAt(i,dummy.matrix);flowers.setColorAt(i,new T.Color(i%3===0?'#dfb6bd':i%3===1?'#f3d984':'#e4e9cd'))}scene.add(flowers);
  const falls=new T.Group();falls.position.set(-220,terrainHeight(-220,-130),-130);scene.add(falls);box(falls,5,7,2,0,3.5,-3,'#929987');box(falls,2.5,6,.2,0,3.2,-1.9,'#a3d0d0');box(falls,7,.15,5,0,.1,0,'#719f9e');
  const r=ropeCrossing;obstacles.push({x:r.x,z:r.z,width:20,depth:10});
  for(let i=0;i<18;i++){const a=i/18*Math.PI*2,x=r.x+Math.cos(a)*11,z=r.z+Math.sin(a)*7;const rock=new T.Mesh(new T.IcosahedronGeometry(1,1),material('#727966'));rock.position.set(x,terrainHeight(x,z)-.4,z);rock.scale.set(2.1,1.7,1.2);scene.add(rock)}
- for(const x of [r.from.x,r.to.x]){box(scene,.5,2,.5,x,terrainHeight(x,r.z)+1,r.z+1.7,'#a98755');const tag=label('Ancoragem · use a corda');tag.position.set(x,terrainHeight(x,r.z)+3,r.z);scene.add(tag)}
+ for(const x of [r.from.x,r.to.x]){for(const side of[-1,1])box(scene,.3,2.3,.3,x,terrainHeight(x,r.z)+1.15,r.z+side*1.6,'#a98755');box(scene,.4,.25,3.5,x,terrainHeight(x,r.z)+2.2,r.z,'#a98755');const tag=label('Ancoragem · use a corda');tag.position.set(x,terrainHeight(x,r.z)+3,r.z);scene.add(tag)}
  return obstacles;
 
 }
@@ -69,6 +71,8 @@ export function getForestLayout(){
  for(let i=0;forest.length<6000&&i<30000;i++){
   let x=(rnd(i+1)-.5)*BOUNDARY*2,z=(rnd(i+97)-.5)*BOUNDARY*2;
   if(i<1800){const route=narrow[i%narrow.length],t=(Math.floor(i/8)+.5)/225,p=route.curve.getPoint(t),d=route.curve.getTangent(t),side=Math.floor(i/4)%2?1:-1,offset=3+rnd(i+205)*3;x=p.x-d.z*side*offset;z=p.z+d.x*side*offset}
+  const biome=biomeAt(x,z);if(rnd(i+901)>biome.trees)continue;
+  if(nodes.some(n=>Math.hypot(n.x-x,n.z-z)<7)||camps.some(n=>Math.hypot(n.x-x,n.z-z)<11)||landmarks.some(n=>Math.hypot(n.x-x,n.z-z)<10))continue;
   if(Math.abs(x)>BOUNDARY||Math.abs(z)>BOUNDARY||Math.hypot(x,z)<48||terrainHeight(x,z)>34||(Math.abs(x-ropeCrossing.x)<24&&Math.abs(z-ropeCrossing.z)<13)||closeToTrail(x,z)||riverPoints.some(p=>Math.hypot(p[0]-x,p[1]-z)<12)||destinations.some(p=>Math.hypot(p.x-x,p.z-z)<12)||caves.some(c=>Math.abs(x-c.x-10)<38&&z<c.z+10&&z>c.z-c.length-20))continue;
   forest.push({x,z,s:.75+rnd(i+201)*.6,hue:.27+rnd(i+304)*.06,lightness:.25+rnd(i+59)*.1});
  }

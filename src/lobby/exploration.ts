@@ -1,3 +1,5 @@
+import {biomeAt} from './biomes';
+import {nodes} from './expeditionData';
 export const PREVIOUS_AREA_MULTIPLIER = 15;
 export const EXPANSION = Math.sqrt(10);
 export const AREA_MULTIPLIER = PREVIOUS_AREA_MULTIPLIER * 10;
@@ -7,7 +9,8 @@ export const mapPercent = (metres: number, span = SIZE) => metres / span * 100 +
 const codes: Record<string,string> = {fogueira:'F',acampamento:'B',oficina:'O',lago:'L',observatorio:'M',vip:'V',cume:'C',pedras:'S',rio:'R',flores:'P',refugio:'A',cachoeira:'Q'};
 export const mapCode = (id:string) => codes[id] ?? '?';
 /** A valley between two ridges. The camp stays level; elevations spread gradually. */
-const rawTerrain = (x:number,z:number) => {
+const poolHeights=new Map<string,number>(),pools=nodes.filter(n=>['water','fish'].includes(n.kind)&&Math.hypot(n.x,n.z)>55);
+const rawTerrain = (x:number,z:number,skipPools=false):number => {
  const edge=Math.min(1,Math.max(0,(Math.hypot(x,z)-43)/55)),fade=edge*edge*(3-2*edge);
  const hill=(cx:number,cz:number,h:number,r:number)=>h*Math.exp(-((x-cx)**2+(z-cz)**2)/(r*r));
  let h=fade*(hill(245,-230,58,100)+hill(-245,-255,43,105)+hill(210,205,22,120)+hill(-210,270,18,100)+1.5+1.3*Math.sin(x*.015)*Math.cos(z*.012))-6*Math.exp(-(((x-135)/9)**4+((z+175)/6)**4));
@@ -17,6 +20,8 @@ const rawTerrain = (x:number,z:number) => {
   if(d<nearest){nearest=d;waterHeight=12*(1-(i+t)/(riverPoints.length-1));}
  }
  if(nearest<24){const blend=Math.exp(-((nearest/14)**4));h=h*(1-blend)+waterHeight*blend;}
+ if(biomeAt(x,z).id==='desert')h+=1.7*Math.sin(x*.065+Math.sin(z*.035))*Math.sin(z*.045);
+ if(!skipPools)for(const n of pools){const r=n.kind==='fish'?5:2,d=Math.hypot(x-n.x,z-n.z);if(d<r+2){let target=poolHeights.get(n.id);if(target===undefined){target=rawTerrain(n.x,n.z,true);poolHeights.set(n.id,target)}const t=Math.min(1,Math.max(0,(r+2-d)/2));h=h*(1-t)+target*t;}}
  return h;
 };
 export const caves = [
@@ -62,7 +67,7 @@ const originalDiscoveries = [
   {id:'nevoa-cascata',name:'Névoa da Cascata',x:-125,z:-58,rarity:'Raro',hint:'Siga o som da água pela trilha da cascata.',story:'Alguns tesouros são os lugares que conhecemos.'},
 ];
 // Shared coordinates drive geometry, the atlas, discoveries and signs.
-const landmarkPositions:Record<string,[number,number]>={cume:[245,-230],pedras:[-245,-255],rio:[-170,120],flores:[210,205],refugio:[-210,270],cachoeira:[-220,-130]};
+const landmarkPositions:Record<string,[number,number]>={cume:[245,-230],pedras:[-245,-255],rio:[-170,120],flores:[-160,245],refugio:[-210,270],cachoeira:[-220,-130]};
 const rewardPositions:Record<string,[number,number]>={'semente-trilha':[64,-60],'cume-dourado':landmarkPositions.cume,'cristal-serra':landmarkPositions.pedras,'ponte-amizade':landmarkPositions.rio,'flor-prado':landmarkPositions.flores,'insignia-pioneiro':landmarkPositions.refugio,'nevoa-cascata':landmarkPositions.cachoeira};
 const scale=(x:number,z:number):[number,number]=>[x,z];
 export const destinations = [
