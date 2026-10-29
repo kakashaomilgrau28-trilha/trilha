@@ -1,5 +1,6 @@
 import {memo,useMemo,useState,useRef,useEffect,useId} from 'react';
 import * as T from 'three';
+import {Minus} from 'lucide-react';
 import {SIZE,BOUNDARY,surfaceHeight as terrainHeight,caveRoute,riverPoints,trails,caves,ropeCrossing} from './exploration';
 import {biomeColor} from './biomes';
 import {landmarks,nodes,camps} from './expeditionData';
@@ -7,9 +8,9 @@ import {places} from './scene';
 import {getForestLayout} from './landscape';
 
 const atlasPlaces=[...places,...landmarks.filter(p=>!p.id.startsWith('journal')),...camps.filter(p=>p.id!=='base'),...nodes.filter(p=>p.kind==='water'&&p.id!=='base-water')];
-type Props={explored:string[];x:number;z:number;heading:number;expanded:boolean;onNavigate:(p:{x:number;z:number;name:string})=>void;onToggle:()=>void};
+type Props={onMinimize?:()=>void;explored:string[];x:number;z:number;heading:number;expanded:boolean;onNavigate:(p:{x:number;z:number;name:string})=>void;onToggle:()=>void};
 let cachedTerrain:string;
-function FieldMap({explored,x,z,heading,expanded,onToggle,onNavigate}:Props){
+function FieldMap({explored,x,z,heading,expanded,onToggle,onNavigate,onMinimize}:Props){
  const maskId=useId().replace(/:/g,'');const known=useMemo(()=>new Set(explored),[explored]);const seen=(x:number,z:number)=>known.has(Math.floor(x/40)+':'+Math.floor(z/40));
  const [zoom,setZoom]=useState(1),[pan,setPan]=useState({x:0,z:0}),[selected,setSelected]=useState('');
  const [drag,setDrag]=useState<{id:number;x:number;y:number;px:number;pz:number}|null>(null);
@@ -40,7 +41,8 @@ function FieldMap({explored,x,z,heading,expanded,onToggle,onNavigate}:Props){
   setSelected(closest.id);
  }
  const destination=atlasPlaces.find(p=>p.id===selected),unit=span>600?200:span>200?50:10;
- return <div className={`field-map detailed-map ${expanded?'is-open':''}`}>
+ return <div id="hud-minimap" className={`field-map detailed-map ${expanded?'is-open':''}`}>
+  {!expanded&&onMinimize&&<button className="map-minimize" aria-label="Minimizar minimapa" onClick={onMinimize}><Minus size={18}/></button>}
   <button className="field-map-toggle" onClick={onToggle} aria-expanded={expanded}>{expanded?'Fechar mapa de localização':'Abrir mapa de localização'} <span>↗</span></button>
   {expanded&&<div className="atlas-tools"><button onClick={()=>setZoom(v=>Math.min(12,v*1.5))} aria-label="Ampliar mapa">+</button><button onClick={()=>setZoom(v=>Math.max(1,v/1.5))} aria-label="Reduzir mapa">−</button><button onClick={()=>{setPan({x,z});setZoom(6)}}>Minha posição</button><button onClick={()=>{setPan({x:0,z:0});setZoom(1)}}>Toda a região</button></div>}
   <svg ref={svg} className="atlas-canvas" viewBox={`${cx-span/2} ${cz-span/2} ${span} ${span}`} role="img" aria-label="Mapa topográfico do cenário: relevo, trilhas, acampamento, água e cavernas" onPointerDown={e=>{if(!expanded||(e.target as Element).closest('[data-map-marker]'))return;e.stopPropagation();e.currentTarget.setPointerCapture(e.pointerId);setDrag({id:e.pointerId,x:e.clientX,y:e.clientY,px:pan.x,pz:pan.z})}} onPointerMove={e=>{if(drag?.id!==e.pointerId)return;const r=e.currentTarget.getBoundingClientRect();setPan({x:Math.max(-SIZE/2,Math.min(SIZE/2,drag.px-(e.clientX-drag.x)*span/Math.min(r.width,r.height))),z:Math.max(-SIZE/2,Math.min(SIZE/2,drag.pz-(e.clientY-drag.y)*span/Math.min(r.width,r.height)))})}} onPointerUp={()=>setDrag(null)} onPointerCancel={()=>setDrag(null)} onWheel={e=>{e.stopPropagation();if(expanded)setZoom(v=>Math.max(1,Math.min(12,v*(e.deltaY>0?.85:1.15))))}}>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type PointerEvent } from "react";
 import * as T from "three";
 import {
   Maximize,
+  Eye, EyeOff, Minus, Heart, Backpack, Bell,
   Minimize,
   RotateCcw,
   RotateCw,
@@ -19,6 +20,7 @@ import type { Profile, Visitor } from "./useLobby";
 import {BOUNDARY, terrainHeight, caveAt, discoveries, type Discovery} from './exploration';
 import {movementSpeed,gearIds} from './gear';
 import FieldMap from './FieldMap';
+import {useHudPanels} from './useHudPanels';
 import Quickbelt from './Quickbelt';
 import {createEquipment,type Equipment} from './equipment';
 import {startWaterAction,advanceWaterAction,type WaterAction} from './itemActions';
@@ -52,6 +54,7 @@ export default function LobbyWorld(props: Props) {
   const [initialExpedition]=useState(()=>props.fixture?createExpedition():checkpointLoad(props.profile.nickname));
   const survival=useRef(initialExpedition),action=useRef<(id:string)=>void>(()=>{}),sneaking=useRef(false),tree=useRef(false);
   const [expedition,setExpedition]=useState(()=>({...initialExpedition,explored:[...initialExpedition.explored]})),[journal,setJournal]=useState(false),[animalText,setAnimalText]=useState(''),[context,setContext]=useState<{id:string;label:string}|null>(null);
+  const {panels,toggle:toggleHud,minimize:minimizeHud,minimized,toggleAll}=useHudPanels();
   const latest = useRef(props);
   latest.current = props;
   const view = useRef({ yaw: Math.PI/4, pitch: Math.atan(1/Math.sqrt(2)), distance: 30 }),
@@ -85,7 +88,7 @@ export default function LobbyWorld(props: Props) {
     const node=notice.current;if(!node||!section.current)return;
     const target=section.current,observer=new ResizeObserver(()=>target.style.setProperty('--notice-height',`${node.getBoundingClientRect().height}px`));
     observer.observe(node);return()=>observer.disconnect();
-  },[expedition.message,mapExpanded,journal,expedition.messageTime>0]);
+  },[expedition.message,mapExpanded,journal,expedition.messageTime>0,panels.notices]);
   function equip(id:string){const parked=survival.current.bikePosition??{x:0,z:8};if(id==='bicicleta'&&Math.hypot(coords.x-parked.x,coords.z-parked.z)>4){note(survival.current,'A bicicleta ficou estacionada. Volte até ela para montar.');return}if(resources.current.crossing){resources.current.message='Conclua a travessia antes de trocar o item.';resources.current.messageUntil=performance.now()+4000;return}props.onEquip(id)}
   useEffect(() => {
     const change = () =>
@@ -502,7 +505,7 @@ export default function LobbyWorld(props: Props) {
   function start(e: PointerEvent<HTMLDivElement>) {
     if (
       latest.current.paused ||
-      (e.target as HTMLElement).closest("button,a,details,input,select,.field-map,.gear-hud")
+      (e.target as HTMLElement).closest("button,a,details,input,select,.field-map,.gear-hud,.survival-panel,.survival-vitals,.survival-notice,.hud-panel-dock,.quickbelt")
     )
       return;
     surface.current?.focus();
@@ -546,7 +549,7 @@ export default function LobbyWorld(props: Props) {
   return (
     <section
       ref={section}
-      className={`lobby-world isometric-world ${expanded ? "expanded" : ""} ${expedition.messageTime>0&&!journal&&!mapExpanded?'has-survival-notice':''}`}
+      className={`lobby-world isometric-world ${expanded ? "expanded" : ""} ${expedition.messageTime>0&&panels.notices&&!journal&&!mapExpanded?'has-survival-notice':''}`}
     >
       <div className="lobby-mapbar">
         <div>
@@ -554,6 +557,7 @@ export default function LobbyWorld(props: Props) {
           <strong>{near.name}</strong>
         </div>
         <div>
+          <button className="hud-clean-toggle" aria-label={minimized?'Restaurar painéis':'Minimizar todos os painéis'} aria-pressed={minimized} onClick={()=>{toggleAll();setMapExpanded(false)}}>{minimized?<Eye size={18}/>:<EyeOff size={18}/>}<span>{minimized?'Painéis':'Recolher'}</span></button>
           <button
             onClick={() => {
               view.current = { yaw: Math.PI/4, pitch: Math.atan(1/Math.sqrt(2)), distance: 30 };setOverview(false);
@@ -594,7 +598,7 @@ export default function LobbyWorld(props: Props) {
         data-position={`${coords.x},${coords.z}`}
         ref={surface}
         className="lobby-surface"
-        style={{touchAction:mapExpanded?"pan-y":"none"}}
+        style={{touchAction:"auto"}}
         tabIndex={0}
         aria-label="Mapa do lobby. WASD ou setas para andar. Arraste para girar a câmera."
         onPointerDown={start}
@@ -614,14 +618,20 @@ export default function LobbyWorld(props: Props) {
         {joystick&&<div className="floating-stick" style={{left:joystick.x,top:joystick.y}} aria-hidden="true"><div ref={stick}/></div>}
         <button className="jump-button" aria-label="Pular" onClick={()=>{if(!survival.current.exhausted&&survival.current.stamina>10)input.current.jump=true;surface.current?.focus()}}>Pular <small>Espaço</small></button>
         {hud.observing&&props.item==='binoculos'&&<div className="binocular-view" aria-hidden="true"><span>+</span></div>}
-        <div className="place-caption">
+        <div className="place-caption" hidden>
           <strong>{near.name}</strong>
           <span>{near.description}</span>
         </div>
-        <FieldMap explored={expedition.explored} onNavigate={p=>{waypoint.current=p;setMapExpanded(false);surface.current?.focus()}} x={coords.x} z={coords.z} heading={hud.heading} expanded={mapExpanded} onToggle={()=>setMapExpanded(v=>!v)}/>
+        {!journal&&!mapExpanded&&<nav className="hud-panel-dock" aria-label="Painéis do jogo">
+          <button aria-label="Mostrar ou minimizar estado" aria-expanded={panels.status} aria-controls="hud-condition" className={expedition.health<25?'is-critical':''} onClick={()=>toggleHud('status')}><Heart size={16}/><span>Vida {Math.round(expedition.health)}%</span></button>
+          <button aria-label="Mostrar ou minimizar item" aria-expanded={panels.equipment} aria-controls="hud-equipment" onClick={()=>toggleHud('equipment')}><Backpack size={16}/><span>Item</span></button>
+          <button aria-label="Mostrar ou minimizar minimapa" aria-expanded={panels.map} aria-controls="hud-minimap" onClick={()=>toggleHud('map')}><MapIcon size={16}/><span>Mapa</span></button>
+          <button aria-label="Mostrar ou minimizar avisos" aria-expanded={panels.notices} aria-controls="hud-notices" data-unread={expedition.messageTime>0} onClick={()=>toggleHud('notices')}><Bell size={16}/><span>Avisos</span></button>
+        </nav>}
+        {(panels.map||mapExpanded)&&<FieldMap onMinimize={()=>minimizeHud('map')} explored={expedition.explored} onNavigate={p=>{waypoint.current=p;setMapExpanded(false);surface.current?.focus()}} x={coords.x} z={coords.z} heading={hud.heading} expanded={mapExpanded} onToggle={()=>setMapExpanded(v=>!v)}/>}
         {false&&!mapExpanded&&!showPerformance&&<div className="expedition-goal"><b>{waypoint.current?'Destino marcado':'Próxima descoberta'}</b><p>{hud.bearing.split(' · ')[0]} · {hud.distance} m</p>{waypoint.current&&<button onClick={()=>{waypoint.current=null}}>Limpar destino</button>}</div>}
-        {!mapExpanded&&<Quickbelt item={props.item} onEquip={id=>{equip(id);surface.current?.focus()}}/>}
-        {!mapExpanded&&<div className="gear-hud">
+        {!mapExpanded&&!journal&&panels.belt&&<Quickbelt item={props.item} onEquip={id=>{equip(id);surface.current?.focus()}}/>}
+        {!mapExpanded&&!journal&&panels.equipment&&<div className="gear-hud" id="hud-equipment"><header className="hud-panel-heading"><b>Item equipado</b><button aria-label="Minimizar equipamento" onClick={()=>minimizeHud('equipment')}><Minus size={18}/></button></header>
           <label>Equipamento <select value={props.item} onChange={e=>{equip(e.target.value);surface.current?.focus()}}><option value="">Mãos livres</option>{gearIds.map(id=><option key={id} value={id}>{({mapa:'Mapa',bicicleta:'Bicicleta',pet:'Companheiro',lanterna:'Lanterna',cantil:'Cantil',corda:'Corda',bussola:'Bússola',binoculos:'Binóculos',botas:'Botas',capacete:'Capacete com luz'} as Record<string,string>)[id]}</option>)}</select></label>
 
           {hud.cave&&<strong>{hud.cave} · {['lanterna','capacete'].includes(props.item)&&hud.light?'luz ligada':'equipe uma fonte de luz'}</strong>}
@@ -634,12 +644,13 @@ export default function LobbyWorld(props: Props) {
           {hud.action&&<progress value={hud.progress} max={1} aria-label={hud.action}/>}
           {hud.message&&<p role="status">{hud.message}</p>}
         </div>}
-        {!mapExpanded&&!journal&&<SurvivalVitals state={expedition} x={coords.x} z={coords.z} onOpen={()=>setJournal(true)}/>}
+        {!mapExpanded&&!journal&&panels.status&&<SurvivalVitals onMinimize={()=>minimizeHud('status')} state={expedition} x={coords.x} z={coords.z} onOpen={()=>setJournal(true)}/>}
         {!mapExpanded&&!journal&&animalText&&<div className="fauna-warning" role="status">{animalText}</div>}
-        {!mapExpanded&&!journal&&expedition.messageTime>0&&<p ref={notice} className="survival-notice" role="status">{expedition.message}</p>}
+        {!mapExpanded&&!journal&&panels.notices&&<p ref={notice} className="survival-notice" id="hud-notices" role="status"><button aria-label="Minimizar avisos" onClick={()=>minimizeHud('notices')}><Minus size={18}/></button>{expedition.messageTime>0?expedition.message:'Nenhum aviso novo.'}</p>}
         {!journal&&!mapExpanded&&!nearReward&&context&&<button className="field-context" onClick={()=>{action.current(context.id);surface.current?.focus()}}>{context.label}</button>}
         {journal&&<SurvivalPanel state={expedition} x={coords.x} z={coords.z} onAction={id=>{action.current(id);surface.current?.focus()}} onClose={()=>setJournal(false)} animal={animalText} sneaking={sneaking.current} tree={tree.current}/>}
         {expedition.dead&&<div className="expedition-death"><h2>A expedição terminou</h2><p>{expedition.dead}</p><p>Os recursos usados no mundo não reaparecem ao retomar. Refaça o preparo no último acampamento salvo.</p><button onClick={()=>action.current('respawn')}>Retomar último acampamento</button></div>}
+        {!mapExpanded&&!journal&&<button className="belt-toggle" aria-label={panels.belt?'Minimizar mochila rápida':'Mostrar mochila rápida'} aria-expanded={panels.belt} onClick={()=>toggleHud('belt')}><Backpack size={20}/><span>Mochila</span>{panels.belt&&<Minus size={14}/>}</button>}
         <div className="lobby-zoom">
           <button
             onClick={() =>
@@ -707,7 +718,7 @@ export default function LobbyWorld(props: Props) {
               mapa de campo mostra os lugares; a bicicleta aumenta a velocidade;
               o pet acompanha você e fareja descobertas. Use F ou os botões para montar a bicicleta, beber água, acender a luz e fixar a corda na ravina. Use G ou Reabastecer com o cantil perto da água. Cavernas são exploradas a pé; leve lanterna ou capacete com luz.
             </p>
-<p>J: diário com missões, mochila e ações de campo. C: furtividade. Beber repõe hidratação; descansar sentado recupera stamina. Salve na base ou nos acampamentos. Água não tratada exige fervura.</p>
+<p>Use os botões Vida, Item, Mapa e Avisos para abrir ou minimizar os painéis. O ícone da mochila mostra os equipamentos rápidos. Recolher esconde os painéis sem parar a expedição.</p><p>J: diário com missões, mochila e ações de campo. C: furtividade. Beber repõe hidratação; descansar sentado recupera stamina. Salve na base ou nos acampamentos. Água não tratada exige fervura.</p>
             <label className="performance-toggle"><input type="checkbox" checked={showPerformance} onChange={e=>setShowPerformance(e.target.checked)}/> Exibir desempenho medido neste aparelho</label>
             <p>Espaço ou Pular: salto. Gráficos automáticos ajustam a resolução durante a exploração. Use Alta para priorizar detalhes ou Leve para reduzir o custo gráfico.</p>
             <button onClick={() => setHelp(false)}>Entendi</button>
