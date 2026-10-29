@@ -65,3 +65,5 @@
 .isometric-world .gear-hud select{background:#1f2a20;color:#eef0dd;border-color:#71835d}
 @media(max-width:800px),(max-height:500px) and (pointer:coarse){.isometric-world .gear-hud,.isometric-world .survival-vitals,.isometric-world .survival-notice{z-index:7}.isometric-world .survival-notice{touch-action:pan-y}}
 @media(max-width:360px){.hud-panel-dock button:first-child{flex:1.5}.hud-panel-dock button:not(:first-child) svg{display:none}.hud-panel-dock button{padding-inline:4px}}
+/* Keep camera zoom reachable in a short landscape viewport. */
+@media(max-height:500px) and (pointer:coarse){.isometric-world .lobby-zoom,.isometric-world.has-survival-notice .lobby-zoom{display:flex;flex-direction:row;gap:4px;right:80px;bottom:10px}.isometric-world .quickbelt{right:180px}}
