@@ -9,7 +9,7 @@ export const nodes:ResourceNode[]=[{id:'antarctic-sea',kind:'fish',x:280,z:-240,
  }return parts;
 })];
 export const camps=[{id:'base',name:'Base Trilha',x:0,z:8},{id:'taiga-camp',name:'Acampamento boreal',x:-145,z:-220},{id:'savanna-camp',name:'Acampamento do vale',x:-140,z:220}];
-export const landmarks=[{id:'ruin',name:'Ruínas do Observatório',x:285,z:65},{id:'journal-1',name:'Página do rio',x:-170,z:120},{id:'journal-2',name:'Página da serra',x:245,z:-230},{id:'journal-3',name:'Página das ruínas',x:285,z:65},{id:'final',name:'Farol dos Seis Ventos',x:350,z:-280},{id:'explorer',name:'Helena · exploradora',x:9,z:14}];
+export const landmarks=[{id:'ruin',name:'Ruínas do Observatório',x:285,z:65},{id:'journal-1',name:'Página do rio',x:-170,z:120},{id:'journal-2',name:'Página da serra',x:245,z:-230},{id:'journal-3',name:'Página das ruínas',x:285,z:65},{id:'final',name:'Farol dos Seis Ventos',x:350,z:-280},{id:'explorer',name:'Milena · exploradora',x:9,z:14}];
 export const missions=[
  ['Mapear cinco regiões','Explore cinco biomas além da base.','visited',5,'2 rações e 1 bandagem'],
  ['Olhar do alto','Alcance o Cume das Araucárias para revelar seus arredores.','viewpoint',1,'1 ração'],
@@ -26,7 +26,7 @@ export const missions=[
  ['Preparado para os extremos','Cruze 180 m de deserto ou gelo com sede e fome acima de zero.','extreme',180,'1 roupa térmica'],
  ['O segredo das ruínas','Nas ruínas, alinhe os símbolos na sequência anotada nas páginas do diário.','puzzle',1,'1 kit médico'],
  ['Distância de segurança','Rompa uma perseguição de animal e saia do território.','escaped',1,'1 bandagem'],
- ['Conversa de exploradores','Fale com Helena na base para receber a missão do farol.','npc',1,'2 rações'],
+ ['Conversa de exploradores','Fale com Milena na base para receber a missão do farol.','npc',1,'2 rações'],
  ['Diário fragmentado','Recupere as três páginas nas ruínas, no rio e na serra.','journal',3,'2 rações'],
  ['Antes que o tempo vire','Com o diário e a passagem abertos, alcance o farol até o final do dia 6.','final',1,'Distintivo dos Seis Ventos'],
 ].map(([name,description,key,target,reward],i)=>({id:i+1,name:String(name),description:String(description),key:String(key),target:Number(target),reward:String(reward)}));

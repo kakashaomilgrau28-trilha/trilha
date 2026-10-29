@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import {RoundedBoxGeometry} from "three/addons/geometries/RoundedBoxGeometry.js";
 import {mergeGeometries} from "three/addons/utils/BufferGeometryUtils.js";
+import {ropeArmAngles} from './ropePose';
 
 export const looks = [
   { shirt: "#d59b57", skin: "#bb825b", hair: "#332921" },
@@ -90,7 +91,7 @@ export function person(index: number) {
   const shadow=new THREE.Mesh(new THREE.PlaneGeometry(1.8,1.8),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(canvas),transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-1}));shadow.rotation.x=-Math.PI/2;shadow.position.y=.19;root.add(shadow);
   let previous=0,phase=0,weight=0;
   const ease=(current:number,target:number,dt:number)=>THREE.MathUtils.lerp(current,target,1-Math.exp(-14*dt));
-  return {root,sockets,animate(time:number,moving:boolean,gesture='',cycling=false,motion?:{speed:number;air:number;landing:number;item?:string;action?:number;observing?:boolean;cyclePhase?:number;crossing?:boolean}){
+  return {root,sockets,resetAnimation(){previous=0;phase=0;weight=0;body.position.y=0;for(const joint of joints)joint.rotation.set(0,0,0)},animate(time:number,moving:boolean,gesture='',cycling=false,motion?:{speed:number;air:number;landing:number;item?:string;action?:number;observing?:boolean;cyclePhase?:number;crossing?:boolean}){
     const dt=previous?Math.min(.1,Math.max(0,time-previous)):1/60;previous=time;
     const speed=motion?.speed??(moving?3.6:0),air=motion?.air??0,landing=motion?.landing??0;
     weight=ease(weight,moving?Math.min(1,speed/2):0,dt);phase+=speed*dt*(cycling?2.8:2.7);
@@ -122,6 +123,11 @@ export function person(index: number) {
     }
     body.position.y=ease(body.position.y,(seated?-.39:cycling?.27:Math.abs(Math.sin(phase))*weight*(run?.055:.025)+Math.sin(time*2.2)*.009)-landing*.11,dt);
     body.rotation.x=ease(body.rotation.x,cycling?.18:run?.065:0,dt);body.rotation.z=Math.sin(phase)*weight*(cycling?.012:.018);
+    if(motion?.crossing){
+      // Hard physical constraint: hands touch the handle, never the overhead cable.
+      const grip=ropeArmAngles();body.position.y=0;body.rotation.set(0,0,0);
+      for(let i=0;i<2;i++){arms[i].rotation.set(grip.shoulder,0,0);elbows[i].rotation.set(grip.elbow,0,0);legs[i].rotation.x=.1;knees[i].rotation.x=.24;}
+    }
     scarf.rotation.x=Math.sin(phase+.5)*weight*.13;eyes.scale.y=Math.sin(time*.7)> .996?.12:1;
     shadow.position.y=.19-air;shadow.scale.setScalar(1+Math.min(air,.8)*.3);shadow.material.opacity=1-Math.min(air*.2,.6);
   }};

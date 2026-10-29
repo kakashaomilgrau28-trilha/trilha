@@ -28,7 +28,8 @@ import {worldClimate} from './biomes';
 import {createExpedition,checkpointLoad,checkpointSave,loadLedger,persistLedger,stepSurvival,act,note,damage,wear,weight,waterAt,swimmingAt,available,consumeNode,startActivity,interactionAt} from './survival';
 import {distract,huntHit} from './fauna';
 import {buildExpeditionWorld} from './expeditionWorld';
-import {ropeAnchors,ropePoint,createRopeTrip,ropeFrame,ropeStaminaNeeded,type RopeTrip} from './traversal';
+import {createRopeTrip,ropeFrame,ropeStaminaNeeded,type RopeTrip} from './traversal';
+import {createRopeRig,createRopeSpan} from './ropeRig';
 import {frameProfiler} from './diagnostics';
 type Props = {
   profile: Profile;
@@ -156,12 +157,11 @@ export default function LobbyWorld(props: Props) {
     let itemId=latest.current.item,equipped=itemId==='bicicleta'?cachedBike:createEquipment(actor,scene,itemId);
     const tell=(text:string)=>{resources.current.message=text;resources.current.messageUntil=performance.now()+4500};
     const syncEquipment=()=>{if(resources.current.crossing||itemId===latest.current.item)return;if(itemId!=='bicicleta')equipped.dispose();itemId=latest.current.item;resources.current.observing=false;resources.current.action=null;resources.current.mounted=itemId==='bicicleta';if(itemId)survival.current.torchLit=false;equipped=itemId==='bicicleta'?cachedBike:createEquipment(actor,scene,itemId)};
+    const ropeRig=createRopeRig();actor.root.add(ropeRig.root);
     const ropeVisual=new T.Group();ropeVisual.userData.dynamic=true;scene.add(ropeVisual);
     const showRope=()=>{
       disposeScene(ropeVisual);ropeVisual.clear();
-      const [a,b]=ropeAnchors();
-      const curve=new(class extends T.Curve<T.Vector3>{constructor(){super()}getPoint(t:number,target=new T.Vector3()){const p=ropePoint(a,b,t);return target.set(p.x,p.y,p.z)}})();
-      const cable=new T.Mesh(new T.TubeGeometry(curve,64,.045,6,false),new T.MeshStandardMaterial({color:'#d4b77d',roughness:1}));ropeVisual.add(cable);
+      ropeVisual.add(createRopeSpan());
     };
 
     let p = {
@@ -337,9 +337,11 @@ export default function LobbyWorld(props: Props) {
       const wasGrounded=motion.grounded;
       if(!motion.grounded)lastFallY=Math.max(lastFallY,motion.y);
       advanceMotion(motion,{x:wx,z:wz,speed,jump:input.current.jump&&!s.exhausted&&s.stamina>10&&!swimming&&!tree.current&&!r.crossing,enabled,bike},dt,groundHeight,queryObstacles,BOUNDARY);input.current.jump=false;if(wasGrounded&&!motion.grounded&&motion.vy>0)s.stamina=Math.max(0,s.stamina-8);
+      let ropeAttached=false;
       if(r.crossing){
         if(enabled)r.crossing.elapsed+=dt;
         const position=ropeFrame(r.crossing);
+        ropeAttached=position.attached&&!position.done;
         motion.x=position.x;motion.z=position.z;motion.y=position.y;motion.vx=motion.vz=motion.vy=0;motion.grounded=true;
         if(position.done)r.crossing=null;
       }
@@ -348,7 +350,9 @@ export default function LobbyWorld(props: Props) {
       p.x=motion.x;p.y=motion.z;
       const altitude=groundHeight(p.x,p.y),air=Math.max(0,motion.y-altitude);
       actor.root.position.set(p.x,motion.y+(tree.current?3.5:swimming?-.45:0),p.y);
-      actor.animate(now/1000,moving,s.activity&&['rest','sleep'].includes(s.activity.kind)?'Sentar':latest.current.gesture,bike,{speed:actualSpeed,air,landing:motion.landing,item:s.activity?.kind==='hunt'?'mapa':s.torchLit?'lanterna':itemId,action:r.action?.kind==='drink'?Math.sin(Math.PI*r.action.elapsed/r.action.duration):0,observing:r.observing,cyclePhase:equipped.phase,crossing:!!r.crossing});
+      actor.animate(now/1000,moving,s.activity&&['rest','sleep'].includes(s.activity.kind)?'Sentar':latest.current.gesture,bike,{speed:actualSpeed,air,landing:motion.landing,item:s.activity?.kind==='hunt'?'mapa':s.torchLit?'lanterna':itemId,action:r.action?.kind==='drink'?Math.sin(Math.PI*r.action.elapsed/r.action.duration):0,observing:r.observing,cyclePhase:equipped.phase,crossing:ropeAttached});
+      ropeRig.root.visible=ropeAttached;
+      if(itemId==='corda')equipped.root.visible=!ropeAttached;
       const nearestAnimal=expeditionWorld.nearest(p.x,p.y),threat=!!nearestAnimal&&nearestAnimal.mode==='pursue'&&Math.hypot(nearestAnimal.x-p.x,nearestAnimal.z-p.y)<30;
       const completedActivity=s.activity;
       if(enabled){stepSurvival(s,dt,{x:p.x,z:p.y,moving,running:sprint,climbing:slope>.3||!!r.crossing||tree.current,swimming,seated:latest.current.gesture==='Sentar',sheltered:!!covered,cycling:bike,distance:moved,fall:!wasGrounded&&motion.grounded?lastFallY-motion.y:0,item:bike?'bicicleta':itemId==='bicicleta'?'':itemId,rope:!!r.crossing,threat});expeditionWorld.update(s,dt,{x:p.x,z:p.y,running:sprint,sneaking:sneaking.current,swimming,tree:tree.current,light:r.light&&['lanterna','capacete'].includes(itemId)&&s.durability[itemId]>0},queryObstacles)}

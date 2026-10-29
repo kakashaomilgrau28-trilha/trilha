@@ -54,7 +54,7 @@ export function buildLandscape(scene:T.Scene){
  const falls=new T.Group();falls.position.set(-220,terrainHeight(-220,-130),-130);scene.add(falls);box(falls,5,7,2,0,3.5,-3,'#929987');box(falls,2.5,6,.2,0,3.2,-1.9,'#a3d0d0');box(falls,7,.15,5,0,.1,0,'#719f9e');
  const r=ropeCrossing;obstacles.push({x:r.x,z:r.z,width:20,depth:10});
  for(let i=0;i<18;i++){const a=i/18*Math.PI*2,x=r.x+Math.cos(a)*11,z=r.z+Math.sin(a)*7;const rock=new T.Mesh(new T.IcosahedronGeometry(1,1),material('#727966'));rock.position.set(x,terrainHeight(x,z)-.4,z);rock.scale.set(2.1,1.7,1.2);scene.add(rock)}
- for(const x of [r.from.x,r.to.x]){for(const side of[-1,1])box(scene,.3,2.3,.3,x,terrainHeight(x,r.z)+1.15,r.z+side*1.6,'#a98755');box(scene,.4,.25,3.5,x,terrainHeight(x,r.z)+2.2,r.z,'#a98755');const tag=label('Ancoragem · use a corda');tag.position.set(x,terrainHeight(x,r.z)+3,r.z);scene.add(tag)}
+ for(const x of [r.from.x,r.to.x]){for(const side of[-1,1])box(scene,.3,2.8,.3,x,terrainHeight(x,r.z)+1.4,r.z+side*1.6,'#a98755');box(scene,.4,.25,3.5,x,terrainHeight(x,r.z)+2.7,r.z,'#a98755');const tag=label('Ancoragem · use a corda');tag.position.set(x,terrainHeight(x,r.z)+3.2,r.z);scene.add(tag)}
  return obstacles;
 
 }
